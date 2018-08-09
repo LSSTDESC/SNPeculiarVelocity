@@ -41,7 +41,47 @@ class GetDerivedQuantities:
 
         return smass
     
-    
+    def get_derived_quantities(self,coeff, z): 
+        """
+        Given a path to a kcorrect template file, as well as 
+        kcorrect coefficients for a set of galaxies and return derived
+        quantities
+
+        inputs
+        ------
+        template_path -- str
+        path to kcorrect templates
+        coeff -- (N x N_templates) array
+        array of kcorrect coefficients
+        z -- (N,) array
+        redshifts of galaxies
+
+        returns
+        -------
+        sfr -- (N,) array
+        Array of star formation rates for galaxies
+        met -- (N,) array
+        Array of metallicities for galaxies
+        smass -- (N,) array
+        Array of stellar masses for galaxies
+        """
+
+
+        #get angular diameter distances
+ 
+        da    = self.cosmo.angular_diameter_distance(z).value  
+
+        smass = np.dot(self.mass_tot, coeff.T) * (da * 1e6 / 10) ** 2
+        ssfr  = np.dot(coeff, self.sfh_tot)
+        met   = np.dot(coeff, self.sfh_tot * self.sfh_met) / ssfr
+        sfr   = ssfr * smass[:,np.newaxis]
+
+        #get the values at z_galaxy
+        met   = met[:,-1]
+        sfr   = sfr[:,-1]
+
+        return np.vstack((sfr, met, smass))
+
     def __init__(self,template_path):
         self.sfh_tot = fitsio.read(template_path, 12)
         self.sfh_met = fitsio.read(template_path, 13)
