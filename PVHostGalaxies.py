@@ -2,7 +2,6 @@ import numpy
 from astropy.coordinates import SkyCoord
 import GCRCatalogs
 import buzzard_stellar_mass
-# import itertools
 from astropy.cosmology import FlatLambdaCDM
 from astropy.coordinates import SkyCoord
 from astropy import units as u
