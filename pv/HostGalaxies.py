@@ -1,12 +1,13 @@
 import pickle
 import numpy
+import copy
 
 class HostGalaxies(object):
     """docstring for HostGalaxies"""
 
-    def __init__(self, sigma_mu=0.08, catseed=1234, seed=1234):
+    def __init__(self, sigma_mu=0.08, catseed=1234, seed=124):
         super(HostGalaxies, self).__init__()
-        self.data = pickle.load(open("../out/tenyear.{}.{}.pkl".format(sigma_mu,seed), "rb" ))
+        self.data = pickle.load(open("../out/tenyear.{}.{}.pkl".format(sigma_mu,catseed), "rb" ))
         self.galaxies = self.data['galaxies']
         self.catseed=catseed
         self.sigma_mu = 0.08
@@ -25,22 +26,26 @@ class HostGalaxies(object):
         f.close()
 
     def getSubset(self,decmin=-90, decmax=90, zmax=0.2, frac=1):
+        self.galaxies['nsne'][5]=10
+        self.galaxies['mB'][5]=numpy.arange(1,11)
         out = copy.deepcopy(self.data)
 
         # decide if supernovae are discovered or not
         if frac < 1:
             numpy.random.seed(self.seed)
-            nsne = self.galaxies["nsne"]
-            arr = numpy.arange(ngal)
+            nsne = self.galaxies["nsne"].sum()
+            arr = numpy.arange(nsne)
             numpy.random.shuffle(arr)       
-            arr = arr < numpy.round(ngal*frac)  # array that says if SN is in frac
+            arr = arr < numpy.round(nsne*frac)  # array that says if SN is in frac
 
             sindex = 0
-            for i in range(out["nsne"]):
-                found = arr[sindex:sindex+self.data["nsne"][i]]
+            for i in range(len(out['galaxies']["nsne"])):
+                found = arr[sindex:sindex+self.galaxies["nsne"][i]]
+                if (i==5):
+                    print(found,out['galaxies']["nsne"][i],found.sum())
                 out['galaxies']["nsne"][i] = found.sum()
                 out['galaxies']["mB"][i] = out['galaxies']["mB"][i][found]
-                sindex += self.data["nsne"][i]
+                sindex += self.galaxies["nsne"][i]
 
         w = numpy.logical_and.reduce((out['galaxies']['nsne'] > 0,out['galaxies']['dec'] > decmin,
             out['galaxies']['dec'] < decmax,
