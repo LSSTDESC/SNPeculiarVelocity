@@ -6,14 +6,17 @@ class HostGalaxies(object):
 
     def __init__(self, sigma_mu=0.08, catseed=1234, seed=1234):
         super(HostGalaxies, self).__init__()
-        self.galaxies = pickle.load(open("tenyear.{}.{}.pkl".format(sigma_mu,seed), "rb" ))['galaxies']
+        self.data = pickle.load(open("../out/tenyear.{}.{}.pkl".format(sigma_mu,seed), "rb" ))
+        self.galaxies = self.data['galaxies']
         self.catseed=catseed
         self.sigma_mu = 0.08
         self.seed=seed
-        numpy.random.seed(self.seed)
 
-    def draganFormat(self):
-        sortin = numpy.argsort(self.galaxies['redshift'])
+    def draganFormat(self, sort=False):
+        if sort:
+            sortin = numpy.argsort(self.galaxies['redshift'])
+        else:
+            sortin = numpy.arange(len(self.galaxies['redshift']))
         f = open('pvlist.{}.dat'.format(self.catseed), 'w')
         for i in range(len(sortin)):
             print(' '.join(str(e) for e in (self.galaxies['redshift'][sortin[i]],self.galaxies['mB'][sortin[i]][0],0, \
@@ -21,18 +24,28 @@ class HostGalaxies(object):
                 self.galaxies['nsne'][sortin[i]])),file=f)
         f.close()
 
-    def getSubsetIndeces(self,decmin=-90, decmax=90, zmax=0.2, frac=1):
-        ngal = len(self.galaxies["galaxy_id"])
-        arr = numpy.arange(ngal)
-        numpy.random.shuffle(arr)
-        w = numpy.logical_and.reduce((arr < numpy.round(ngal*frac),self.galaxies['dec'] > decmin,
-            self.galaxies['dec'] < decmax,
-            self.galaxies['redshift'] < zmax))
-        return w
-
     def getSubset(self,decmin=-90, decmax=90, zmax=0.2, frac=1):
-        w = self.getSubsetIndeces(decmin=decmin, decmax=decmax, zmax=zmax, frac=frac)
-        out = dict()
-        for key, value in self.galaxies.items():
-            out[key]=value[w]
+        out = copy.deepcopy(self.data)
+
+        # decide if supernovae are discovered or not
+        if frac < 1:
+            numpy.random.seed(self.seed)
+            nsne = self.galaxies["nsne"]
+            arr = numpy.arange(ngal)
+            numpy.random.shuffle(arr)       
+            arr = arr < numpy.round(ngal*frac)  # array that says if SN is in frac
+
+            sindex = 0
+            for i in range(out["nsne"]):
+                found = arr[sindex:sindex+self.data["nsne"][i]]
+                out['galaxies']["nsne"][i] = found.sum()
+                out['galaxies']["mB"][i] = out['galaxies']["mB"][i][found]
+                sindex += self.data["nsne"][i]
+
+        w = numpy.logical_and.reduce((out['galaxies']['nsne'] > 0,out['galaxies']['dec'] > decmin,
+            out['galaxies']['dec'] < decmax,
+            out['galaxies']['redshift'] < zmax))
+
+        for key, value in out["galaxies"].items():
+            out["galaxies"][key]=value[w]
         return out
