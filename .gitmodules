@@ -1,0 +1,3 @@
+[submodule "pv/CAMB"]
+	path = pv/CAMB
+	url = git@github.com:cmbant/CAMB.git
