@@ -1,0 +1,12 @@
+5) in the src dir, run:
+gcc -c *.c -I ../opt/local/include 
+   {the latter is where to look for include directory, e.g. /opt/local/include/recipes}
+   (makes many .o files)
+
+6) ar r librecipes.a *.o
+   (archive, replace, name has t start with 'lib', end with 'a')
+
+7) move librecipes.a into directory /lib
+
+8) in ~/lib run  
+ranlib librecipes.a
