@@ -6,7 +6,7 @@ class HostGalaxies(object):
 
     def __init__(self, sigma_mu=0.08, catseed=1234, seed=1234):
         super(HostGalaxies, self).__init__()
-        self.galaxies = pickle.load(open("tenyear.{}.{}.pkl".format(sigma_mu,seed), "rb" ))
+        self.galaxies = pickle.load(open("tenyear.{}.{}.pkl".format(sigma_mu,seed), "rb" ))['galaxies']
         self.catseed=catseed
         self.sigma_mu = 0.08
         self.seed=seed
