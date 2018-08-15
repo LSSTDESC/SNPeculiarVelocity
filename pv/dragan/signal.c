@@ -18,6 +18,8 @@ int main()
     double  k, n, z;
     FILE *ifp;
 
+    gsl_set_error_handler_off();
+
     PRINT_FLAG = 0;
     /**************************************/
     /** Planck parameters - August 2016! **/
@@ -79,9 +81,9 @@ int main()
 
     double **all_SN_z_th_phi, **all_Noise_SN, *all_delta_m;
     double **SN_z_th_phi, **Signal_SN,  **Noise_SN, *delta_m;
-    char SN_filename[256] , Cov_filename[256];
-    sprintf(SN_filename , "/Users/huterer/research/SUPERNOVAE/SN_ANGPS/SN_DATA/PANSTARRS/SN_data.txt");
-    sprintf(Cov_filename, "/Users/huterer/research/SUPERNOVAE/SN_ANGPS/SN_DATA/PANSTARRS/SN_Cov.txt");
+    char SN_filename[256];
+    sprintf(SN_filename , "pvlist.1234.dat");
+    // sprintf(SN_filename , "small_data_clean.txt");
 
     /************************/
     /*** fiducial choices ***/
@@ -89,7 +91,7 @@ int main()
     
     OFFDIAG=1;     /*full off-diag Noise */
     N_START = 1;   /* hardcoded before already */
-    N_END=208;       /* How many SN would you actually like to USE? DEFAULT=208, but choice doesntmatter */
+    N_END=file_eof_linecount(SN_filename);       /* How many SN would you actually like to USE? DEFAULT=208, but choice doesntmatter */
     N_USED = N_END-N_START+1;    
     WINDOW = 1;    /* Mean subtracted using int over all-sky (DEFAULT) */
 
@@ -112,173 +114,33 @@ int main()
     all_Noise_SN  = dmatrix(1, N_SN, 1, N_SN);
     all_delta_m   = dvector(1, N_SN);
     
-    SN_z_th_phi = dmatrix(1, N_USED, 1, 4);
-    Noise_SN  = dmatrix(1, N_USED, 1, N_USED);
-    delta_m   = dvector(1, N_USED);
+    // SN_z_th_phi = dmatrix(1, N_USED, 1, 4);
+    // Noise_SN  = dmatrix(1, N_USED, 1, N_USED);
+    // delta_m   = dvector(1, N_USED);
 
     /***********************************************************/
     /** read the SN from file, possibly with noise covariance **/
     /***********************************************************/
-
-    read_pos_noise(OFFDIAG, all_SN_z_th_phi, all_delta_m, all_Noise_SN, SN_filename, Cov_filename);
-
-    /************************************************************************/
-    /**                   order the SN in increasing redshift              **/
-    /** ... unless if you want SN (ordered) plus gals (ordered anew) case! **/
-    /************************************************************************/
-
-    //order_SN_increasing_z(N_SN, SN_z_th_phi, Noise_SN, delta_m);  
-    order_SN_increasing_z(N_SN, all_SN_z_th_phi, all_Noise_SN, all_delta_m);
-    
-    for(i=N_START; i<=N_END; i++)
-    {
-        for(j=1; j<=4; j++)
-            SN_z_th_phi[i-N_START+1][j] = all_SN_z_th_phi[i][j];   
-
-        for(j=N_START; j<=N_END; j++)
-            Noise_SN[i-N_START+1][j-N_START+1] = all_Noise_SN[i][j];
-        delta_m[i-N_START+1]  = all_delta_m[i];   
-    }    
+    read_pos_noise(OFFDIAG, all_SN_z_th_phi, all_delta_m, all_Noise_SN, SN_filename);
 
     /**********************************************/
     /** Evaluate the signal matrix of PanStarrs ***/
     /**********************************************/
-    Signal_SN = dmatrix(1, N_USED, 1, N_USED);        
+    Signal_SN = dmatrix(1, N_SN, 1, N_SN);        
     COUNT_IN=0; COUNT_BELOW=0;  COUNT_ABOVE=0;
 
-    calculate_Cov_vel_of_SN(N_USED, SN_z_th_phi, Signal_SN, omega_m, w0, wa);
+    calculate_Cov_vel_of_SN(N_SN, all_SN_z_th_phi, Signal_SN, omega_m, w0, wa);
 
     printf("%e %e\n", Signal_SN[1][1], Signal_SN[N_USED][N_USED]);
-    printf("%e %e\n", Noise_SN[1][1], Noise_SN[N_USED][N_USED]);
+    // printf("%e %e\n", Noise_SN[1][1], Noise_SN[N_USED][N_USED]);
 
-    // /***********************************/
-    // /** Compare to old CovMat **********/
-    // /***********************************/
-    // double **orig_Signal_SN;
-    // char old_Sig_filename[256];
-    
-    // sprintf(old_Sig_filename,  "/Users/huterer/research/SUPERNOVAE/SN_ANGPS/CL_THEORY/SN_COVMAT/Signal_Cov_ordered_z_PS.dat");
-    // int N_OLD_SIG = file_eof_linecount(old_Sig_filename);
-    // printf("I see %d lines in the OLD signal file\n", N_OLD_SIG);
-
-    // orig_Signal_SN = dmatrix(1, N_OLD_SIG, 1, N_OLD_SIG);     
-    // file_read_matrix(orig_Signal_SN, N_OLD_SIG, old_Sig_filename);
-
-    // ifp=fopen("OUTPUT/Signal_diag_new_over_old.dat", "w");
-    // fprintf(ifp, "(Note, ratio will be around one only once the selected z-values like around z_sn values)\n");
-    // for(i=1; i<=N_USED; i++)
-    //     fprintf(ifp, "%f %f\n", SN_z_th_phi[i][1], Signal_SN[i][i]/orig_Signal_SN[i][i]);
-    // fclose(ifp);
-
-    // /*************************************************/
-    // /** Read in the binned  n(z) distribution of SN **/
-    // /*************************************************/
-    // char binned_sn_filename[156];
-    // sprintf(binned_sn_filename, "INPUT/Bins_Z_SN_sig_mixed.txt");
-
-    // int N_Z = file_eof_linecount(binned_sn_filename);
-    // printf("binned file has %d lines\n", N_Z);
-
-    // double *z_arr, *nz, nz_norm=0, *sig_bin_ave;    
-    // z_arr= dvector(1, N_Z);
-    // nz   = dvector(1, N_Z);
-    // sig_bin_ave = dvector(1, N_Z);
-
-    // ifp=fopen(binned_sn_filename, "r");
-    // for(i=1; i<=N_Z; i++)
-    // {
-    //     fscanf(ifp, "%lf %lf %lf\n", &z_arr[i], &nz[i], &sig_bin_ave[i]);
-    //     nz_norm += nz[i];
-    // }
-    // printf("Total of  %f sn in binned file\n", nz_norm);
-    // fclose(ifp);
-    
-    // /************************************************************/
-    // /** Evaluate the signal matrix for arbitrary given arrays ***/
-    // /************************************************************/
-    // int N_COSTH   = 1001; // checked that 101 is way too low; for 5001, modest (20%) uptick at l=20, less at lower ell
-
-    // double *costh_arr, ***Signal_tensor;
-    // costh_arr = dvector(1, N_COSTH);
-        
-    // Signal_tensor = d3tensor(1, N_COSTH, 1, N_Z, 1, N_Z);        
-
-    // double dcosth=2.0/(N_COSTH-1);
-    // for(i=1; i<=N_COSTH; i++)
-    // {
-    //     costh_arr[i]  = -1.0 + (i-1)*dcosth;
-    //     if (i == 1)        costh_arr[i] += VERYSMALL;
-    //     if (i == N_COSTH)  costh_arr[i] -= VERYSMALL;
-    //     //printf("%d  %f\n", i, costh_arr[i]);
-    // }
-
-    // double t=omp_get_wtime();
-    // calculate_Signal_given_z_theta_arr(N_COSTH, N_Z, costh_arr, z_arr, Signal_tensor, omega_m, w0, wa);
-    // double t1=omp_get_wtime();
-
-    // /**************************************************************************/
-    // /** renormalize terms in Signal so goes fron <dm dm> to <dm/sig dm/sig>  **/
-    // /**************************************************************************/
-    // for(i=1; i<=N_COSTH; i++)
-    //     for(j=1; j<=N_Z; j++)
-    //         for(jj=1; jj<=N_Z; jj++)
-    //             Signal_tensor[i][j][jj] *= 1.0/(sig_bin_ave[j]*sig_bin_ave[jj]);
-    
-    // printf("costh=%f z=%f S(i,i)=%e\n", costh_arr[N_COSTH], z_arr[1],  Signal_tensor[N_COSTH][1][1]);
-            
-    // printf("*************************************\n");
-    // printf("time for like evaluation only=%lf\n", t1-t);    
-    // printf("*************************************\n");
-
-    // /********************************************************************/
-    // /*** integrate over ninj (weighted) to get S(theta) for that n(z) ***/
-    // /********************************************************************/
-    // double *Signal_theta, sum, dum;
-    // Signal_theta = dvector(1, N_COSTH);
-
-
-
-    // /* nz_norm=0; */
-    // /* ifp=fopen("INPUT/Soltis_nz.dat", "r"); */
-    // /* for(j=1; j<=N_Z; j++) */
-    // /* { */
-    // /*     fscanf(ifp, "%lf %lf\n", &dum, &nz[j]); */
-    // /*     nz_norm += nz[j]; */
-    // /*     printf("%d %f\n", j, nz[j]); */
-    // /* } */
-    // /* fclose(ifp); */
-      
-    // ifp=fopen("OUTPUT/Signal_theta.dat", "w");
-    // for(i=1; i<=N_COSTH; i++)
-    // {
-    //     sum=0;
-    //     for(j=1; j<=N_Z; j++)
-    //         for(jj=1; jj<=N_Z; jj++)
-    //             sum   += Signal_tensor[i][j][jj]*nz[j]*nz[jj];
-
-    //     Signal_theta[i] = sum/(nz_norm*nz_norm);
-    //     fprintf(ifp, "%f %f\n",  acos(costh_arr[i])*180.0/M_PI, Signal_theta[i]);
-    // }
-    // fclose(ifp);
-    // /*****************/
-    // /***  get C_l  ***/
-    // /*****************/
-    // double *Cl, costh;
-    // int ell, LMAX=20;
-    // Cl=dvector(1, LMAX);
-
-    // ifp=fopen("OUTPUT/Cl.dat", "w");
-    // for (ell=1; ell<=LMAX; ell++)
-    // {
-    //     sum=0;
-    //     for(i=1; i<=N_COSTH-1; i++)
-    //     {
-    //         costh = 0.5*(costh_arr[i] + costh_arr[i+1]);
-    //         sum += 2*M_PI * Signal_theta[i] * gsl_sf_legendre_Pl(ell,costh) * (dcosth); //
-    //     }
-    //     Cl[ell] = sum;
-    //     fprintf(ifp,"%d %e\n", ell, Cl[ell] ) ;
-    // }
-    // fclose(ifp);
+    // ifp=fopen("small.out", "w");
+    ifp=fopen("pvlist.1234.out", "w");
+    for(i=1;i<=N_SN;i++){
+        for(j=1;j<=N_SN;j++)
+            fprintf(ifp,"%0.9e ",Signal_SN[i][j]);
+        fprintf(ifp,"\n");
+    }
+    fclose(ifp);
     exit(0);
 }

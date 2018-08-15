@@ -21,8 +21,7 @@ class HostGalaxies(object):
         f = open('pvlist.{}.dat'.format(self.catseed), 'w')
         for i in range(len(sortin)):
             print(' '.join(str(e) for e in (self.galaxies['redshift'][sortin[i]],self.galaxies['mB'][sortin[i]][0],0, \
-                self.galaxies['l'][sortin[i]],self.galaxies['b'][sortin[i]], self.galaxies['mB_expected'][sortin[i]], \
-                self.galaxies['nsne'][sortin[i]])),file=f)
+                self.galaxies['l'][sortin[i]],self.galaxies['b'][sortin[i]], self.galaxies['mB_expected'][sortin[i]])),file=f)
         f.close()
 
     def getSubset(self,decmin=-90, decmax=90, zmax=0.2, frac=1):

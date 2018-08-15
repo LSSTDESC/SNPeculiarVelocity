@@ -238,8 +238,7 @@ gsl_histogram *Tl_over_Cl_hist[L_MAX_CALIB];
 /*********************************/
 int  N_SN, NG_LIKE_CORRECTION, MARG_OVER_SCRIPTM;
 void read_SN_pos(double **SN_z_th_phi, char *filename);
-void read_pos_noise(int d, double **SN_z_th_phi, double *delta_m, double **Noise_Cov,
-                  char *filename, char*file_noise_cov);
+void read_pos_noise(int d, double **SN_z_th_phi, double *delta_m, double **Noise_Cov, char *filename);
 void order_SN_increasing_z(int nsn,double **SN_z_th_phi, double **Noise_C,double *delta_m);
 void order_whole_SN_file_in_z(char *file_in, char *file_out);
 void calculate_Cov_vel_of_SN(int nmax, double **SN_z_th_phi, double **Signal_SN, 

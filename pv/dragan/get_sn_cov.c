@@ -39,7 +39,7 @@ void read_SN_pos(double **SN_z_th_phi, char *filename)
     fclose(ifp1);
 }
 void read_pos_noise(int OFFDIAG, double **SN_z_th_phi, double *delta_m, double **Noise_Cov,
-                  char   *filename,   char *file_noise_cov)
+                  char   *filename)
 {
     int i,j;
     double z,m,cov,sigma_m, m_th, l_gal, b_gal;
@@ -80,37 +80,21 @@ void read_pos_noise(int OFFDIAG, double **SN_z_th_phi, double *delta_m, double *
     }
     fclose(ifp1);
 
-    if (OFFDIAG != -1)
-    {
-        ifp1=fopen(file_noise_cov, "r");
-        for(i=1; i<=N_SN; i++)
+
+    for(i=1; i<=N_SN; i++)
+        for(j=1; j<=N_SN; j++)
         {
-            for(j=1; j<=N_SN; j++)
+            if (i == j)
             {
-                fscanf(ifp1, "%lf ", &cov);
-                //if ((i == 208 || i == 207) && (j == 208)) printf("Cov=%f\n", cov);
-                Noise_Cov[i][j] = cov;
+                z = SN_z_th_phi[i][1];
+                //prefac = 5/log(10.0) * (1 - (1+z)/H_dimless(z, 0.3, -1.0, 0.0)/r_dimless_tab(z));
+                // no need to add 300km/s any more
+                //Noise_Cov[i][j] = pow(SN_z_th_phi[i][4], 2) + pow(prefac * 300.0/3.0e5, 2);
+                Noise_Cov[i][j] = pow(SN_z_th_phi[i][4], 2);
             }
-            fscanf(ifp1, "\n");
+            else        Noise_Cov[i][j] = 0;
         }
-        fclose(ifp1);
-    }
-    else // if using N_ii = sigma^2        
-    {
-        for(i=1; i<=N_SN; i++)
-            for(j=1; j<=N_SN; j++)
-            {
-                if (i == j)
-                {
-                    z = SN_z_th_phi[i][1];
-                    //prefac = 5/log(10.0) * (1 - (1+z)/H_dimless(z, 0.3, -1.0, 0.0)/r_dimless_tab(z));
-                    // no need to add 300km/s any more
-                    //Noise_Cov[i][j] = pow(SN_z_th_phi[i][4], 2) + pow(prefac * 300.0/3.0e5, 2);
-                    Noise_Cov[i][j] = pow(SN_z_th_phi[i][4], 2);
-                }
-                else        Noise_Cov[i][j] = 0;
-            }
-    }
+    
 }
 void order_SN_increasing_z(int nsn, double **SN_z_th_phi, double **Noise_Cov, double *delta_m)
 {
