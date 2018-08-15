@@ -8,5 +8,5 @@ gcc -c *.c -I ../opt/local/include/recipes
 
 7) move librecipes.a into directory /lib
 
-8) in ~/lib run  
+8) in /lib run  
 ranlib librecipes.a
