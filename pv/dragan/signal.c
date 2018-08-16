@@ -135,7 +135,7 @@ int main()
     // printf("%e %e\n", Noise_SN[1][1], Noise_SN[N_USED][N_USED]);
 
     // ifp=fopen("small.out", "w");
-    ifp=fopen("pvlist.1234.out", "w");
+    ifp=fopen("pvlist.1234.xi", "w");
     for(i=1;i<=N_SN;i++){
         for(j=1;j<=N_SN;j++)
             fprintf(ifp,"%0.9e ",Signal_SN[i][j]);

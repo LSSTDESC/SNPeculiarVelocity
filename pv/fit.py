@@ -39,11 +39,4 @@ sampler = emcee.EnsembleSampler(nwalkers, ndim, lnprob)
 sampler.run_mcmc(p0, 100)
 
 import pickle
-pickle.dump(sampler, open( "emcee.pkl", "wb" ) )
-
-def plot():
-    from chainconsumer import *
-    sampler=  pickle.load("emcee.pkl")
-    c = ChainConsumer()
-    c.add_chain(sampler.flatchain, parameters=["$A$", "$M$","$\sigma$"])
-    c.plotter.plot(filename="example.png", figsize="column")
+pickle.dump(sampler.flatchain, open( "emcee.pkl", "wb" ) )
