@@ -35,20 +35,19 @@ Otherwise `git submodule update --init --recursive` does the job.  Follow CAMB's
 `pv/CAMB/camb`.
 
 * Build Dragan's executable that calculates the theoretical peculiar magnitude correlations. Located in `pv/dragan`.
-It uses gsl.  NERSC instructions for cori are:
+It uses gsl.  NERSC instructions for cori are
 ```
 module load gsl
 module swap PrgEnv-intel PrgEnv-gnu
-```
-
-Compiled using `make`.  If successful creates the executable `pv/dragan/sig`
+``` 
+Compiled using `make`.  If successful creates the executable `pv/dragan/sig`.
 
 * Python code is dependent on the lsst stack already installed
 on cori.  This code is set up using
-
-`source /global/common/software/lsst/cori-haswell-gcc/stack/setup_current_sims.sh`
-
-`setup lsst_sims`
+```
+source /global/common/software/lsst/cori-haswell-gcc/stack/setup_current_sims.sh
+setup lsst_sims
+```
 
 * The executable `camb` is called within `sig`.  It is therefore good to have it in your path.  For example I put
 but of these executables in a `bin` directory.
