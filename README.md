@@ -78,3 +78,5 @@ python view.py
 ## Notes for Brian
 
 The code that we would like to make faster is sig.  It reads the file pvlist.1234.dat.  There are two versions of this file.  In /global/homes/a/akim/desc/PeculiarVelocity/out there is the real one we want to use.  In /global/homes/a/akim/desc/PeculiarVelocity/test/ there is a short one that completes quickly.
+
+Another code that is slow is fit.py, where there is a matrix inversion and calculation of eigenvalues of a large matrix.  The calculations are done using numpy, for which cori knows to run openmp maybe.
