@@ -22,7 +22,6 @@ def lnprob(theta):
     C = A*numpy.array(xi)
     numpy.fill_diagonal(C,C.diagonal()+ sigma**2/hg.galaxies['nsne'])
     Cinv= numpy.linalg.inv(C)
-    Croots = scipy.linalg.sqrtm(C)
     logdetC = numpy.log(numpy.linalg.eigvalsh(C)).sum()
     mterm  = Deltam-M
 
