@@ -92,6 +92,9 @@ if __name__ == "__main__":
                     help="distance modulus standard deviation")
     parser.add_argument("--seed", dest="seed", default=1234, type = int, required = False,
                     help="random number generator seed")
+    parser.add_argument('--test', dest='test', action='store_true')
+    parser.add_argument('--no-test', dest='test', action='store_false')
+    parser.set_defaults(feature=True)
     args = parser.parse_args()
 
-    main(args.sigma_mu, args.seed)
+    main(args.sigma_mu, args.seed, test=args.test)
