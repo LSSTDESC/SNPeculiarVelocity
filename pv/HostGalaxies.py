@@ -5,9 +5,9 @@ import copy
 class HostGalaxies(object):
     """docstring for HostGalaxies"""
 
-    def __init__(self, sigma_mu=0.08, catseed=1234, seed=124):
+    def __init__(self, sigma_mu=0.08, catseed=1234, seed=124, path='../out'):
         super(HostGalaxies, self).__init__()
-        self.data = pickle.load(open("../out/tenyear.{}.{}.pkl".format(sigma_mu,catseed), "rb" ))
+        self.data = pickle.load(open("{}/tenyear.{}.{}.pkl".format(path,sigma_mu,catseed), "rb" ))
         self.galaxies = self.data['galaxies']
         self.catseed=catseed
         self.sigma_mu = 0.08
@@ -25,8 +25,6 @@ class HostGalaxies(object):
         f.close()
 
     def getSubset(self,decmin=-90, decmax=90, zmax=0.2, frac=1):
-        self.galaxies['nsne'][5]=10
-        self.galaxies['mB'][5]=numpy.arange(1,11)
         out = copy.deepcopy(self.data)
 
         # decide if supernovae are discovered or not
@@ -40,8 +38,6 @@ class HostGalaxies(object):
             sindex = 0
             for i in range(len(out['galaxies']["nsne"])):
                 found = arr[sindex:sindex+self.galaxies["nsne"][i]]
-                if (i==5):
-                    print(found,out['galaxies']["nsne"][i],found.sum())
                 out['galaxies']["nsne"][i] = found.sum()
                 out['galaxies']["mB"][i] = out['galaxies']["mB"][i][found]
                 sindex += self.galaxies["nsne"][i]
@@ -53,3 +49,6 @@ class HostGalaxies(object):
         for key, value in out["galaxies"].items():
             out["galaxies"][key]=value[w]
         return out
+
+    def getIndices(self, x):
+        return numpy.searchsorted(self.galaxies["galaxy_id"], x)
