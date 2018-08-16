@@ -25,7 +25,7 @@ def lnprob(theta):
     logdetC = numpy.log(numpy.linalg.eigvalsh(C)).sum()
     mterm  = Deltam-M
 
-    lp = -0.5*halflogdetC - 0.5* ( mterm.T @ (Cinv @ mterm) )
+    lp = -0.5* (halflogdetC +( mterm.T @ (Cinv @ mterm) ))
     if not numpy.isfinite(lp):
         return -np.inf
     return lp
