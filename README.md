@@ -15,7 +15,7 @@ The workflow is as follows:
 * Determine the theoretical peculiar magnitude correlation function expected from General Relativity
   * Uses CAMB
   * Populates a GR-based theory matrix *S*.
-  * The model for the general theory is $*AS*, where the $A$ parameter is introduced.  *A*=1 is the GR solution.
+  * The model for the general theory is *AS*, where the $A$ parameter is introduced.  *A*=1 is the GR solution.
 * Determine the observed peculiar magnitude for galaxies
   * The magnitude *m* is the average of all supernovae hosted by the galaxy.
   * Assumes that the background distance modulus *mu* is known.
@@ -36,10 +36,10 @@ Otherwise `git submodule update --init --recursive` does the job.  Follow CAMB's
 
 * Build Dragan's executable that calculates the theoretical peculiar magnitude correlations. Located in `pv/dragan`.
 It uses gsl.  NERSC instructions for cori are:
-
-`module load gsl`
-
-`module swap PrgEnv-intel PrgEnv-gnu`
+```
+module load gsl
+module swap PrgEnv-intel PrgEnv-gnu
+```
 
 Compiled using `make`.  If successful creates the executable `pv/dragan/sig`
 
@@ -55,22 +55,27 @@ but of these executables in a `bin` directory.
 
 ## Execution
 
-1) Make the SNe and galaxies
-> python PVHostGalaxies.py 
-
-2) Make ASCII file readable by Dragan's code
-In [1]: from HostGalaxies import *
-In [2]: HostGalaxies().draganFormat() 
-
-3) Run Dragan's code from directory where ascii file is created
->sig
-
-4) Fit parameters
-> python fit.py
-
-5) Look at output
-> python view.py
-
+* Make the SNe and galaxies.
+```
+python PVHostGalaxies.py
+```
+* Make ASCII file readable by Dragan's code.  In python:
+```
+from HostGalaxies import *
+HostGalaxies().draganFormat() 
+```
+* Run Dragan's code from directory where ascii file is created.
+```
+sig
+```
+* Fit parameters.
+```
+python fit.py
+```
+* Look at output.
+```
+python view.py
+```
 ## Notes for Brian
 
 The code that we would like to make faster is sig.  It reads the file pvlist.1234.dat.  There are two versions of this file.  In /global/homes/a/akim/desc/PeculiarVelocity/out there is the real one we want to use.  In /global/homes/a/akim/desc/PeculiarVelocity/test/ there is a short one that completes quickly.
