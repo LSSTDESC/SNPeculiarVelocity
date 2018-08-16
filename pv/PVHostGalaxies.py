@@ -8,13 +8,18 @@ from astropy import units as u
 import pickle
 import argparse
 
-def main(sigma_MB, seed):
+def main(sigma_MB, seed, test = True):
     # Things that may be user configurable
     controlTime = 1.e1      # number of years
 
     # The catalog that is used
-
-    coadd_cat = GCRCatalogs.load_catalog('buzzard_v1.6')
+    if test :
+        cat = 'buzzard_v1.6_test'
+        path = '../test/'
+    else:
+        cat = 'buzzard_v1.6'
+        path = '../out'
+    coadd_cat = GCRCatalogs.load_catalog(cat)
 
     # Buzzard does not have needed galaxy properties.  The following is used to derive them.
     kfile = "/global/projecta/projectdirs/lsst/groups/CS/Buzzard/metadata/templates/k_nmf_derived.default.fits"
@@ -55,7 +60,6 @@ def main(sigma_MB, seed):
         for key, value in data.items():
             data[key]=value[w]
         data['nsne'] = nsne[w]
-        data['nsne'][1]=2
         data['mB']  = []
         for nsn, redtrue in zip(data['nsne'], data["redshift_true"]):
             data['mB'].append(MB + numpy.random.normal(scale=sigma_MB,size=nsn)+cosmo.distmod(redtrue).value)
@@ -79,7 +83,7 @@ def main(sigma_MB, seed):
     ans['config']['sigma_MB']=sigma_MB
     ans['config']['seed']=seed
     ans['config']['time']=controlTime = 1.e1
-    pickle.dump(ans, open( "tenyear.{}.{}.pkl".format(sigma_MB,seed), "wb" ) )
+    pickle.dump(ans, open( "{}tenyear.{}.{}.pkl".format(path,sigma_MB,seed), "wb" ) )
 
 
 if __name__ == "__main__":
