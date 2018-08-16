@@ -1,29 +1,57 @@
 # Peculiar Velocity
 
-Determine the precision on $f\sigma_8$.
+Determine the precision on f sigma_8 using Type Ia supernova peculiar velocity (magnitude)
+autocorrelation.
+
+The parameters we want to explore are:
+* Survey duration
+* Survey solid angle implemented as narrowing of dec range
+* Maximum redshift
+* Intrinsic magnitude dispersion
+
+The workflow is as follows:
+
+* Realize supernovae assigned to galaxies in an LSST galaxy catalog.
+* Determine the theoretical peculiar magnitude correlation function expected from General Relativity
+  * Uses CAMB
+  * Populates a GR-based theory matrix *S*.
+  * The model for the general theory is $*AS*, where the $A$ parameter is introduced.  *A*=1 is the GR solution.
+* Determine the observed peculiar magnitude for galaxies
+  * The magnitude *m* is the average of all supernovae hosted by the galaxy.
+  * Assumes that the background distance modulus *mu* is known.
+  * Introduces a parameter *M* for the SN Ia absolute magnitude zeropoint.
+  * Peculiar magnitude is *m-(mu+M)*.
+  * Peculiar magnitudes assigned an uncertainty *sigma/sqrt(n)* where *sigma* is a parameter and *n* is the
+number of the SNe in the galaxy.  At this point no measuremnt noise is considered.
+* Fit for *A, sigma, M* for different subsets.
+
 
 ## Installation
 
-There are several distinct codes.
+* Build Dragan's modified NR library.  Instructions on how to build this in `nr/README`.
 
-nr/ : c code.  Instructions on how to build this in nr/README
+* Build CAMB.  This is an external submodule located in `pv/CAMB`.  Supposedly new versions of git will give you this.
+Otherwise `git submodule update --init --recursive` does the job.  Follow CAMB's build instructions.  Creates an executable
+`pv/CAMB/camb`.
 
-pv/ : python code.  It is dependent on the lsst stack already installed
+* Build Dragan's executable that calculates the theoretical peculiar magnitude correlations. Located in `pv/dragan`.
+It uses gsl.  NERSC instructions for cori are:
+
+`module load gsl`
+
+`module swap PrgEnv-intel PrgEnv-gnu`
+
+Compiled using `make`.  If successful creates the executable `pv/dragan/sig`
+
+* Python code is dependent on the lsst stack already installed
 on cori.  This code is set up using
 
-source /global/common/software/lsst/cori-haswell-gcc/stack/setup_current_sims.sh
-setup lsst_sims
+`source /global/common/software/lsst/cori-haswell-gcc/stack/setup_current_sims.sh`
 
-pv/dragan/ : c code.  Uses gsl.  According to cori instructions the following commands must be done
+`setup lsst_sims`
 
-module load gsl
-module swap PrgEnv-intel PrgEnv-gnu
-
-compiled using make.  If successful creates the executable pv/dragan/sig
-
-pv/CAMB/ : fortran code.  It is an external modules. it is build using make. If successful creates the executable pv/CAMB/sig.  This executable is called by sig so needs to be in the PATH.
-
-
+* The executable `camb` is called within `sig`.  It is therefore good to have it in your path.  For example I put
+but of these executables in a `bin` directory.
 
 ## Execution
 
