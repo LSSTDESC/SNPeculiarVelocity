@@ -15,7 +15,7 @@ The workflow is as follows:
 * Determine the theoretical peculiar magnitude correlation function expected from General Relativity
   * Uses CAMB
   * Populates a GR-based theory matrix *S*.
-  * The model for the general theory is *AS*, where the $A$ parameter is introduced.  *A*=1 is the GR solution.
+  * The model for the general theory is *AS*, where the *A* parameter is introduced.  *A*=1 is the GR solution.
 * Determine the observed peculiar magnitude for galaxies
   * The magnitude *m* is the average of all supernovae hosted by the galaxy.
   * Assumes that the background distance modulus *mu* is known.
