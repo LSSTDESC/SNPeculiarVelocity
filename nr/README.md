@@ -1,12 +1,15 @@
-5) in the src dir, run:
-gcc -c *.c -I ../opt/local/include/recipes
-   {the latter is where to look for include directory, e.g. /opt/local/include/recipes}
-   (makes many .o files)
+# Dragan's nr library
 
-6) ar r librecipes.a *.o
-   (archive, replace, name has t start with 'lib', end with 'a')
+## Installation
 
-7) move librecipes.a into directory /lib
+* in the src dir, run:
 
-8) in /lib run  
-ranlib librecipes.a
+`gcc -c *.c -I ../opt/local/include/recipes`
+
+* `ar r librecipes.a *.o`
+
+* move `librecipes.a` into directory `/lib`
+
+* in `/lib` run
+
+`ranlib librecipes.a`
