@@ -17,6 +17,8 @@ Deltam=m_eff- hg.galaxies['mB_expected']
 
 def lnprob(theta):
     A, M, sigma = theta
+    if (A <=0 or sigma <0):
+        return -numpy.inf
     C = A*numpy.array(xi)
     numpy.fill_diagonal(C,C.diagonal()+ sigma**2/hg.galaxies['nsne'])
     Cinv= numpy.linalg.inv(C)
@@ -30,13 +32,24 @@ def lnprob(theta):
         return -np.inf
     return lp
 
-ndim, nwalkers = 3, 10
+ndim, nwalkers = 3, 12
 sig = numpy.array([0.1,0.01,0.01])
 
-p0 = [numpy.array([1,0,0.1])+numpy.random.uniform(low = -sig, high=sig) for i in range(nwalkers)]
+p0 = [numpy.array([1,0,0.08])+numpy.random.uniform(low = -sig, high=sig) for i in range(nwalkers)]
 
 sampler = emcee.EnsembleSampler(nwalkers, ndim, lnprob)
-sampler.run_mcmc(p0, 100)
+sampler.run_mcmc(p0, 1000)
 
-import pickle
-pickle.dump(sampler.flatchain, open( "emcee.pkl", "wb" ) )
+# import pickle
+# pickle.dump(sampler.flatchain, open( "emcee.pkl", "wb" ) )
+
+from chainconsumer import *
+
+# flatchain=  pickle.load(open("emcee.pkl",'rb'))
+c = ChainConsumer()
+
+subchain = sampler.chain[:,100:,:]
+
+subchain = numpy.reshape(subchain,(subchain.shape[0]*subchain.shape[1],subchain.shape[2]))
+c.add_chain(subchain, parameters=["$A$", "$M$","$\sigma$"])
+c.plotter.plot(filename="example.png", figsize="column")
