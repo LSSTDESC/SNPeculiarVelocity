@@ -50,7 +50,7 @@ setup lsst_sims
 ```
 
 * The executable `camb` is called within `sig`.  It is therefore good to have it in your path.  For example I put
-but of these executables in a `bin` directory.
+these executables in a `bin` directory.
 
 ## Execution
 
