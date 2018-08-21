@@ -243,6 +243,9 @@ void order_SN_increasing_z(int nsn,double **SN_z_th_phi, double **Noise_C,double
 void order_whole_SN_file_in_z(char *file_in, char *file_out);
 void calculate_Cov_vel_of_SN(int nmax, double **SN_z_th_phi, double **Signal_SN, 
                              double omega_m, double w0, double wa);
+void calculate_Cov_vel_of_SN_vec(int n, int* i_loc, int* jloc,
+        double * SN_z_i_loc, double * SN_th_i_loc,double* SN_phi_i_loc, double * SN_z_j_loc, double * SN_th_j_loc,double * SN_phi_j_loc, 
+        double * ans_loc,double omega_m, double w0, double wa);
 void calculate_Signal_given_z_theta_arr(int ncosalpha, int nz, double *cosalpha_arr, double *z_arr, double ***Signal_tensor,
                                         double omega_m, double w0, double wa);
 double getang_spher_cos(double theta1, double phi1, double theta2, double phi2);

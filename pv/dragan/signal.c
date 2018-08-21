@@ -5,6 +5,7 @@
 #include <gsl/gsl_sf_legendre.h>
 #include <gsl/gsl_sf_bessel.h>
 #include<omp.h>
+#include<mpi.h>
 #include"declarations.h"
 #include"recipes/nrutil.h"
 #include"recipes/nr.h"
@@ -12,6 +13,7 @@
 
 int main()
 {
+    const MPI_Comm comm = MPI_COMM_WORLD;
     int  OFFDIAG, N_START, N_END, N_USED;
     int i, j, jj;
     double w0, wa, omega_m, A, h, A_k005;
@@ -19,6 +21,25 @@ int main()
     FILE *ifp;
 
     gsl_set_error_handler_off();
+
+    /****/
+    /** MPI who am I and who is root here **/
+    /****/
+
+    int mpi_size;
+    int mpi_rank;
+    int remainder;
+    const int mpi_root = 0;
+    MPI_Init(NULL, NULL);
+    MPI_Comm_size(comm, &mpi_size);
+    MPI_Comm_rank(comm, &mpi_rank);
+
+
+
+
+
+
+
 
     PRINT_FLAG = 0;
     /**************************************/
@@ -104,48 +125,168 @@ int main()
     spline_jlprime_range_ell   (LMAX_CIJ_THETA); // can't use for parallel
     spline_jlprime_range_ell_NR(LMAX_CIJ_THETA); // need for parallel runs
 
-    /***********************************************************/
-    /***   select datafiles and define some arrays/matrices  ***/
-    /***********************************************************/
-    N_SN = file_eof_linecount(SN_filename);
-    printf("I see %d SN in that file\n", N_SN);
+    int sz;
 
-    all_SN_z_th_phi = dmatrix(1, N_SN, 1, 4);
-    all_Noise_SN  = dmatrix(1, N_SN, 1, N_SN);
-    all_delta_m   = dvector(1, N_SN);
+  // Allocate master array only on master MPI rank
+    if (mpi_rank == mpi_root){ 
+        /***********************************************************/
+        /***   select datafiles and define some arrays/matrices  ***/
+        /***********************************************************/
+        N_SN = file_eof_linecount(SN_filename);
+        printf("I see %d SN in that file\n", N_SN);
+
+        all_SN_z_th_phi = dmatrix(1, N_SN, 1, 4);
+        all_Noise_SN  = dmatrix(1, N_SN, 1, N_SN);
+        all_delta_m   = dvector(1, N_SN);
+        
+        // SN_z_th_phi = dmatrix(1, N_USED, 1, 4);
+        // Noise_SN  = dmatrix(1, N_USED, 1, N_USED);
+        // delta_m   = dvector(1, N_USED);
+
+        /***********************************************************/
+        /** read the SN from file, possibly with noise covariance **/
+        /***********************************************************/
+        read_pos_noise(OFFDIAG, all_SN_z_th_phi, all_delta_m, all_Noise_SN, SN_filename);
+
+        /**********************************************/
+        /** Evaluate the signal matrix of PanStarrs ***/
+        /**********************************************/
+        Signal_SN = dmatrix(1, N_SN, 1, N_SN);        
+        // COUNT_IN=0; COUNT_BELOW=0;  COUNT_ABOVE=0;
+
+        /****
+        /** Vectorize output into something useful for MPI **/
+        ****/
+
+        int *i_all *j_all;
+        double *SN_z_i_all, *SN_th_i_all,*SN_ph_i_all;
+        double *SN_z_j_all, *SN_th_j_all,*SN_ph_j_all;
+        sz = N_SN * (N_SN+1)/2;
+        i_all = malloc(sz*sizeof(int));
+        j_all = malloc(sz*sizeof(int));
+        SN_z_i_all= malloc(sz*sizeof(double));
+        SN_th_i_all= malloc(sz*sizeof(double));
+        SN_ph_i_all= malloc(sz*sizeof(double));
+        SN_z_j_all= malloc(sz*sizeof(double));
+        SN_th_j_all= malloc(sz*sizeof(double));
+        SN_ph_j_all= malloc(sz*sizeof(double));
+        ans_all = malloc(sz*sizeof(double));
+        int i;
+        int index=0;
+        for(i=0 i< N_SN; i++){
+            int j;
+                for(j=i j< N_SN; j++){
+                    i_all[index] = i;
+                    j_all[index] = j;
+                    SN_z_i_all[index]= all_SN_z_th_phi[i+1][1];
+                    SN_th_i_all[index]= all_SN_z_th_phi[i+1][2];
+                    SN_ph_i_all[index]= all_SN_z_th_phi[i+1][3];
+                    SN_z_j_all[index]= all_SN_z_th_phi[j+1][1];
+                    SN_th_j_all[index]= all_SN_z_th_phi[j+1][2];
+                    SN_ph_j_all[index]= all_SN_z_th_phi[j+1][3];
+                    index++;
+                }  
+            }
+        }
+    }
+
+    MPI_Bcast(N_SN, 1, MPI_INT, mpi_root, comm);
+
+    /****/
+    /** for full vectorized list of inputs how much do I send and from where **/
+    /****/
+
+    int *sendcounts, *displs, recvcount;
+
+    // Because the number of MPI ranks may not divide evenly into the size of the
+    // master array, we must allocate an array which contains the number of
+    // master array elements to send to each MPI rank, which may differ across
+    // MPI ranks.
+    sendcounts = malloc(mpi_size*sizeof(int));
+    // This is the displacement from the zeroth element of the master array which
+    // corresponds to the ith chunk of the master array which is scattered to the
+    // ith MPI rank.
+    displs = malloc(mpi_size*sizeof(int));
+
+    // Set up array chunks to send to each MPI process. If the number of MPI
+    // processes does not divide evenly into the number of elements in the array,
+    // distribute the remaining parts among the first several MPI ranks in order
+    // to achieve the best possible load balance.
+
+    remainder = sz % mpi_size;
+    for (int i = 0; i < mpi_size; i++) sendcounts[i] = sz / mpi_size;
+    for (int i = 0; i < remainder; i++) sendcounts[i]++;
+    displs[mpi_root] = 0;
+    for (int i = 1; i < mpi_size; i++) displs[i] = displs[i-1] + sendcounts[i-1];
+
+    int *i_loc *jloc;
+    double *SN_z_th_phi_i_loc, *SN_z_th_phi_j_loc, *ans_loc;
+
+    i_loc = malloc(sendcounts[mpi_rank]*sizeof(int));
+    j_loc = malloc(sendcounts[mpi_rank]*sizeof(int));
+    SN_z_i_loc = malloc(sendcounts[mpi_rank]*sizeof(double));
+    SN_th_i_loc = malloc(sendcounts[mpi_rank]*sizeof(double));
+    SN_phi_i_loc = malloc(sendcounts[mpi_rank]*sizeof(double));
+    SN_z_j_loc = malloc(sendcounts[mpi_rank]*sizeof(double));
+    SN_th_j_loc = malloc(sendcounts[mpi_rank]*sizeof(double));
+    SN_phi_j_loc = malloc(sendcounts[mpi_rank]*sizeof(double));
+    ans_loc = = malloc(sendcounts[mpi_rank]*sizeof(double));
+
+    recvcount = sendcounts[mpi_rank];
+
+    // Scatter the master array on the master MPI rank to various MPI ranks.
+    MPI_Scatterv(i_all, sendcounts, displs,
+               MPI_INT, i_loc, recvcount,
+               MPI_INT, 0, comm);
+    MPI_Scatterv(j_all, sendcounts, displs,
+               MPI_INT, j_loc, recvcount,
+               MPI_INT, 0, comm);
+    MPI_Scatterv(SN_z_i_all, sendcounts, displs,
+               MPI_DOUBLE, SN_z_i_loc, recvcount,
+               MPI_DOUBLE, 0, comm);
+    MPI_Scatterv(SN_th_i_all, sendcounts, displs,
+           MPI_DOUBLE, SN_th_i_loc, recvcount,
+           MPI_DOUBLE, 0, comm);
+    MPI_Scatterv(SN_ph_i_all, sendcounts, displs,
+       MPI_DOUBLE, SN_ph_i_loc, recvcount,
+       MPI_DOUBLE, 0, comm);
+    MPI_Scatterv(SN_z_j_all, sendcounts, displs,
+               MPI_DOUBLE, SN_z_j_loc, recvcount,
+               MPI_DOUBLE, 0, comm);
+    MPI_Scatterv(SN_th_j_all, sendcounts, displs,
+           MPI_DOUBLE, SN_th_j_loc, recvcount,
+           MPI_DOUBLE, 0, comm);
+    MPI_Scatterv(SN_ph_j_all, sendcounts, displs,
+       MPI_DOUBLE, SN_ph_j_loc, recvcount,
+       MPI_DOUBLE, 0, comm);
+
+    calculate_Cov_vel_of_SN_vec(recvcount, i_loc, jloc,
+        SN_z_i_loc, SN_th_i_loc,SN_phi_i_loc, SN_z_j_loc, SN_th_j_loc,SN_phi_j_loc, 
+        ans_loc, omega_m, w0, wa);
     
-    // SN_z_th_phi = dmatrix(1, N_USED, 1, 4);
-    // Noise_SN  = dmatrix(1, N_USED, 1, N_USED);
-    // delta_m   = dvector(1, N_USED);
+    MPI_Gatherv(ans_loc, recvcount, MPI_DOUBLE, ans_all, displs,
+               MPI_DOUBLE, ans_all, sendcounts, displs,
+               MPI_DOUBLE, 0, comm);
 
-    /***********************************************************/
-    /** read the SN from file, possibly with noise covariance **/
-    /***********************************************************/
-    read_pos_noise(OFFDIAG, all_SN_z_th_phi, all_delta_m, all_Noise_SN, SN_filename);
+    if (mpi_rank == mpi_root){ 
+        // calculate_Cov_vel_of_SN(N_SN, all_SN_z_th_phi, Signal_SN, omega_m, w0, wa);
 
-    /**********************************************/
-    /** Evaluate the signal matrix of PanStarrs ***/
-    /**********************************************/
-    Signal_SN = dmatrix(1, N_SN, 1, N_SN);        
-    COUNT_IN=0; COUNT_BELOW=0;  COUNT_ABOVE=0;
+        printf("%e %e\n", ans_all[0], ans_all[1]);
+        // printf("%e %e\n", Noise_SN[1][1], Noise_SN[N_USED][N_USED]);
 
-    calculate_Cov_vel_of_SN(N_SN, all_SN_z_th_phi, Signal_SN, omega_m, w0, wa);
+        // FILE *f = fopen("client.data", "wb");
+        // for(i=1;i<=N_SN;i++){
+        //         fwrite(Signal_SN[i]+1, sizeof(double), N_SN, f);
+        // }
+        // fclose(f);
 
-    printf("%e %e\n", Signal_SN[1][1], Signal_SN[N_USED][N_USED]);
-    // printf("%e %e\n", Noise_SN[1][1], Noise_SN[N_USED][N_USED]);
-
-    FILE *f = fopen("client.data", "wb");
-    for(i=1;i<=N_SN;i++){
-            fwrite(Signal_SN[i]+1, sizeof(double), N_SN, f);
+        // ifp=fopen("pvlist.1234.xi", "w");
+        // for(i=1;i<=N_SN;i++){
+        //     for(j=1;j<=N_SN;j++)
+        //         fprintf(ifp,"%0.9e ",Signal_SN[i][j]);
+        //     fprintf(ifp,"\n");
+        // }
+        // fclose(ifp);
     }
-    fclose(f);
-
-    ifp=fopen("pvlist.1234.xi", "w");
-    for(i=1;i<=N_SN;i++){
-        for(j=1;j<=N_SN;j++)
-            fprintf(ifp,"%0.9e ",Signal_SN[i][j]);
-        fprintf(ifp,"\n");
-    }
-    fclose(ifp);
     exit(0);
 }

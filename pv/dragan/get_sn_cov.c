@@ -220,6 +220,35 @@ void calculate_Cov_vel_of_SN(int nmax, double **SN_z_th_phi, double **Signal_SN,
         }
     }
 }
+
+
+
+void calculate_Cov_vel_of_SN_vec(int n, int* i_loc, int* jloc,
+        double * SN_z_i_loc, double * SN_th_i_loc,double* SN_phi_i_loc, double * SN_z_j_loc, double * SN_th_j_loc,double * SN_phi_j_loc, 
+        double * ans_loc,double omega_m, double w0, double wa)
+{
+
+    int  i;
+#pragma omp parallel for default(none) shared(nmax, Signal_SN, SN_z_th_phi, omega_m, w0, wa) schedule(dynamic)  
+    
+    for(i=1; i<=n; i++)
+    {
+       
+        double cosalpha, dum;    
+
+
+        if (i_loc[i] == j_loc[i]) cosalpha=1.0;
+        else 
+            cosalpha = getang_spher_cos(SN_th_i_loc[i], SN_phi_i_loc[i],
+                                        SN_th_j_loc[j], SN_phi_j_loc[j]);
+
+        dum = Cij_theta_gsl_int(i_loc[i], j_loc[i], SN_z_loc[i], SN_z_loc[1], 
+                                cosalpha, omega_m, w0, wa);
+
+        double[i] = dum;        
+    }
+}
+
 void calculate_Signal_given_z_theta_arr(int ncosalpha, int nz, double *cosalpha_arr, double *z_arr, double ***Signal_tensor,
                                         double omega_m, double w0, double wa)
 {
