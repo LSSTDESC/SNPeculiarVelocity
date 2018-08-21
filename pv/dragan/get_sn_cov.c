@@ -198,7 +198,7 @@ void calculate_Cov_vel_of_SN(int nmax, double **SN_z_th_phi, double **Signal_SN,
     
     for(i=1; i<=nmax; i++)
     {
-        int th_id = omp_get_thread_num();
+        // int th_id = omp_get_thread_num();
         //printf("i=%d from thread  %d, redshift=%f\n", i, th_id, SN_z_th_phi[i][1]);
         
         int j;

@@ -134,7 +134,12 @@ int main()
     printf("%e %e\n", Signal_SN[1][1], Signal_SN[N_USED][N_USED]);
     // printf("%e %e\n", Noise_SN[1][1], Noise_SN[N_USED][N_USED]);
 
-    // ifp=fopen("small.out", "w");
+    FILE *f = fopen("client.data", "wb");
+    for(i=1;i<=N_SN;i++){
+            fwrite(Signal_SN[i]+1, sizeof(double), N_SN, f);
+    }
+    fclose(f);
+
     ifp=fopen("pvlist.1234.xi", "w");
     for(i=1;i<=N_SN;i++){
         for(j=1;j<=N_SN;j++)

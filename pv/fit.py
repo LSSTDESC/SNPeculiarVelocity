@@ -3,6 +3,7 @@ import numpy
 import scipy.linalg
 import emcee
 import pickle
+import array
 
 class Fit(object):
     """docstring for Fit"""
@@ -12,7 +13,11 @@ class Fit(object):
         self.catseed=catseed
         self.path=path
         self.hg = HostGalaxies(sigma_mu=sigma_mu, catseed=catseed)
-        self.xi = numpy.loadtxt('{}pvlist.{}.xi'.format(path,catseed))
+        # self.xi = numpy.loadtxt('{}pvlist.{}.xi'.format(path,catseed))
+        a = array.array('d')
+        a.fromfile(open('{}pvlist.{}.xi','rb'),len(self.hg.galaxies['galaxy_id'])**2)
+        self.xi = numpy.array(a)
+        self.xi = numpy.reshape(self.xi2,(len(self.hg.galaxies['galaxy_id']),len(self.hg.galaxies['galaxy_id'])))
 
     @staticmethod        
     def lnprob(theta, Deltam, nsne, xi):

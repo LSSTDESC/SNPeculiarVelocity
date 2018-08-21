@@ -18,7 +18,7 @@ def main(sigma_MB, seed, test = True):
         path = '../test/'
     else:
         cat = 'buzzard_v1.6'
-        path = '../out'
+        path = '../out/'
     coadd_cat = GCRCatalogs.load_catalog(cat)
 
     # Buzzard does not have needed galaxy properties.  The following is used to derive them.
