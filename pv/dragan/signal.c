@@ -64,16 +64,16 @@ int main()
     
     /***Spline the r(z) ***/    
     spline_r(omega_m, w0, wa);
-    printf("%2d before camb",mpi_rank);
 
     /**Spline the T(k) evaluated using CAMB  do_nonlin=1 HERE, and dn/dlnk=0  **/
     if (mpi_rank == mpi_root){
-        printf("running CAMB");  
+        printf("running CAMB\n");  
         run_camb_get_Tk_friendly_format(1, omega_m, omhh, obhh, n, 0.0, A, w0);
-        MPI_Barrier(MPI_COMM_WORLD);
-    } else {
-        MPI_Barrier(MPI_COMM_WORLD);
+        printf("done running CAMB\n");  
     }
+    MPI_Barrier(comm);
+    printf("%2d passed barrier\n",mpi_rank);
+
     spline_Tk_from_CAMB(omega_m, w0, wa, A, n);    
     spline_Pk_from_CAMB   (0, omega_m, w0, wa, A, n);    
     spline_Pk_from_CAMB_NR(0, omega_m, w0, wa, A, n);    
@@ -183,7 +183,6 @@ int main()
         }
     }
     
-
     MPI_Bcast(&N_SN, 1, MPI_INT, mpi_root, comm);
     MPI_Bcast(&sz, 1, MPI_INT, mpi_root, comm);
 
@@ -258,7 +257,7 @@ int main()
     calculate_Cov_vel_of_SN_vec(recvcount, i_loc, j_loc,
         SN_z_i_loc, SN_th_i_loc,SN_ph_i_loc, SN_z_j_loc, SN_th_j_loc,SN_ph_j_loc, 
         ans_loc, omega_m, w0, wa);
-    printf("%2d %2d %2d %2d",mpi_rank,recvcount,sendcounts[mpi_rank], displs[mpi_rank]);
+    printf("%2d %2d %2d %2d \n",mpi_rank,recvcount,sendcounts[mpi_rank], displs[mpi_rank]);
     MPI_Gatherv(ans_loc, recvcount, MPI_DOUBLE, ans_all, sendcounts, displs,
        MPI_DOUBLE, 0, comm);
 
