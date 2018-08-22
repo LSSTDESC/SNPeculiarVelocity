@@ -10,14 +10,13 @@
 #include"recipes/nrutil.h"
 #include"recipes/nr.h"
 
-    
+
 int main()
 {
     /** MPI who am I and who is root here **/
     const MPI_Comm comm = MPI_COMM_WORLD;
     int mpi_size;
     int mpi_rank;
-    int remainder;
     const int mpi_root = 0;
     MPI_Init(NULL, NULL);
     MPI_Comm_size(comm, &mpi_size);
@@ -65,10 +64,16 @@ int main()
     
     /***Spline the r(z) ***/    
     spline_r(omega_m, w0, wa);
+    printf("%2d before camb",mpi_rank);
 
     /**Spline the T(k) evaluated using CAMB  do_nonlin=1 HERE, and dn/dlnk=0  **/
-
-    run_camb_get_Tk_friendly_format(1, omega_m, omhh, obhh, n, 0.0, A, w0);
+    if (mpi_rank == mpi_root){
+        printf("running CAMB");  
+        run_camb_get_Tk_friendly_format(1, omega_m, omhh, obhh, n, 0.0, A, w0);
+        MPI_Barrier(MPI_COMM_WORLD);
+    } else {
+        MPI_Barrier(MPI_COMM_WORLD);
+    }
     spline_Tk_from_CAMB(omega_m, w0, wa, A, n);    
     spline_Pk_from_CAMB   (0, omega_m, w0, wa, A, n);    
     spline_Pk_from_CAMB_NR(0, omega_m, w0, wa, A, n);    
@@ -187,6 +192,7 @@ int main()
     /****/
 
     int *sendcounts, *displs, recvcount;
+    int remainder;
 
     // Because the number of MPI ranks may not divide evenly into the size of the
     // master array, we must allocate an array which contains the number of
@@ -252,21 +258,19 @@ int main()
     calculate_Cov_vel_of_SN_vec(recvcount, i_loc, j_loc,
         SN_z_i_loc, SN_th_i_loc,SN_ph_i_loc, SN_z_j_loc, SN_th_j_loc,SN_ph_j_loc, 
         ans_loc, omega_m, w0, wa);
-
+    printf("%2d %2d %2d %2d",mpi_rank,recvcount,sendcounts[mpi_rank], displs[mpi_rank]);
     MPI_Gatherv(ans_loc, recvcount, MPI_DOUBLE, ans_all, sendcounts, displs,
        MPI_DOUBLE, 0, comm);
 
     if (mpi_rank == mpi_root){ 
 // calculate_Cov_vel_of_SN(N_SN, all_SN_z_th_phi, Signal_SN, omega_m, w0, wa);
 
-        printf("%e %e\n", ans_all[0], ans_all[1]);
+//        printf("%e %e\n", ans_all[0], ans_all[1]);
 // printf("%e %e\n", Noise_SN[1][1], Noise_SN[N_USED][N_USED]);
 
-// FILE *f = fopen("client.data", "wb");
-// for(i=1;i<=N_SN;i++){
-//         fwrite(Signal_SN[i]+1, sizeof(double), N_SN, f);
-// }
-// fclose(f);
+        FILE *f = fopen("client.data", "wb");
+        fwrite(ans_all, sizeof(double), sz, f);
+        fclose(f);
 
 // ifp=fopen("pvlist.1234.xi", "w");
 // for(i=1;i<=N_SN;i++){
