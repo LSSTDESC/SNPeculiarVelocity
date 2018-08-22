@@ -6,6 +6,10 @@
 #include"recipes/nr.h"
 #include "declarations.h" 
 
+#ifndef M_PI
+  #define M_PI 3.14159265358979323840
+#endif
+
 #define BETA_CMB_DIP (370.0/3.0e5)
 #define VEC_X        -0.071 // dipole x, y, z
 #define VEC_Y        -0.662
@@ -223,15 +227,14 @@ void calculate_Cov_vel_of_SN(int nmax, double **SN_z_th_phi, double **Signal_SN,
 
 
 
-void calculate_Cov_vel_of_SN_vec(int n, int* i_loc, int* jloc,
+void calculate_Cov_vel_of_SN_vec(int n, int* i_loc, int* j_loc,
         double * SN_z_i_loc, double * SN_th_i_loc,double* SN_phi_i_loc, double * SN_z_j_loc, double * SN_th_j_loc,double * SN_phi_j_loc, 
         double * ans_loc,double omega_m, double w0, double wa)
 {
 
-    int  i;
-#pragma omp parallel for default(none) shared(nmax, Signal_SN, SN_z_th_phi, omega_m, w0, wa) schedule(dynamic)  
+#pragma omp parallel for default(none) shared(n, i_loc, j_loc,SN_z_i_loc, SN_th_i_loc, SN_phi_i_loc, SN_z_j_loc, SN_th_j_loc,SN_phi_j_loc, ans_loc, omega_m, w0, wa) schedule(dynamic)  
     
-    for(i=1; i<=n; i++)
+    for(int i=0; i<n; i++)
     {
        
         double cosalpha, dum;    
@@ -240,12 +243,12 @@ void calculate_Cov_vel_of_SN_vec(int n, int* i_loc, int* jloc,
         if (i_loc[i] == j_loc[i]) cosalpha=1.0;
         else 
             cosalpha = getang_spher_cos(SN_th_i_loc[i], SN_phi_i_loc[i],
-                                        SN_th_j_loc[j], SN_phi_j_loc[j]);
+                                        SN_th_j_loc[i], SN_phi_j_loc[i]);
 
-        dum = Cij_theta_gsl_int(i_loc[i], j_loc[i], SN_z_loc[i], SN_z_loc[1], 
+        dum = Cij_theta_gsl_int(i_loc[i], j_loc[i], SN_z_i_loc[i], SN_z_j_loc[i], 
                                 cosalpha, omega_m, w0, wa);
 
-        double[i] = dum;        
+        ans_loc[i] = dum;        
     }
 }
 
