@@ -9,6 +9,7 @@
 #include"declarations.h"
 #include"recipes/nrutil.h"
 #include"recipes/nr.h"
+#include <time.h>
 
 
 int main()
@@ -21,6 +22,14 @@ int main()
     MPI_Init(NULL, NULL);
     MPI_Comm_size(comm, &mpi_size);
     MPI_Comm_rank(comm, &mpi_rank);
+
+    clock_t start_t, end_t;
+    double total_t;
+    if (mpi_rank == mpi_root){
+        start_t = clock();
+        printf("Starting of the program, start_t = %ld\n", start_t);
+    }
+
 
     int sz;
     int N_SN;
@@ -37,6 +46,9 @@ int main()
     double *ans_all;
     int *i_loc, *j_loc;
     double *SN_z_i_loc, *SN_th_i_loc, *SN_ph_i_loc, *SN_z_j_loc, *SN_th_j_loc, *SN_ph_j_loc, *ans_loc;
+
+
+
 
     gsl_set_error_handler_off();
 
@@ -100,6 +112,7 @@ int main()
 
   // Allocate master array only on master MPI rank
     if (mpi_rank == mpi_root){
+
 
         /*******************************************************************/
         /**   get #SN and define the SN data and covariance mat arrays   ***/
@@ -258,6 +271,10 @@ int main()
         FILE *f = fopen("pvlist.1234.xi", "wb");
         fwrite(ans_all, sizeof(double), sz, f);
         fclose(f);
+        end_t = clock();
+        printf("End of the big loop, end_t = %ld\n", end_t);
+        total_t = (double)(end_t - start_t) / CLOCKS_PER_SEC;
+        printf("Total time taken by CPU: %f\n", total_t  );
     }
 
     exit(0);
