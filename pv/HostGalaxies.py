@@ -1,6 +1,7 @@
 import pickle
 import numpy
 import copy
+import argparse
 
 class HostGalaxies(object):
     """docstring for HostGalaxies"""
@@ -20,8 +21,7 @@ class HostGalaxies(object):
         else:
             sortin = numpy.arange(len(self.galaxies['redshift']))
         f = open('{}/pvlist.{}.dat'.format(self.path,self.catseed), 'w')
-        for i in range(85,len(sortin)):
-            print(sortin[i],self.galaxies['nsne'][sortin[i]],type(self.galaxies['mB'][sortin[i]]))
+        for i in range(len(sortin)):
             print(' '.join(str(e) for e in (self.galaxies['redshift'][sortin[i]],self.galaxies['mB'][sortin[i]][0],0, \
                 self.galaxies['l'][sortin[i]],self.galaxies['b'][sortin[i]], self.galaxies['mB_expected'][sortin[i]])),file=f)
         f.close()
@@ -62,7 +62,7 @@ if __name__ == "__main__":
                     help="distance modulus standard deviation")
     parser.add_argument("--seed", dest="seed", default=1234, type = int, required = False,
                     help="random number generator seed")
-    parser.add_argument('--path', dest='path', efault=1234, type = string, required=False)
+    parser.add_argument('--path', dest='path', default='../test/', type = str, required=False)
     args = parser.parse_args()
 
-    HostGalaxies(sigma_mu=args.sigma_mu, catseed=args.seed, path=path).draganFormat()
+    HostGalaxies(sigma_mu=args.sigma_mu, catseed=args.seed, path=args.path).draganFormat()
