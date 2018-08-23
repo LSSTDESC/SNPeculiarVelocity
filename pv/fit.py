@@ -16,7 +16,7 @@ class Fit(object):
         a = array.array('d')
         ngal = len(self.hg.galaxies['galaxy_id'])
         sz = int((ngal**2+ngal)/2)
-        a.fromfile(open('"{}pvlist.{}.xi'.format(path,catseed),'rb'),sz)
+        a.fromfile(open('{}pvlist.{}.xi'.format(path,catseed),'rb'),sz)
         a= numpy.array(a)
 
         self.xi = numpy.zeros((ngal,ngal))
@@ -25,7 +25,6 @@ class Fit(object):
             self.xi[i,j] =v
             if (i !=j):
                 self.xi[j,i]=v
-        print (self)
  
 
     @staticmethod        
