@@ -68,13 +68,15 @@ def main(sigma_MB, seed, test = True):
         c = SkyCoord(ra=data["ra"]*u.degree, dec=data["dec"]*u.degree, frame='icrs')
         data['l'] = c.galactic.spherical.lon.value
         data['b'] = c.galactic.spherical.lat.value
-        
+                    
         if out is None:
             out = data
         else:
             for key, value in data.items():
-                out[key] = numpy.append(out[key],value)               
-
+                if (type(value) is list):
+                    out[key]=out[key]+value
+                else:
+                    out[key] = numpy.append(out[key],value)  
 
     # Persist results
     ans=dict()
@@ -82,7 +84,7 @@ def main(sigma_MB, seed, test = True):
     ans['config']=dict()
     ans['config']['sigma_MB']=sigma_MB
     ans['config']['seed']=seed
-    ans['config']['time']=controlTime = 1.e1
+    ans['config']['time']=controlTime
     pickle.dump(ans, open( "{}tenyear.{}.{}.pkl".format(path,sigma_MB,seed), "wb" ) )
 
 
@@ -94,7 +96,7 @@ if __name__ == "__main__":
                     help="random number generator seed")
     parser.add_argument('--test', dest='test', action='store_true')
     parser.add_argument('--no-test', dest='test', action='store_false')
-    parser.set_defaults(feature=True)
+    parser.set_defaults(test=True)
     args = parser.parse_args()
 
     main(args.sigma_mu, args.seed, test=args.test)
