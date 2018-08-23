@@ -13,29 +13,20 @@ class Fit(object):
         self.catseed=catseed
         self.path=path
         self.hg = HostGalaxies(sigma_mu=sigma_mu, catseed=catseed)
-        # self.xi = numpy.loadtxt('{}pvlist.{}.xi'.format(path,catseed))
-        a = array.array('d')
-        a.fromfile(open('{}pvlist.{}.xi'.format(path,catseed),'rb'),len(self.hg.galaxies['galaxy_id'])**2)
-        self.xi = numpy.array(a)
-        self.xi = numpy.reshape(self.xi,(len(self.hg.galaxies['galaxy_id']),len(self.hg.galaxies['galaxy_id'])))
-
         a = array.array('d')
         ngal = len(self.hg.galaxies['galaxy_id'])
-
         sz = int((ngal**2+ngal)/2)
-        a.fromfile(open('{}client.data'.format(path),'rb'),sz)
+        a.fromfile(open('"{}pvlist.{}.xi'.format(path,catseed),'rb'),sz)
         a= numpy.array(a)
 
-        self.xi2 = numpy.zeros((ngal,ngal))
+        self.xi = numpy.zeros((ngal,ngal))
         ind = numpy.triu_indices(ngal)
         for v, i, j in zip(a,ind[0],ind[1]):
-            # print (v,i,j)
-            self.xi2[i,j] =v
+            self.xi[i,j] =v
             if (i !=j):
-                self.xi2[j,i]=v 
-        print((self.xi-self.xi2).min(), (self.xi-self.xi2).max())
-
-        wefwe
+                self.xi[j,i]=v
+        print (self)
+ 
 
     @staticmethod        
     def lnprob(theta, Deltam, nsne, xi):
