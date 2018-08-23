@@ -60,10 +60,9 @@ def main(sigma_MB, seed, test = True):
         for key, value in data.items():
             data[key]=value[w]
         data['nsne'] = nsne[w]
-        data['mB']  = []
+        data['mB']  = []    # this is a list as opposed to the others
         for nsn, redtrue in zip(data['nsne'], data["redshift_true"]):
             data['mB'].append(MB + numpy.random.normal(scale=sigma_MB,size=nsn)+cosmo.distmod(redtrue).value)
-        data['mB'] = numpy.array(data['mB'])
         data['mB_expected'] = MB + cosmo.distmod(data["redshift"]).value
         c = SkyCoord(ra=data["ra"]*u.degree, dec=data["dec"]*u.degree, frame='icrs')
         data['l'] = c.galactic.spherical.lon.value
@@ -76,7 +75,7 @@ def main(sigma_MB, seed, test = True):
                 if (type(value) is list):
                     out[key]=out[key]+value
                 else:
-                    out[key] = numpy.append(out[key],value)  
+                    out[key] = numpy.append(out[key],value)
 
     # Persist results
     ans=dict()
