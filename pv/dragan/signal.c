@@ -209,8 +209,6 @@ int main()
     displs[mpi_root] = 0;
     for (int i = 1; i < mpi_size; i++) displs[i] = displs[i-1] + sendcounts[i-1];
 
-
-
     i_loc = malloc(sendcounts[mpi_rank]*sizeof(int));
     j_loc = malloc(sendcounts[mpi_rank]*sizeof(int));
     SN_z_i_loc = malloc(sendcounts[mpi_rank]*sizeof(double));
@@ -252,27 +250,15 @@ int main()
     calculate_Cov_vel_of_SN_vec(recvcount, i_loc, j_loc,
         SN_z_i_loc, SN_th_i_loc,SN_ph_i_loc, SN_z_j_loc, SN_th_j_loc,SN_ph_j_loc, 
         ans_loc, omega_m, w0, wa);
-    // printf("%2d %2d %2d %2d \n",mpi_rank,recvcount,sendcounts[mpi_rank], displs[mpi_rank]);
+ 
     MPI_Gatherv(ans_loc, recvcount, MPI_DOUBLE, ans_all, sendcounts, displs,
        MPI_DOUBLE, 0, comm);
 
     if (mpi_rank == mpi_root){ 
-// calculate_Cov_vel_of_SN(N_SN, all_SN_z_th_phi, Signal_SN, omega_m, w0, wa);
-
-//        printf("%e %e\n", ans_all[0], ans_all[1]);
-// printf("%e %e\n", Noise_SN[1][1], Noise_SN[N_USED][N_USED]);
-
-        FILE *f = fopen("client.data", "wb");
+        FILE *f = fopen("pvlist.1234.xi", "wb");
         fwrite(ans_all, sizeof(double), sz, f);
         fclose(f);
-
-// ifp=fopen("pvlist.1234.xi", "w");
-// for(i=1;i<=N_SN;i++){
-//     for(j=1;j<=N_SN;j++)
-//         fprintf(ifp,"%0.9e ",Signal_SN[i][j]);
-//     fprintf(ifp,"\n");
-// }
-// fclose(ifp);
     }
+
     exit(0);
 }
