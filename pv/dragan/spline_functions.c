@@ -72,7 +72,7 @@ void spline_Pk_from_CAMB(double z, double omega_m, double w0, double wa, double 
     /** and skip that first line if that's the case                            **/
     /****************************************************************************/    
     int N_SKIP = nskip_first_line_of_file_or_not("matterpower.dat");
-    printf("In matterpower (GSL tab), skipping %d lines\n", N_SKIP);    
+    // printf("In matterpower (GSL tab), skipping %d lines\n", N_SKIP);    
     NSPLINE_PK_CAMB -= N_SKIP;
 
     /******************************/
@@ -118,7 +118,7 @@ void spline_Pk_from_CAMB_NR(double z, double omega_m, double w0, double wa, doub
     /** and skip that first line if that's the case                            **/
     /****************************************************************************/    
     int N_SKIP = nskip_first_line_of_file_or_not("matterpower.dat");
-    printf("In matterpower (NR tab), skipping %d lines\n", N_SKIP);    
+    // printf("In matterpower (NR tab), skipping %d lines\n", N_SKIP);    
     NSPLINE_PK_CAMB -= N_SKIP;
 
     /******************************/
