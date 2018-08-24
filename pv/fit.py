@@ -4,10 +4,11 @@ import scipy.linalg
 import emcee
 import pickle
 import array
+import os
 
 class Fit(object):
     """docstring for Fit"""
-    def __init__(self,  sigma_mu=0.08, catseed=1234, path='../test/'):
+    def __init__(self,  sigma_mu=0.08, catseed=1234, path=os.environ['SCRATCH']+'/pvtest/'):
         super(Fit, self).__init__()
         self.sigma_mu = sigma_mu
         self.catseed=catseed
@@ -62,5 +63,14 @@ class Fit(object):
         sampler = Fit.fit(m_eff- self.hg.galaxies['mB_expected'],  self.hg.galaxies['nsne'],self.xi)
         pickle.dump(sampler.chain, open('{}pvlist.{}.{}.pkl'.format(self.path,self.sigma_mu,self.catseed), "wb" ) )
 
-fit=Fit()
-fit.sample()
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--sigma_mu",dest="sigma_mu", default=0.08, type = float, required = False,
+                    help="distance modulus standard deviation")
+    parser.add_argument("--seed", dest="seed", default=1234, type = int, required = False,
+                    help="random number generator seed")
+    parser.add_argument('--path', dest='path', default=os.environ['SCRATCH']+'/pvtest/', type = str, required=False)
+    args = parser.parse_args()
+
+    fit=Fit(sigma_mu=args.sigma_mu, catseed=args.seed, path=args.path)
+    fit.sample()
