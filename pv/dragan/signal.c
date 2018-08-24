@@ -10,10 +10,19 @@
 #include"recipes/nrutil.h"
 #include"recipes/nr.h"
 #include <time.h>
+#include <string.h>
 
 
-int main()
+int main(int argc, char *argv[])
 {
+
+    char* fileroot;
+    if (argc !=2) {
+        printf("Specify file root\n");
+        exit(1);
+    }
+    fileroot = argv[1];
+
     /** MPI who am I and who is root here **/
     const MPI_Comm comm = MPI_COMM_WORLD;
     int mpi_size;
@@ -121,7 +130,7 @@ int main()
         double **all_SN_z_th_phi, **all_Noise_SN, *all_delta_m;
         double **SN_z_th_phi, **Signal_SN,  **Noise_SN, *delta_m;
         char SN_filename[256];
-        sprintf(SN_filename , "pvlist.1234.dat");
+        sprintf(SN_filename , strcat(fileroot,".dat"));
             // sprintf(SN_filename , "small_data_clean.txt");
 
             /************************/
@@ -268,7 +277,7 @@ int main()
        MPI_DOUBLE, 0, comm);
 
     if (mpi_rank == mpi_root){ 
-        FILE *f = fopen("pvlist.1234.xi", "wb");
+        FILE *f = fopen(strcat(fileroot,".xi"), "wb");
         fwrite(ans_all, sizeof(double), sz, f);
         fclose(f);
         end_t = clock();
