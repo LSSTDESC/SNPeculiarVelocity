@@ -17,15 +17,16 @@ class Fit(object):
         a = array.array('d')
         ngal = len(self.hg.galaxies['galaxy_id'])
         sz = int((ngal**2+ngal)/2)
-        a.fromfile(open('{}pvlist.{}.xi'.format(path,catseed),'rb'),sz)
-        a= numpy.array(a)
 
-        self.xi = numpy.zeros((ngal,ngal))
-        ind = numpy.triu_indices(ngal)
-        for v, i, j in zip(a,ind[0],ind[1]):
-            self.xi[i,j] =v
-            if (i !=j):
-                self.xi[j,i]=v
+        # a.fromfile(open('{}pvlist.{}.xi'.format(path,catseed),'rb'),sz)
+        # a= numpy.array(a)
+
+        # self.xi = numpy.zeros((ngal,ngal))
+        # ind = numpy.triu_indices(ngal)
+        # for v, i, j in zip(a,ind[0],ind[1]):
+        #     self.xi[i,j] =v
+        #     if (i !=j):
+        #         self.xi[j,i]=v
  
 
     @staticmethod        
@@ -60,7 +61,7 @@ class Fit(object):
             m_eff.append(m.sum()/n)
         m_eff=numpy.array(m_eff)
         Deltam=m_eff- self.hg.galaxies['mB_expected']
-        sampler = Fit.fit(m_eff- self.hg.galaxies['mB_expected'],  self.hg.galaxies['nsne'],self.xi)
+        sampler = Fit.fit(m_eff- self.hg.galaxies['mB_expected'],  self.hg.galaxies['nsne'],self.hg.xi)
         pickle.dump(sampler.chain, open('{}pvlist.{}.{}.pkl'.format(self.path,self.sigma_mu,self.catseed), "wb" ) )
 
 if __name__ == "__main__":

@@ -2,6 +2,8 @@ import pickle
 import numpy
 import copy
 import argparse
+import os.path
+os.path.isfile(fname)
 
 class HostGalaxies(object):
     """docstring for HostGalaxies"""
@@ -14,6 +16,18 @@ class HostGalaxies(object):
         self.catseed=catseed
         self.sigma_mu = sigma_mu
         self.seed=seed
+        self.xi = None
+        if os.path.isfile(fname):
+            a.fromfile(open('{}pvlist.{}.xi'.format(path,catseed),'rb'),sz)
+            a= numpy.array(a)
+
+            self.xi = numpy.zeros((ngal,ngal))
+            ind = numpy.triu_indices(ngal)
+            for v, i, j in zip(a,ind[0],ind[1]):
+                self.xi[i,j] =v
+                if (i !=j):
+                    self.xi[j,i]=v
+
 
     def draganFormat(self, sort=False):
         if sort:
