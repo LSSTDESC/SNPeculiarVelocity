@@ -3,6 +3,8 @@ import numpy
 import copy
 import argparse
 import os.path
+import array
+
 
 class HostGalaxies(object):
     """docstring for HostGalaxies"""
@@ -15,10 +17,13 @@ class HostGalaxies(object):
         self.catseed=catseed
         self.sigma_mu = sigma_mu
         self.seed=seed
-        ngal = len(self.data['galaxies'])
-        sz=ngal*(ngal+1)/2
         self.xi = None
-        if os.path.isfile(fname):
+
+        if os.path.isfile("{}pvlist.{}.xi".format(path,catseed)):
+            a = array.array('d')
+            ngal = len(self.galaxies['galaxy_id'])
+            sz = int((ngal**2+ngal)/2)
+            a=array.array('d')
             a.fromfile(open('{}pvlist.{}.xi'.format(path,catseed),'rb'),sz)
             a= numpy.array(a)
             self.xi = numpy.zeros((ngal,ngal))
