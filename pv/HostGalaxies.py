@@ -16,11 +16,11 @@ class HostGalaxies(object):
         self.catseed=catseed
         self.sigma_mu = sigma_mu
         self.seed=seed
+        ngal = len(self.data['galaxies'])
         self.xi = None
         if os.path.isfile(fname):
             a.fromfile(open('{}pvlist.{}.xi'.format(path,catseed),'rb'),sz)
             a= numpy.array(a)
-
             self.xi = numpy.zeros((ngal,ngal))
             ind = numpy.triu_indices(ngal)
             for v, i, j in zip(a,ind[0],ind[1]):
