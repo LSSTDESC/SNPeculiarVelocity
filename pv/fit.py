@@ -8,26 +8,8 @@ import os
 
 class Fit(object):
     """docstring for Fit"""
-    def __init__(self,  sigma_mu=0.08, catseed=1234, path=os.environ['SCRATCH']+'/pvtest/'):
+    def __init__(self):
         super(Fit, self).__init__()
-        self.sigma_mu = sigma_mu
-        self.catseed=catseed
-        self.path=path
-        self.hg = HostGalaxies(sigma_mu=sigma_mu, catseed=catseed)
-        a = array.array('d')
-        ngal = len(self.hg.galaxies['galaxy_id'])
-        sz = int((ngal**2+ngal)/2)
-
-        # a.fromfile(open('{}pvlist.{}.xi'.format(path,catseed),'rb'),sz)
-        # a= numpy.array(a)
-
-        # self.xi = numpy.zeros((ngal,ngal))
-        # ind = numpy.triu_indices(ngal)
-        # for v, i, j in zip(a,ind[0],ind[1]):
-        #     self.xi[i,j] =v
-        #     if (i !=j):
-        #         self.xi[j,i]=v
- 
 
     @staticmethod        
     def lnprob(theta, Deltam, nsne, xi):
@@ -55,15 +37,16 @@ class Fit(object):
         sampler.run_mcmc(p0, 1000)
         return sampler
 
-    def sample(self):
+    @staticmethod
+    def sample(galaxies,xi):
         m_eff =[]
-        for  m, n in zip(self.hg.galaxies['mB'],self.hg.galaxies['nsne']):
+        for  m, n in zip(galaxies['mB'],galaxies['nsne']):
             m_eff.append(m.sum()/n)
         m_eff=numpy.array(m_eff)
-        Deltam=m_eff- self.hg.galaxies['mB_expected']
-        sampler = Fit.fit(m_eff- self.hg.galaxies['mB_expected'],  self.hg.galaxies['nsne'],self.hg.xi)
-        pickle.dump(sampler.chain, open('{}pvlist.{}.{}.pkl'.format(self.path,self.sigma_mu,self.catseed), "wb" ) )
-
+        Deltam=m_eff- galaxies['mB_expected']
+        sampler = Fit.fit(m_eff- galaxies['mB_expected'],  galaxies['nsne'],hg.xi)
+        return sampler
+ 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--sigma_mu",dest="sigma_mu", default=0.08, type = float, required = False,
@@ -73,5 +56,6 @@ if __name__ == "__main__":
     parser.add_argument('--path', dest='path', default=os.environ['SCRATCH']+'/pvtest/', type = str, required=False)
     args = parser.parse_args()
 
-    fit=Fit(sigma_mu=args.sigma_mu, catseed=args.seed, path=args.path)
-    fit.sample()
+    hg = HostGalaxies(sigma_mu=args.sigma_mu, catseed=args.seed)
+    sampler = Fit.sample(hg.galaxies,hg.xi)
+    pickle.dump(sampler.chain, open('{}pvlist.{}.{}.pkl'.format(args.path,args.sigma_mu,args.seed), "wb" ) )
