@@ -8,8 +8,8 @@ import os
 
 class Fit(object):
     """docstring for Fit"""
-    def __init__(self):
-        super(Fit, self).__init__()
+    # def __init__(self):
+    #     super(Fit, self).__init__()
 
     @staticmethod        
     def lnprob(theta, Deltam, nsne, xi):
