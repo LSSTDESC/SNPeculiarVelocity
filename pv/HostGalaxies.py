@@ -3,6 +3,8 @@ import numpy
 import copy
 import argparse
 import os.path
+import array
+
 
 class HostGalaxies(object):
     """docstring for HostGalaxies"""
@@ -15,10 +17,13 @@ class HostGalaxies(object):
         self.catseed=catseed
         self.sigma_mu = sigma_mu
         self.seed=seed
-        ngal = len(self.data['galaxies'])
-        sz=ngal*(ngal+1)/2
         self.xi = None
-        if os.path.isfile(fname):
+
+        if os.path.isfile("{}pvlist.{}.xi".format(path,catseed)):
+            a = array.array('d')
+            ngal = len(self.galaxies['galaxy_id'])
+            sz = int((ngal**2+ngal)/2)
+            a=array.array('d')
             a.fromfile(open('{}pvlist.{}.xi'.format(path,catseed),'rb'),sz)
             a= numpy.array(a)
             self.xi = numpy.zeros((ngal,ngal))
@@ -63,9 +68,21 @@ class HostGalaxies(object):
             out['galaxies']['redshift'] < zmax))
 
         for key, value in out["galaxies"].items():
-            out["galaxies"][key]=value[w]
+            if (key != 'mB'):   #everything is a numpy array
+                out["galaxies"][key]=value[w]
+            else:               #except this list
+                newmB = []
+                for ele, use in zip(value, w):
+                      if use:
+                        newmB.append(ele)
+                out["galaxies"][key]=newmB
 
-        return out
+        if self.xi is None:
+            xiout = None
+        else:
+            xiout = numpy.reshape(self.xi[numpy.outer(w,w)],(w.sum(),w.sum()))
+
+        return out, xiout
 
     def getIndices(self, x):
         return numpy.searchsorted(self.galaxies["galaxy_id"], x)
@@ -78,5 +95,8 @@ if __name__ == "__main__":
                     help="random number generator seed")
     parser.add_argument('--path', dest='path', default='../test/', type = str, required=False)
     args = parser.parse_args()
+
+    # hg = HostGalaxies(sigma_mu=args.sigma_mu, catseed=args.seed, path=args.path)
+    # sg, sxi = hg.getSubset(zmax=0.1)
 
     HostGalaxies(sigma_mu=args.sigma_mu, catseed=args.seed, path=args.path).draganFormat()
