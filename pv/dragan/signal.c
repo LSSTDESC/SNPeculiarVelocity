@@ -232,7 +232,7 @@ int main(int argc, char *argv[])
         if (startindex != 0){
             char SN_filename[256];
             FILE * ptr;
-            sprintf(SN_filename , ".%s.xi.%d",fileroot,startindex);
+            sprintf(SN_filename , "%s.xi.%d",fileroot,startindex);
             ptr = fopen(SN_filename,"rb");  // r for read, b for binary
             fread(ans_all,sizeof(double),sz,ptr); // read 10 bytes to our buffer
             fclose(ptr);
@@ -350,7 +350,7 @@ int main(int argc, char *argv[])
             char SN_filename[256];
             sprintf(SN_filename , "%s.xi.%d",fileroot,base);
             FILE *f = fopen(SN_filename, "wb");
-            fwrite(ans_loc, sizeof(double), sz, f);
+            fwrite(ans_all, sizeof(double), sz, f);
             fclose(f);
         }
     }
