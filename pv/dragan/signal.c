@@ -12,6 +12,14 @@
 #include <time.h>
 #include <string.h>
 
+struct Orderer {
+   int  index;
+   int  comparator;
+}; 
+
+int cmpfunc (const struct Orderer * a, const struct Orderer * b) {
+   return ( a->comparator - b->comparator );
+}
 
 int main(int argc, char *argv[])
 {
@@ -55,9 +63,8 @@ int main(int argc, char *argv[])
     double *ans_all;
     int *i_loc, *j_loc;
     double *SN_z_i_loc, *SN_th_i_loc, *SN_ph_i_loc, *SN_z_j_loc, *SN_th_j_loc, *SN_ph_j_loc, *ans_loc;
-
-
-
+    struct Orderer* orders =  malloc(sz*(sizeof *orders) );
+    int* randomorder;   /* used to scramble integrals for load balancing */
 
     gsl_set_error_handler_off();
 
@@ -184,24 +191,44 @@ int main(int argc, char *argv[])
         SN_ph_j_all= malloc(sz*sizeof(double));
         ans_all = malloc(sz*sizeof(double));
 
+        /* Randomize the order of elements in the array for load balancing */
+
+        srand(1);
         int index=0;
         for(int ii=0; ii< N_SN; ii++){
             for(int jj=ii; jj< N_SN; jj++){
-                i_all[index] = ii;
-                j_all[index] = jj;
-                SN_z_i_all[index]= all_SN_z_th_phi[ii+1][1];
-                SN_th_i_all[index]= all_SN_z_th_phi[ii+1][2];
-                SN_ph_i_all[index]= all_SN_z_th_phi[ii+1][3];
-                SN_z_j_all[index]= all_SN_z_th_phi[jj+1][1];
-                SN_th_j_all[index]= all_SN_z_th_phi[jj+1][2];
-                SN_ph_j_all[index]= all_SN_z_th_phi[jj+1][3];
+                orders[index].index = index;
+                orders[index].comparator = rand();
                 index++;
             }  
         }
+        qsort(orders, sz, sizeof(*orders), cmpfunc);
+        randomorder = malloc(sz*sizeof(int));
+        for (int ii=0; ii<sz;ii++){
+            randomorder[ii]=orders[ii].index;
+        }
+
+        index=0;
+        for(int ii=0; ii< N_SN; ii++){
+            for(int jj=ii; jj< N_SN; jj++){
+                i_all[randomorder[index]] = ii;
+                j_all[randomorder[index]] = jj;
+                SN_z_i_all[randomorder[index]]= all_SN_z_th_phi[ii+1][1];
+                SN_th_i_all[randomorder[index]]= all_SN_z_th_phi[ii+1][2];
+                SN_ph_i_all[randomorder[index]]= all_SN_z_th_phi[ii+1][3];
+                SN_z_j_all[randomorder[index]]= all_SN_z_th_phi[jj+1][1];
+                SN_th_j_all[randomorder[index]]= all_SN_z_th_phi[jj+1][2];
+                SN_ph_j_all[randomorder[index]]= all_SN_z_th_phi[jj+1][3];
+                index++;
+            }  
+        }
+
+
     }
     
     MPI_Bcast(&N_SN, 1, MPI_INT, mpi_root, comm);
     MPI_Bcast(&sz, 1, MPI_INT, mpi_root, comm);
+    MPI_Bcast(&randomorder, sz, MPI_INT, mpi_root, comm);   
 
     /****/
     /** for full vectorized list of inputs how much do I send and from where **/
@@ -269,6 +296,7 @@ int main(int argc, char *argv[])
        MPI_DOUBLE, SN_ph_j_loc, recvcount,
        MPI_DOUBLE, 0, comm);
 
+
     calculate_Cov_vel_of_SN_vec(recvcount, i_loc, j_loc,
         SN_z_i_loc, SN_th_i_loc,SN_ph_i_loc, SN_z_j_loc, SN_th_j_loc,SN_ph_j_loc, 
         ans_loc, omega_m, w0, wa);
@@ -285,6 +313,6 @@ int main(int argc, char *argv[])
         total_t = (double)(end_t - start_t) / CLOCKS_PER_SEC;
         printf("Total time taken by CPU: %f\n", total_t  );
     }
-
+    MPI_Finalize();
     exit(0);
 }
