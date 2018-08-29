@@ -17,19 +17,23 @@ struct Orderer {
    int  comparator;
 }; 
 
-int cmpfunc (const struct Orderer * a, const struct Orderer * b) {
-   return ( a->comparator - b->comparator );
+int cmpfunc (const void * a, const void * b) {
+    struct Orderer *a1 = (struct Orderer *)a;
+    struct Orderer *a2 = (struct Orderer*)b;
+    return ( a1->comparator - a2->comparator );
 }
 
 int main(int argc, char *argv[])
 {
 
     char* fileroot;
-    if (argc !=2) {
+    int startindex;
+    if (argc !=3) {
         printf("Specify file root\n");
         exit(1);
     }
     fileroot = argv[1];
+    startindex = atoi(argv[2]);
 
     /** MPI who am I and who is root here **/
     const MPI_Comm comm = MPI_COMM_WORLD;
@@ -225,6 +229,14 @@ int main(int argc, char *argv[])
             }  
         }
 
+        if (startindex != 0){
+            char SN_filename[256];
+            FILE * ptr;
+            sprintf(SN_filename , ".%s.xi.%d",fileroot,startindex);
+            ptr = fopen(SN_filename,"rb");  // r for read, b for binary
+            fread(ans_all,sizeof(double),sz,ptr); // read 10 bytes to our buffer
+            fclose(ptr);
+        }
 
     }
     
@@ -297,11 +309,51 @@ int main(int argc, char *argv[])
     MPI_Scatterv(SN_ph_j_all, sendcounts, displs,
        MPI_DOUBLE, SN_ph_j_loc, recvcount,
        MPI_DOUBLE, 0, comm);
+    MPI_Scatterv(ans_all, sendcounts, displs,
+       MPI_DOUBLE, ans_loc, recvcount,
+       MPI_DOUBLE, 0, comm);
 
+    int maxsendcounts = -1;
+    for (int i = 0; i < mpi_size; i++) {
+        if (sendcounts[i] > maxsendcounts){
+            maxsendcounts = sendcounts[i];
+        }
+    }
 
-    calculate_Cov_vel_of_SN_vec(recvcount, i_loc, j_loc,
-        SN_z_i_loc, SN_th_i_loc,SN_ph_i_loc, SN_z_j_loc, SN_th_j_loc,SN_ph_j_loc, 
-        ans_loc, omega_m, w0, wa);
+    int savefreq=3;
+    int base = startindex;
+    int nloops = maxsendcounts/savefreq;
+    if (maxsendcounts % savefreq  !=0) nloops=nloops+1;
+
+    for (int ii=0; ii<  nloops; ii++){
+        int ncts=0;
+        if ((recvcount - base) >= savefreq){
+            ncts = savefreq;
+        } else {
+            ncts = recvcount-base;
+        }
+        if ((recvcount - base) >=0){
+            calculate_Cov_vel_of_SN_vec(ncts, &i_loc[base], &j_loc[base],
+                &SN_z_i_loc[base], &SN_th_i_loc[base],&SN_ph_i_loc[base], &SN_z_j_loc[base], &SN_th_j_loc[base],&SN_ph_j_loc[base], 
+                &ans_loc[base], omega_m, w0, wa);
+        }
+
+        // calculate_Cov_vel_of_SN_vec(recvcount, i_loc, j_loc,
+        //     SN_z_i_loc, SN_th_i_loc,SN_ph_i_loc, SN_z_j_loc, SN_th_j_loc,SN_ph_j_loc, 
+        //     ans_loc, omega_m, w0, wa);
+
+        base = base+ ncts;
+        MPI_Gatherv(ans_loc, recvcount, MPI_DOUBLE, ans_all, sendcounts, displs,
+            MPI_DOUBLE, 0, comm);
+
+        if (mpi_rank == mpi_root){
+            char SN_filename[256];
+            sprintf(SN_filename , "%s.xi.%d",fileroot,base);
+            FILE *f = fopen(SN_filename, "wb");
+            fwrite(ans_loc, sizeof(double), sz, f);
+            fclose(f);
+        }
+    }
  
     MPI_Gatherv(ans_loc, recvcount, MPI_DOUBLE, ans_all, sendcounts, displs,
        MPI_DOUBLE, 0, comm);
