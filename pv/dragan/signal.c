@@ -63,7 +63,6 @@ int main(int argc, char *argv[])
     double *ans_all;
     int *i_loc, *j_loc;
     double *SN_z_i_loc, *SN_th_i_loc, *SN_ph_i_loc, *SN_z_j_loc, *SN_th_j_loc, *SN_ph_j_loc, *ans_loc;
-    struct Orderer* orders =  malloc(sz*(sizeof *orders) );
     int* randomorder;   /* used to scramble integrals for load balancing */
 
     gsl_set_error_handler_off();
@@ -137,7 +136,9 @@ int main(int argc, char *argv[])
         double **all_SN_z_th_phi, **all_Noise_SN, *all_delta_m;
         double **SN_z_th_phi, **Signal_SN,  **Noise_SN, *delta_m;
         char SN_filename[256];
-        sprintf(SN_filename , strcat(fileroot,".dat"));
+
+        sprintf(SN_filename , "%s.dat",fileroot);
+
             // sprintf(SN_filename , "small_data_clean.txt");
 
             /************************/
@@ -192,6 +193,7 @@ int main(int argc, char *argv[])
         ans_all = malloc(sz*sizeof(double));
 
         /* Randomize the order of elements in the array for load balancing */
+        struct Orderer* orders =  malloc(sz*(sizeof *orders) );
 
         srand(1);
         int index=0;
@@ -228,7 +230,7 @@ int main(int argc, char *argv[])
     
     MPI_Bcast(&N_SN, 1, MPI_INT, mpi_root, comm);
     MPI_Bcast(&sz, 1, MPI_INT, mpi_root, comm);
-    MPI_Bcast(&randomorder, sz, MPI_INT, mpi_root, comm);   
+    // MPI_Bcast(randomorder, sz, MPI_INT, mpi_root, comm);   
 
     /****/
     /** for full vectorized list of inputs how much do I send and from where **/
@@ -304,9 +306,18 @@ int main(int argc, char *argv[])
     MPI_Gatherv(ans_loc, recvcount, MPI_DOUBLE, ans_all, sendcounts, displs,
        MPI_DOUBLE, 0, comm);
 
-    if (mpi_rank == mpi_root){ 
-        FILE *f = fopen(strcat(fileroot,".xi"), "wb");
-        fwrite(ans_all, sizeof(double), sz, f);
+    if (mpi_rank == mpi_root){
+
+        /* redistribute answers */
+        double *ans_resort;
+        ans_resort = malloc(sz*sizeof(double));
+        for (int ii=0; ii<sz;ii++){
+            ans_resort[ii]= ans_all[randomorder[ii]];
+        }
+        char SN_filename[256];
+        sprintf(SN_filename , "%s.xi",fileroot);
+        FILE *f = fopen(SN_filename, "wb");
+        fwrite(ans_resort, sizeof(double), sz, f);
         fclose(f);
         end_t = clock();
         printf("End of the big loop, end_t = %ld\n", end_t);
