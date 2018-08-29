@@ -51,22 +51,24 @@ int main(int argc, char *argv[])
         printf("Starting of the program, start_t = %ld\n", start_t);
     }
 
-
     int sz;
     int N_SN;
 
     int  OFFDIAG, N_START, N_END, N_USED;
     double w0, wa, omega_m, A, h, A_k005;
     double  k, n, z;
-    FILE *ifp;
+    // FILE *ifp;
 
     /* Containers for vectors used by MPI */
     int *i_all, *j_all;
     double *SN_z_i_all, *SN_th_i_all,*SN_ph_i_all;
     double *SN_z_j_all, *SN_th_j_all,*SN_ph_j_all;
     double *ans_all;
+    unsigned int *todo_all;
+
     int *i_loc, *j_loc;
     double *SN_z_i_loc, *SN_th_i_loc, *SN_ph_i_loc, *SN_z_j_loc, *SN_th_j_loc, *SN_ph_j_loc, *ans_loc;
+    unsigned int *todo_loc;
     int* randomorder;   /* used to scramble integrals for load balancing */
 
     gsl_set_error_handler_off();
@@ -195,6 +197,7 @@ int main(int argc, char *argv[])
         SN_th_j_all= malloc(sz*sizeof(double));
         SN_ph_j_all= malloc(sz*sizeof(double));
         ans_all = malloc(sz*sizeof(double));
+        todo_all = malloc(sz*sizeof(unsigned int));
 
         /* Randomize the order of elements in the array for load balancing */
         struct Orderer* orders =  malloc(sz*(sizeof *orders) );
@@ -225,6 +228,7 @@ int main(int argc, char *argv[])
                 SN_z_j_all[randomorder[index]]= all_SN_z_th_phi[jj+1][1];
                 SN_th_j_all[randomorder[index]]= all_SN_z_th_phi[jj+1][2];
                 SN_ph_j_all[randomorder[index]]= all_SN_z_th_phi[jj+1][3];
+                todo_all[index]=1;
                 index++;
             }  
         }
@@ -235,6 +239,10 @@ int main(int argc, char *argv[])
             sprintf(SN_filename , "%s.xi.%d",fileroot,startindex);
             ptr = fopen(SN_filename,"rb");  // r for read, b for binary
             fread(ans_all,sizeof(double),sz,ptr); // read 10 bytes to our buffer
+            fclose(ptr);
+            sprintf(SN_filename , "%s.xitodo.%d",fileroot,startindex);
+            ptr = fopen(SN_filename,"rb");  // r for read, b for binary
+            fread(todo_all,sizeof(unsigned int),sz,ptr); // read 10 bytes to our buffer
             fclose(ptr);
         }
 
@@ -281,6 +289,7 @@ int main(int argc, char *argv[])
     SN_th_j_loc = malloc(sendcounts[mpi_rank]*sizeof(double));
     SN_ph_j_loc = malloc(sendcounts[mpi_rank]*sizeof(double));
     ans_loc = malloc(sendcounts[mpi_rank]*sizeof(double));
+    todo_loc = malloc(sendcounts[mpi_rank]*sizeof(unsigned int));
 
     recvcount = sendcounts[mpi_rank];
 
@@ -312,6 +321,9 @@ int main(int argc, char *argv[])
     MPI_Scatterv(ans_all, sendcounts, displs,
        MPI_DOUBLE, ans_loc, recvcount,
        MPI_DOUBLE, 0, comm);
+    MPI_Scatterv(todo_all, sendcounts, displs,
+       MPI_UNSIGNED, todo_loc, recvcount,
+       MPI_UNSIGNED, 0, comm);
 
     int maxsendcounts = -1;
     for (int i = 0; i < mpi_size; i++) {
@@ -336,6 +348,7 @@ int main(int argc, char *argv[])
             calculate_Cov_vel_of_SN_vec(ncts, &i_loc[base], &j_loc[base],
                 &SN_z_i_loc[base], &SN_th_i_loc[base],&SN_ph_i_loc[base], &SN_z_j_loc[base], &SN_th_j_loc[base],&SN_ph_j_loc[base], 
                 &ans_loc[base], omega_m, w0, wa);
+            for (int jj =0;jj<ncts;jj++) todo_loc[base+jj]=0;
         }
 
         // calculate_Cov_vel_of_SN_vec(recvcount, i_loc, j_loc,
@@ -345,12 +358,21 @@ int main(int argc, char *argv[])
         base = base+ ncts;
         MPI_Gatherv(ans_loc, recvcount, MPI_DOUBLE, ans_all, sendcounts, displs,
             MPI_DOUBLE, 0, comm);
+        MPI_Gatherv(todo_loc, recvcount, MPI_UNSIGNED, todo_all, sendcounts, displs,
+            MPI_UNSIGNED, 0, comm);
+
+        for (int jj=0;jj<recvcount;jj++) printf("%d ",todo_loc[jj]);
+        printf("\n");
 
         if (mpi_rank == mpi_root){
             char SN_filename[256];
             sprintf(SN_filename , "%s.xi.%d",fileroot,base);
             FILE *f = fopen(SN_filename, "wb");
             fwrite(ans_all, sizeof(double), sz, f);
+            fclose(f);
+            sprintf(SN_filename , "%s.xitodo.%d",fileroot,base);
+            f = fopen(SN_filename, "wb");
+            fwrite(todo_all, sizeof(unsigned int), sz, f);
             fclose(f);
         }
     }
