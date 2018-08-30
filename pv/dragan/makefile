@@ -1,4 +1,9 @@
-CC = mpicc 
+ifeq ($(NERSC_HOST),cori)	#cori instrunctions say not to use gcc
+	CC = cc
+else
+	CC = mpicc
+endif
+
 CFLAGS=-g -Wall -fopenmp -std=c99
 IDIR   = -I/usr/local/include  -I../../nr/opt/local/include
 LDIR   = -L/usr/local/lib      -L../../nr/lib
