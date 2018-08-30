@@ -400,14 +400,12 @@ int main(int argc, char *argv[])
         }
     }
 
-    int savefreq=1000;
+    int savefreq=2000;
     int base = 0;
     int nloops = maxsendcounts/savefreq;
     if (maxsendcounts % savefreq  !=0) nloops=nloops+1;
-    // printf("%d %d %d \n",maxsendcounts,savefreq,nloops);
 
     for (int ii=0; ii<  nloops; ii++){
-
         int ncts=0;
         // for (int jj=0;jj<recvcount;jj++) printf("%d ",todo_loc[jj]);
         // printf("\n");
@@ -416,7 +414,7 @@ int main(int argc, char *argv[])
         } else {
             ncts = recvcount-base;
         }
-        if ((recvcount - base) >=0){
+        if ((recvcount - base) >=0 && recvcount !=0){
             calculate_Cov_vel_of_SN_vec(ncts, &i_loc[base], &j_loc[base],
                 &SN_z_i_loc[base], &SN_th_i_loc[base],&SN_ph_i_loc[base], &SN_z_j_loc[base], &SN_th_j_loc[base],&SN_ph_j_loc[base], 
                 &ans_loc[base], omega_m, w0, wa);
