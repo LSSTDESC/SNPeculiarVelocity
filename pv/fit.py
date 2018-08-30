@@ -5,6 +5,8 @@ import emcee
 import pickle
 import array
 import os
+import sys
+from emcee.utils import MPIPool
 
 class Fit(object):
     """docstring for Fit"""
@@ -33,8 +35,15 @@ class Fit(object):
         sig = numpy.array([0.1,0.01,0.01])
 
         p0 = [numpy.array([1,0,0.08])+numpy.random.uniform(low = -sig, high=sig) for i in range(nwalkers)]
-        sampler = emcee.EnsembleSampler(nwalkers, ndim, Fit.lnprob, args=[Deltam, nsne,xi])
+
+        pool = MPIPool()
+        if not pool.is_master():
+            pool.wait()
+            sys.exit(0)
+
+        sampler = emcee.EnsembleSampler(nwalkers, ndim, Fit.lnprob, args=[Deltam, nsne,xi], pool=pool)
         sampler.run_mcmc(p0, 1000)
+        pool.close()
         return sampler
 
     @staticmethod
@@ -53,7 +62,7 @@ if __name__ == "__main__":
                     help="distance modulus standard deviation")
     parser.add_argument("--seed", dest="seed", default=1234, type = int, required = False,
                     help="random number generator seed")
-    parser.add_argument('--path', dest='path', default=os.environ['SCRATCH']+'/pvtest/', type = str, required=False)
+    parser.add_argument('--path', dest='path', default='.', type = str, required=False)
     args = parser.parse_args()
 
     hg = HostGalaxies(sigma_mu=args.sigma_mu, catseed=args.seed)
