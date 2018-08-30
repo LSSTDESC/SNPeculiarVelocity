@@ -287,6 +287,14 @@ int main(int argc, char *argv[])
                     index++;
                 }
             }
+            free(i_all);
+            free(j_all);
+            free(SN_z_i_all);
+            free(SN_th_i_all);
+            free(SN_ph_i_all);
+            free(SN_z_j_all);
+            free(SN_th_j_all);
+            free(SN_ph_j_all);
         } else{
             ntodo=sz;
             todoindeces = malloc(ntodo*sizeof(int));
@@ -392,7 +400,7 @@ int main(int argc, char *argv[])
         }
     }
 
-    int savefreq=3;
+    int savefreq=250;
     int base = 0;
     int nloops = maxsendcounts/savefreq;
     if (maxsendcounts % savefreq  !=0) nloops=nloops+1;
