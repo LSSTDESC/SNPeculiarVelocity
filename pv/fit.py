@@ -68,3 +68,5 @@ if __name__ == "__main__":
     hg = HostGalaxies(sigma_mu=args.sigma_mu, catseed=args.seed)
     sampler = Fit.sample(hg.galaxies,hg.xi)
     pickle.dump(sampler.chain, open('{}pvlist.{}.{}.pkl'.format(args.path,args.sigma_mu,args.seed), "wb" ) )
+
+#mpirun -np 2 python fit.py --path ../test/
