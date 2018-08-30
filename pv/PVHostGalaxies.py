@@ -8,7 +8,7 @@ from astropy import units as u
 import pickle
 import argparse
 
-def main(sigma_MB, seed, test = True):
+def main(seed, test = True):
     # Things that may be user configurable
     controlTime = 1.e1      # number of years
 
@@ -60,9 +60,10 @@ def main(sigma_MB, seed, test = True):
         for key, value in data.items():
             data[key]=value[w]
         data['nsne'] = nsne[w]
-        data['mB']  = []    # this is a list as opposed to the others
-        for nsn, redtrue in zip(data['nsne'], data["redshift_true"]):
-            data['mB'].append(MB + numpy.random.normal(scale=sigma_MB,size=nsn)+cosmo.distmod(redtrue).value)
+        data['random_realize'] = []
+        for nsn in data['nsne']:
+            data['random_realize'].append(numpy.random.normal(scale=1,size=nsn))
+        data['mB_true_mn'] = MB + cosmo.distmod(data["redshift_true"]).value
         data['mB_expected'] = MB + cosmo.distmod(data["redshift"]).value
         c = SkyCoord(ra=data["ra"]*u.degree, dec=data["dec"]*u.degree, frame='icrs')
         data['l'] = c.galactic.spherical.lon.value
@@ -81,16 +82,15 @@ def main(sigma_MB, seed, test = True):
     ans=dict()
     ans['galaxies']=out
     ans['config']=dict()
-    ans['config']['sigma_MB']=sigma_MB
     ans['config']['seed']=seed
     ans['config']['time']=controlTime
-    pickle.dump(ans, open( "{}tenyear.{}.{}.pkl".format(path,sigma_MB,seed), "wb" ) )
+    pickle.dump(ans, open( "{}tenyear.{}.pkl".format(path,seed), "wb" ) )
 
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument("--sigma_mu",dest="sigma_mu", default=0.08, type = float, required = False,
-                    help="distance modulus standard deviation")
+    # parser.add_argument("--sigma_mu",dest="sigma_mu", default=0.08, type = float, required = False,
+    #                 help="distance modulus standard deviation")
     parser.add_argument("--seed", dest="seed", default=1234, type = int, required = False,
                     help="random number generator seed")
     parser.add_argument('--test', dest='test', action='store_true')
@@ -98,4 +98,4 @@ if __name__ == "__main__":
     parser.set_defaults(test=True)
     args = parser.parse_args()
 
-    main(args.sigma_mu, args.seed, test=args.test)
+    main(args.seed, test=args.test)

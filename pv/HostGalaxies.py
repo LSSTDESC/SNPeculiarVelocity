@@ -9,14 +9,24 @@ import array
 class HostGalaxies(object):
     """docstring for HostGalaxies"""
 
-    def __init__(self, sigma_mu=0.08, catseed=1234, seed=124, path='../test/'):
+    def __init__(self, sigma_mu=0.08, catseed=1234, seed=123, path='../test/'):
         super(HostGalaxies, self).__init__()
-        self.data = pickle.load(open("{}/tenyear.{}.{}.pkl".format(path,sigma_mu,catseed), "rb" ))
+        self.data = pickle.load(open("{}/tenyear.{}.pkl".format(path,catseed), "rb" ))
         self.path = path
         self.galaxies = self.data['galaxies']
         self.catseed=catseed
         self.sigma_mu = sigma_mu
         self.seed=seed
+
+        numpy.random.seed(self.seed)
+        rand = []
+        for nsn in self.galaxies['nsne']:
+            rand.append(numpy.random.normal(scale=sigma_mu,size=nsn))
+
+        self.galaxies['mB'] = []
+        for ran , mag in zip(rand, self.galaxies['mB_true_mn']):
+            self.galaxies['mB'].append(ran + mag)
+
         self.xi = None
 
         if os.path.isfile("{}pvlist.{}.xi".format(path,catseed)):
