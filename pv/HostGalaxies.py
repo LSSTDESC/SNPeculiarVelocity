@@ -78,7 +78,7 @@ class HostGalaxies(object):
             out['galaxies']['redshift'] < zmax))
 
         for key, value in out["galaxies"].items():
-            if (key != 'mB'):   #everything is a numpy array
+            if (key != 'random_realize' and key != 'mB'):   #everything is a numpy array
                 out["galaxies"][key]=value[w]
             else:               #except this list
                 newmB = []
@@ -106,7 +106,7 @@ if __name__ == "__main__":
     parser.add_argument('--path', dest='path', default='../test/', type = str, required=False)
     args = parser.parse_args()
 
-    # hg = HostGalaxies(sigma_mu=args.sigma_mu, catseed=args.seed, path=args.path)
-    # sg, sxi = hg.getSubset(zmax=0.1)
+    hg = HostGalaxies(sigma_mu=args.sigma_mu, catseed=args.seed, path=args.path)
+    sg, sxi = hg.getSubset(zmax=0.1)
 
-    HostGalaxies(sigma_mu=args.sigma_mu, catseed=args.seed, path=args.path).draganFormat()
+    # HostGalaxies(sigma_mu=args.sigma_mu, catseed=args.seed, path=args.path).draganFormat()
