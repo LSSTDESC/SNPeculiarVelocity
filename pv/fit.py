@@ -31,7 +31,7 @@ class Fit(object):
 
     @staticmethod  
     def fit(Deltam, nsne, xi):
-        ndim, nwalkers = 3, 12
+        ndim, nwalkers = 3, 8
         sig = numpy.array([0.1,0.01,0.01])
 
         p0 = [numpy.array([1,0,0.08])+numpy.random.uniform(low = -sig, high=sig) for i in range(nwalkers)]
@@ -46,7 +46,7 @@ class Fit(object):
             print("Start {}".format(starttime))
 
         sampler = emcee.EnsembleSampler(nwalkers, ndim, Fit.lnprob, args=[Deltam, nsne,xi], pool=pool)
-        sampler.run_mcmc(p0, 1000)
+        sampler.run_mcmc(p0, 10)
 
         if pool.is_master():
             endtime = time.time()
@@ -78,9 +78,10 @@ if __name__ == "__main__":
 
 
     hg = HostGalaxies(sigma_mu=args.sigma_mu, catseed=args.seed, path=args.path)
-    sampler = Fit.sample(hg.galaxies,hg.xi)
+    hg_prune, xi = hg.getSubset(frac=0.1)
+    sampler = Fit.sample(hg_prune['galaxies'],xi)
     pickle.dump(sampler.chain, open('{}pvlist.{}.{}.pkl'.format(args.path,args.sigma_mu,args.seed), "wb" ) )
 
 
-#mpirun -n 2 python fit.py --path ../out/
+#mpirun -n 8 python fit.py --path ../out/
 #srun -n 2 -C haswell python fit.py --path ../out/

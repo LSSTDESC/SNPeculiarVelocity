@@ -71,6 +71,7 @@ class HostGalaxies(object):
                 found = arr[sindex:sindex+self.galaxies["nsne"][i]]
                 out['galaxies']["nsne"][i] = found.sum()
                 out['galaxies']["mB"][i] = out['galaxies']["mB"][i][found]
+                out['galaxies']["random_realize"][i] = out['galaxies']["random_realize"][i][found]                
                 sindex += self.galaxies["nsne"][i]
 
         w = numpy.logical_and.reduce((out['galaxies']['nsne'] > 0,out['galaxies']['dec'] > decmin,
@@ -107,6 +108,6 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     hg = HostGalaxies(sigma_mu=args.sigma_mu, catseed=args.seed, path=args.path)
-    sg, sxi = hg.getSubset(zmax=0.1)
+    sg, sxi = hg.getSubset(zmax=0.01)
 
     # HostGalaxies(sigma_mu=args.sigma_mu, catseed=args.seed, path=args.path).draganFormat()
