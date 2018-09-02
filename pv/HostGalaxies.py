@@ -32,7 +32,7 @@ class HostGalaxies(object):
             ngal = len(self.galaxies['galaxy_id'])
             sz = int((ngal**2+ngal)/2)
             a=array.array('d')
-            a.fromfile(open('{}pvlist.{}.xi'.format(path,catseed),'rb'),sz)
+            a.fromfile(open('{}/pvlist.{}.xi'.format(path,catseed),'rb'),sz)
             a= numpy.array(a)
             self.xi = numpy.zeros((ngal,ngal))
             ind = numpy.triu_indices(ngal)
