@@ -6,7 +6,7 @@ import pickle
 import array
 import os
 import sys
-from emcee.utils import MPIPool
+# from emcee.utils import MPIPool
 
 class Fit(object):
     """docstring for Fit"""
@@ -36,24 +36,25 @@ class Fit(object):
 
         p0 = [numpy.array([1,0,0.08])+numpy.random.uniform(low = -sig, high=sig) for i in range(nwalkers)]
 
-        pool = MPIPool()
-        if not pool.is_master():
-            pool.wait()
-            sys.exit(0)
-        else:
-            import time
-            starttime = time.time()
-            print("Start {}".format(starttime))
+        # pool = MPIPool()
+        # if not pool.is_master():
+        #     pool.wait()
+        #     sys.exit(0)
+        # else:
+        #     import time
+        #     starttime = time.time()
+        #     print("Start {}".format(starttime))
 
-        sampler = emcee.EnsembleSampler(nwalkers, ndim, Fit.lnprob, args=[Deltam, nsne,xi], pool=pool)
-        sampler.run_mcmc(p0, 10)
+        # sampler = emcee.EnsembleSampler(nwalkers, ndim, Fit.lnprob, args=[Deltam, nsne,xi], pool=pool)
+        sampler = emcee.EnsembleSampler(nwalkers, ndim, Fit.lnprob, args=[Deltam, nsne,xi])
+        sampler.run_mcmc(p0, 1000)
 
-        if pool.is_master():
-            endtime = time.time()
-            print("End {}".format(endtime))
-            print("Difference {}".format(endtime-starttime))
+        # if pool.is_master():
+        #     endtime = time.time()
+        #     print("End {}".format(endtime))
+        #     print("Difference {}".format(endtime-starttime))
 
-        pool.close()
+        # pool.close()
         return sampler
 
     @staticmethod
@@ -63,7 +64,7 @@ class Fit(object):
             m_eff.append(m.sum()/n)
         m_eff=numpy.array(m_eff)
         Deltam=m_eff- galaxies['mB_expected']
-        sampler = Fit.fit(m_eff- galaxies['mB_expected'],  galaxies['nsne'],hg.xi)
+        sampler = Fit.fit(m_eff- galaxies['mB_expected'],  galaxies['nsne'],xi)
         return sampler
  
 if __name__ == "__main__":
@@ -78,9 +79,9 @@ if __name__ == "__main__":
 
 
     hg = HostGalaxies(sigma_mu=args.sigma_mu, catseed=args.seed, path=args.path)
-    hg_prune, xi = hg.getSubset(frac=0.1)
+    hg_prune, xi = hg.getSubset(frac=  .5)
     sampler = Fit.sample(hg_prune['galaxies'],xi)
-    pickle.dump(sampler.chain, open('{}pvlist.{}.{}.pkl'.format(args.path,args.sigma_mu,args.seed), "wb" ) )
+    pickle.dump(sampler.chain, open('{}/pvlist.{}.{}.pkl'.format(args.path,args.sigma_mu,args.seed), "wb" ) )
 
 
 #mpirun -n 8 python fit.py --path ../out/
