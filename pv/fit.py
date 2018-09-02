@@ -25,7 +25,6 @@ class Fit(object):
         mterm  = Deltam-M
 
         lp = -0.5* (logdetC +( mterm.T @ (Cinv @ mterm) ))
-        print (lp)
         if not numpy.isfinite(lp):
             return -np.inf
         return lp
@@ -41,9 +40,19 @@ class Fit(object):
         if not pool.is_master():
             pool.wait()
             sys.exit(0)
+        else:
+            import time
+            starttime = time.time()
+            print("Start {}".format(starttime))
 
         sampler = emcee.EnsembleSampler(nwalkers, ndim, Fit.lnprob, args=[Deltam, nsne,xi], pool=pool)
         sampler.run_mcmc(p0, 1000)
+
+        if pool.is_master():
+            endtime = time.time()
+            print("End {}".format(endtime))
+            print("Difference {}".format(endtime-starttime))
+
         pool.close()
         return sampler
 
@@ -67,16 +76,11 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
 
-    if pool.is_master():
-        import time
-        starttime = time.time()
-        print("Start {}".format(starttime))
-    hg = HostGalaxies(sigma_mu=args.sigma_mu, catseed=args.seed)
+
+    hg = HostGalaxies(sigma_mu=args.sigma_mu, catseed=args.seed, path=args.path)
     sampler = Fit.sample(hg.galaxies,hg.xi)
     pickle.dump(sampler.chain, open('{}pvlist.{}.{}.pkl'.format(args.path,args.sigma_mu,args.seed), "wb" ) )
-    if pool.is_master():
-        endtime = time.time()
-        print("End {}".format(endtime))
-        print("Difference {}".format(endtime-starttime))
+
+
 #mpirun -n 2 python fit.py --path ../out/
 #srun -n 2 -C haswell python fit.py --path ../out/
