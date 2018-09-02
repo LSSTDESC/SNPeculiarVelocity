@@ -65,8 +65,16 @@ if __name__ == "__main__":
     parser.add_argument('--path', dest='path', default='.', type = str, required=False)
     args = parser.parse_args()
 
+    import time
+    starttime = time.time()
+    print(starttime)
+
+
     hg = HostGalaxies(sigma_mu=args.sigma_mu, catseed=args.seed)
     sampler = Fit.sample(hg.galaxies,hg.xi)
     pickle.dump(sampler.chain, open('{}pvlist.{}.{}.pkl'.format(args.path,args.sigma_mu,args.seed), "wb" ) )
-
-#mpirun -np 2 python fit.py --path ../test/
+    endtime = time.time()
+    print(endtime)
+    print(endtime-starttime)
+#mpirun -n 2 python fit.py --path ../out/
+#srun -n 2 -C haswell python fit.py --path ../out/
