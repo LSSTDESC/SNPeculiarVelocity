@@ -400,7 +400,7 @@ int main(int argc, char *argv[])
         }
     }
 
-    int savefreq=2000;
+    int savefreq=4000;
     int base = 0;
     int nloops = maxsendcounts/savefreq;
     if (maxsendcounts % savefreq  !=0) nloops=nloops+1;
