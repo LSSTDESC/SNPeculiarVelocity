@@ -25,6 +25,7 @@ class Fit(object):
         mterm  = Deltam-M
 
         lp = -0.5* (logdetC +( mterm.T @ (Cinv @ mterm) ))
+        print (lp)
         if not numpy.isfinite(lp):
             return -np.inf
         return lp
@@ -65,16 +66,17 @@ if __name__ == "__main__":
     parser.add_argument('--path', dest='path', default='.', type = str, required=False)
     args = parser.parse_args()
 
-    import time
-    starttime = time.time()
-    print(starttime)
 
-
+    if pool.is_master():
+        import time
+        starttime = time.time()
+        print("Start {}".format(starttime))
     hg = HostGalaxies(sigma_mu=args.sigma_mu, catseed=args.seed)
     sampler = Fit.sample(hg.galaxies,hg.xi)
     pickle.dump(sampler.chain, open('{}pvlist.{}.{}.pkl'.format(args.path,args.sigma_mu,args.seed), "wb" ) )
-    endtime = time.time()
-    print(endtime)
-    print(endtime-starttime)
+    if pool.is_master():
+        endtime = time.time()
+        print("End {}".format(endtime))
+        print("Difference {}".format(endtime-starttime))
 #mpirun -n 2 python fit.py --path ../out/
 #srun -n 2 -C haswell python fit.py --path ../out/
