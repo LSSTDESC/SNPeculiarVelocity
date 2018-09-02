@@ -6,7 +6,7 @@ import pickle
 import array
 import os
 import sys
-# from emcee.utils import MPIPool
+from emcee.utils import MPIPool
 
 class Fit(object):
     """docstring for Fit"""
@@ -36,25 +36,25 @@ class Fit(object):
 
         p0 = [numpy.array([1,0,0.08])+numpy.random.uniform(low = -sig, high=sig) for i in range(nwalkers)]
 
-        # pool = MPIPool()
-        # if not pool.is_master():
-        #     pool.wait()
-        #     sys.exit(0)
-        # else:
-        #     import time
-        #     starttime = time.time()
-        #     print("Start {}".format(starttime))
+        pool = MPIPool()
+        if not pool.is_master():
+            pool.wait()
+            sys.exit(0)
+        else:
+            import time
+            starttime = time.time()
+            print("Start {}".format(starttime))
 
-        # sampler = emcee.EnsembleSampler(nwalkers, ndim, Fit.lnprob, args=[Deltam, nsne,xi], pool=pool)
-        sampler = emcee.EnsembleSampler(nwalkers, ndim, Fit.lnprob, args=[Deltam, nsne,xi])
-        sampler.run_mcmc(p0, 1000)
+        sampler = emcee.EnsembleSampler(nwalkers, ndim, Fit.lnprob, args=[Deltam, nsne,xi], pool=pool)
+        # sampler = emcee.EnsembleSampler(nwalkers, ndim, Fit.lnprob, args=[Deltam, nsne,xi])
+        sampler.run_mcmc(p0, 100)
 
-        # if pool.is_master():
-        #     endtime = time.time()
-        #     print("End {}".format(endtime))
-        #     print("Difference {}".format(endtime-starttime))
+        if pool.is_master():
+            endtime = time.time()
+            print("End {}".format(endtime))
+            print("Difference {}".format(endtime-starttime))
 
-        # pool.close()
+        pool.close()
         return sampler
 
     @staticmethod
@@ -79,7 +79,7 @@ if __name__ == "__main__":
 
 
     hg = HostGalaxies(sigma_mu=args.sigma_mu, catseed=args.seed, path=args.path)
-    hg_prune, xi = hg.getSubset(frac=  .5)
+    hg_prune, xi = hg.getSubset(frac=  .1)
     sampler = Fit.sample(hg_prune['galaxies'],xi)
     pickle.dump(sampler.chain, open('{}/pvlist.{}.{}.pkl'.format(args.path,args.sigma_mu,args.seed), "wb" ) )
 
