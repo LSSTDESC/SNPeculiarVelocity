@@ -27,9 +27,7 @@ class HostGalaxies(object):
         for ran , mag in zip(rand, self.galaxies['mB_true_mn']):
             self.galaxies['mB'].append(ran + mag)
 
-        self.xi = None
-
-        if os.path.isfile("{}pvlist.{}.xi".format(path,catseed)):
+        if os.path.isfile("{}/pvlist.{}.xi".format(path,catseed)):
             a = array.array('d')
             ngal = len(self.galaxies['galaxy_id'])
             sz = int((ngal**2+ngal)/2)
@@ -42,7 +40,6 @@ class HostGalaxies(object):
                 self.xi[i,j] =v
                 if (i !=j):
                     self.xi[j,i]=v
-
 
     def draganFormat(self, sort=False):
         if sort:
@@ -108,6 +105,6 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     hg = HostGalaxies(sigma_mu=args.sigma_mu, catseed=args.seed, path=args.path)
-    sg, sxi = hg.getSubset(zmax=0.01)
+    # sg, sxi = hg.getSubset(zmax=0.01)
 
     # HostGalaxies(sigma_mu=args.sigma_mu, catseed=args.seed, path=args.path).draganFormat()
