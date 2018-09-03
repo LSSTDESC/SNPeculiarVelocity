@@ -27,12 +27,16 @@ class HostGalaxies(object):
         for ran , mag in zip(rand, self.galaxies['mB_true_mn']):
             self.galaxies['mB'].append(ran + mag)
 
-        if os.path.isfile("{}/pvlist.{}.xi".format(path,catseed)):
+        self.xi = None
+
+        if os.path.isfile("{}pvlist.{}.xi.pkl".format(path,catseed)):
+            self.xi = pickle.load(open("{}pvlist.{}.xi.pkl".format(path,catseed), "rb" ))
+        elif os.path.isfile("{}pvlist.{}.xi".format(path,catseed)):
             a = array.array('d')
             ngal = len(self.galaxies['galaxy_id'])
             sz = int((ngal**2+ngal)/2)
             a=array.array('d')
-            a.fromfile(open('{}/pvlist.{}.xi'.format(path,catseed),'rb'),sz)
+            a.fromfile(open('{}pvlist.{}.xi'.format(path,catseed),'rb'),sz)
             a= numpy.array(a)
             self.xi = numpy.zeros((ngal,ngal))
             ind = numpy.triu_indices(ngal)
@@ -40,6 +44,8 @@ class HostGalaxies(object):
                 self.xi[i,j] =v
                 if (i !=j):
                     self.xi[j,i]=v
+            pickle.dump(self.xi,open("{}pvlist.{}.xi.pkl".format(path,catseed), "wb" ))
+
 
     def draganFormat(self, sort=False):
         if sort:
@@ -105,6 +111,6 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     hg = HostGalaxies(sigma_mu=args.sigma_mu, catseed=args.seed, path=args.path)
-    # sg, sxi = hg.getSubset(zmax=0.01)
+    #sg, sxi = hg.getSubset(zmax=0.01)
 
     # HostGalaxies(sigma_mu=args.sigma_mu, catseed=args.seed, path=args.path).draganFormat()
