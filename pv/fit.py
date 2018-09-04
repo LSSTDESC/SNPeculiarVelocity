@@ -121,9 +121,9 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     hg = HostGalaxies(sigma_mu=args.sigma_mu, catseed=args.seed, path=args.path)
-    # hg_prune, xi = hg.getSubset(frac=0.1)
-    sampler = Fit.sample(hg.galaxies,hg.xi)
-    # sampler = Fit.sample(hg_prune['galaxies'],xi)
+    hg_prune, xi = hg.getSubset(frac=0.9)
+    sampler = Fit.sample(hg_prune['galaxies'],xi)
+    # sampler = Fit.sample(hg.galaxies,hg.xi)
     pickle.dump(sampler.chain, open('{}/pvlist.{}.{}.pkl'.format(args.path,args.sigma_mu,args.seed), "wb" ) )
 
 #mpirun -n 8 python fit.py --path ../out/
