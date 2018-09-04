@@ -29,23 +29,27 @@ class HostGalaxies(object):
 
         self.xi = None
 
-        if os.path.isfile("{}/pvlist.{}.xi.pkl".format(path,catseed)):
-            self.xi = pickle.load(open("{}/pvlist.{}.xi.pkl".format(path,catseed), "rb" ))
-        elif os.path.isfile("{}/pvlist.{}.xi".format(path,catseed)):
-            a = array.array('d')
-            ngal = len(self.galaxies['galaxy_id'])
-            sz = int((ngal**2+ngal)/2)
-            a=array.array('d')
-            a.fromfile(open('{}/pvlist.{}.xi'.format(path,catseed),'rb'),sz)
-            a= numpy.array(a)
-            self.xi = numpy.zeros((ngal,ngal))
-            ind = numpy.triu_indices(ngal)
-            for v, i, j in zip(a,ind[0],ind[1]):
-                self.xi[i,j] =v
-                if (i !=j):
-                    self.xi[j,i]=v
-            pickle.dump(self.xi,open("{}/pvlist.{}.xi.pkl".format(path,catseed), "wb" ))
+        # if os.path.isfile("{}/pvlist.{}.xi.pkl".format(path,catseed)):
+        #     self.xi = pickle.load(open("{}/pvlist.{}.xi.pkl".format(path,catseed), "rb" ))
+        # elif os.path.isfile("{}/pvlist.{}.xi".format(path,catseed))
+        #     ngal = len(self.galaxies['galaxy_id'])
+        #     sz = int((ngal**2+ngal)/2)
+        #     a=array.array('d')
+        #     a.fromfile(open('{}/pvlist.{}.xi'.format(path,catseed),'rb'),sz)
+        #     a= numpy.array(a)
+        #     self.xi = numpy.zeros((ngal,ngal))
+        #     ind = numpy.triu_indices(ngal)
+        #     for v, i, j in zip(a,ind[0],ind[1]):
+        #         self.xi[i,j] =v
+        #         if (i !=j):
+        #             self.xi[j,i]=v
+        #     pickle.dump(self.xi,open("{}/pvlist.{}.xi.pkl".format(path,catseed), "wb" ))
 
+        ngal = len(self.galaxies['galaxy_id'])
+        sz = int((ngal**2+ngal)/2)
+        a=array.array('d')
+        a.fromfile(open('{}/pvlist.{}.xi'.format(path,catseed),'rb'),sz)
+        self.xi= numpy.array(a)
 
     def draganFormat(self, sort=False):
         if sort:

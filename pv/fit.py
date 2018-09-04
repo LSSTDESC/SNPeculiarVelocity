@@ -22,7 +22,13 @@ class Fit(object):
         A, M, sigma = theta
         if (A <=0 or sigma <0):
             return -numpy.inf
-        C = A*numpy.array(xi)
+
+        dim = int(0.5*(numpy.sqrt(1+8*len(xi))))
+        C = numpy.zeros((dim,dim))
+        ind = numpy.triu_indices(ngal)
+            for v, i, j in zip(a,ind[0],ind[1]):
+                C[j,i] =v
+        C = A*numpy.array(C)
         numpy.fill_diagonal(C,C.diagonal()+ sigma**2/nsne)
         mterm  = Deltam-M
 
