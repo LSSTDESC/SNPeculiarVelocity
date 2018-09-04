@@ -98,6 +98,11 @@ class HostGalaxies(object):
         if self.xi is None:
             xiout = None
         else:
+            xiout =[]
+            ind = numpy.triu_indices(ngal)
+            for v, i, j in zip(a,ind[0],ind[1]):
+                self.xi[i,j] =v
+            # xiout = numpy.reshape(self.xi[numpy.outer(w,w)],(w.sum(),w.sum()))
             xiout = numpy.reshape(self.xi[numpy.outer(w,w)],(w.sum(),w.sum()))
 
         return out, xiout
