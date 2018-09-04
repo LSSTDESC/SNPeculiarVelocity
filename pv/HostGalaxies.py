@@ -100,10 +100,20 @@ class HostGalaxies(object):
         else:
             xiout =[]
             ind = numpy.triu_indices(ngal)
-            for v, i, j in zip(a,ind[0],ind[1]):
-                self.xi[i,j] =v
+            useind = numpy.where(w)[0]
+            for i in range(len(useind)):
+                for j in range(i,len(useind)):
+                    theind = numpy.where(numpy.logical_and(ind[0]==useind[i], ind[0] == useind[j]))[0]
+                    xiout.append(self.xi[theind])
+            xiout=numpy.array(xiout)
+            print (self.xi)
+            print(useind)
+            print(xiout)
+            wefew
+            # for v, i, j in zip(a,ind[0],ind[1]):
+            #     self.xi[i,j] =v
+            # # xiout = numpy.reshape(self.xi[numpy.outer(w,w)],(w.sum(),w.sum()))
             # xiout = numpy.reshape(self.xi[numpy.outer(w,w)],(w.sum(),w.sum()))
-            xiout = numpy.reshape(self.xi[numpy.outer(w,w)],(w.sum(),w.sum()))
 
         return out, xiout
 

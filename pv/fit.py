@@ -23,11 +23,12 @@ class Fit(object):
         if (A <=0 or sigma <0):
             return -numpy.inf
 
+        # fill in the c matrix
         dim = int(0.5*(numpy.sqrt(1+8*len(xi))))
         C = numpy.zeros((dim,dim))
-        ind = numpy.triu_indices(ngal)
-            for v, i, j in zip(a,ind[0],ind[1]):
-                C[j,i] =v
+        ind = numpy.triu_indices(dim)
+        for v, i, j in zip(xi,ind[0],ind[1]):
+            C[i,j] =v
         C = A*numpy.array(C)
         numpy.fill_diagonal(C,C.diagonal()+ sigma**2/nsne)
         mterm  = Deltam-M
@@ -37,21 +38,21 @@ class Fit(object):
         #     logdetC = numpy.log(numpy.linalg.eigvalsh(C)).sum()
         #     lp = -0.5* (logdetC +( mterm.T @ (Cinv @ mterm) ))
         # else:
-        dim = xi.shape[0]
+
         C_ = matrix(C)
         W = matrix(0,(dim,1),'d')
-        lapack.syev(C_, W, jobz = 'N') 
+        lapack.syev(C_, W, jobz = 'N',uplo='U') 
         logdetC = sum(numpy.log(W))
 
         C_ = matrix(C)
         ipiv = matrix(0,(dim,1),'i')
-        lapack.sytrf(C_, ipiv)
-        lapack.sytri(C_, ipiv)
+        lapack.sytrf(C_, ipiv,uplo='U')
+        lapack.sytri(C_, ipiv,uplo='U')
 
         mterm  = matrix(mterm)
         y = matrix(0,(dim,1),'d')
 
-        blas.hemv(C_, mterm, y )
+        blas.hemv(C_, mterm, y ,uplo='U')
         lp = -0.5* (logdetC +blas.dot(mterm, y) )
 
         if not numpy.isfinite(lp):
