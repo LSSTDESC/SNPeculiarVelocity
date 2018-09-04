@@ -32,7 +32,6 @@ class HostGalaxies(object):
         if os.path.isfile("{}/pvlist.{}.xi.pkl".format(path,catseed)):
             self.xi = pickle.load(open("{}/pvlist.{}.xi.pkl".format(path,catseed), "rb" ))
         elif os.path.isfile("{}/pvlist.{}.xi".format(path,catseed)):
-            a = array.array('d')
             ngal = len(self.galaxies['galaxy_id'])
             sz = int((ngal**2+ngal)/2)
             a=array.array('d')
