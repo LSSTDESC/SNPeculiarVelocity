@@ -30,41 +30,52 @@ class Fit(object):
         return lp
 
     @staticmethod  
-    def fit(Deltam, nsne, xi):
+    def fit(Deltam, nsne, xi, mpi=False):
         ndim, nwalkers = 3, 8
         sig = numpy.array([0.1,0.01,0.01])
 
         p0 = [numpy.array([1,0,0.08])+numpy.random.uniform(low = -sig, high=sig) for i in range(nwalkers)]
 
-        pool = MPIPool()
-        if not pool.is_master():
-            pool.wait()
-            sys.exit(0)
+        if mpi:
+            pool = MPIPool()
+            if not pool.is_master():
+                pool.wait()
+                sys.exit(0)
+            else:
+                import time
+                starttime = time.time()
+                print("Start {}".format(starttime))
+            sampler = emcee.EnsembleSampler(nwalkers, ndim, Fit.lnprob, args=[Deltam, nsne,xi], pool=pool)
         else:
             import time
             starttime = time.time()
             print("Start {}".format(starttime))
+            sampler = emcee.EnsembleSampler(nwalkers, ndim, Fit.lnprob, args=[Deltam, nsne,xi])
 
-        sampler = emcee.EnsembleSampler(nwalkers, ndim, Fit.lnprob, args=[Deltam, nsne,xi], pool=pool)
-        # sampler = emcee.EnsembleSampler(nwalkers, ndim, Fit.lnprob, args=[Deltam, nsne,xi])
-        sampler.run_mcmc(p0, 100)
+        sampler.run_mcmc(p0, 10)
 
-        if pool.is_master():
+        if mpi:
+            if pool.is_master():
+                endtime = time.time()
+                print("End {}".format(endtime))
+                print("Difference {}".format(endtime-starttime))
+                pool.close()
+        else:
             endtime = time.time()
             print("End {}".format(endtime))
-            print("Difference {}".format(endtime-starttime))
+            print("Difference {}".format(endtime-starttime))   
 
-        pool.close()
+
         return sampler
 
     @staticmethod
-    def sample(galaxies,xi):
+    def sample(galaxies,xi,mpi = False):
         m_eff =[]
         for  m, n in zip(galaxies['mB'],galaxies['nsne']):
             m_eff.append(m.sum()/n)
         m_eff=numpy.array(m_eff)
         Deltam=m_eff- galaxies['mB_expected']
-        sampler = Fit.fit(m_eff- galaxies['mB_expected'],  galaxies['nsne'],xi)
+        sampler = Fit.fit(m_eff- galaxies['mB_expected'],  galaxies['nsne'],xi, mpi)
         return sampler
  
 if __name__ == "__main__":
@@ -74,6 +85,9 @@ if __name__ == "__main__":
     parser.add_argument("--seed", dest="seed", default=1234, type = int, required = False,
                     help="random number generator seed")
     parser.add_argument('--path', dest='path', default='.', type = str, required=False)
+    parser.add_argument('--mpi', dest='mpi', action='store_true')
+    parser.add_argument('--no-mpi', dest='mpi', action='store_false')
+    parser.set_defaults(mpi=False)
     args = parser.parse_args()
 
     hg = HostGalaxies(sigma_mu=args.sigma_mu, catseed=args.seed, path=args.path)
