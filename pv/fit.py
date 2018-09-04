@@ -7,11 +7,15 @@ import array
 import os
 import sys
 from emcee.utils import MPIPool
+import cvxopt.lapack as lapack
+import cvxopt.blas as blas
+from cvxopt import matrix
 
 class Fit(object):
     """docstring for Fit"""
     # def __init__(self):
     #     super(Fit, self).__init__()
+
 
     @staticmethod        
     def lnprob(theta, Deltam, nsne, xi):
@@ -20,11 +24,30 @@ class Fit(object):
             return -numpy.inf
         C = A*numpy.array(xi)
         numpy.fill_diagonal(C,C.diagonal()+ sigma**2/nsne)
-        Cinv= numpy.linalg.inv(C)
-        logdetC = numpy.log(numpy.linalg.eigvalsh(C)).sum()
         mterm  = Deltam-M
 
-        lp = -0.5* (logdetC +( mterm.T @ (Cinv @ mterm) ))
+        # if (usenp):
+        #     Cinv= numpy.linalg.inv(C)
+        #     logdetC = numpy.log(numpy.linalg.eigvalsh(C)).sum()
+        #     lp = -0.5* (logdetC +( mterm.T @ (Cinv @ mterm) ))
+        # else:
+        dim = xi.shape[0]
+        C_ = matrix(C)
+        W = matrix(0,(dim,1),'d')
+        lapack.syev(C_, W, jobz = 'N') 
+        logdetC = sum(numpy.log(W))
+
+        C_ = matrix(C)
+        ipiv = matrix(0,(dim,1),'i')
+        lapack.sytrf(C_, ipiv)
+        lapack.sytri(C_, ipiv)
+
+        mterm  = matrix(mterm)
+        y = matrix(0,(dim,1),'d')
+
+        blas.hemv(C_, mterm, y )
+        lp = -0.5* (logdetC +blas.dot(mterm, y) )
+
         if not numpy.isfinite(lp):
             return -np.inf
         return lp
@@ -52,7 +75,7 @@ class Fit(object):
             print("Start {}".format(starttime))
             sampler = emcee.EnsembleSampler(nwalkers, ndim, Fit.lnprob, args=[Deltam, nsne,xi])
 
-        sampler.run_mcmc(p0, 10)
+        sampler.run_mcmc(p0, 2000)
 
         if mpi:
             if pool.is_master():
