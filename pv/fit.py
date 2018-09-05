@@ -125,9 +125,7 @@ if __name__ == "__main__":
 
     if args.antecedent is not None:
         chain = pickle.load(open('{}/pvlist.{}.{}.{}.pkl.{}'.format(args.path,args.sigma_mu,args.seed,args.frac,args.antecedent), "rb" ) )
-        p0=chain[-1]
     else:
-        p0=None
         chain=None
 
     if (args.frac !=0):
