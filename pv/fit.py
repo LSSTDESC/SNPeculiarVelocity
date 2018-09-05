@@ -53,11 +53,12 @@ class Fit(object):
         return lp
 
     @staticmethod  
-    def fit(Deltam, nsne, xi, mpi=False):
+    def fit(Deltam, nsne, xi, mpi=False, p0=None, nchain=2000):
         ndim, nwalkers = 3, 8
         sig = numpy.array([0.1,0.01,0.01])
 
-        p0 = [numpy.array([1,0,0.08])+numpy.random.uniform(low = -sig, high=sig) for i in range(nwalkers)]
+        if p0 is None:
+            p0 = [numpy.array([1,0,0.08])+numpy.random.uniform(low = -sig, high=sig) for i in range(nwalkers)]
 
         if mpi:
             pool = MPIPool()
@@ -75,7 +76,7 @@ class Fit(object):
             print("Start {}".format(starttime))
             sampler = emcee.EnsembleSampler(nwalkers, ndim, Fit.lnprob, args=[Deltam, nsne,xi])
 
-        sampler.run_mcmc(p0, 2000)
+        sampler.run_mcmc(p0, nchain)
 
         if mpi:
             if pool.is_master():
@@ -92,13 +93,13 @@ class Fit(object):
         return sampler
 
     @staticmethod
-    def sample(galaxies,xi,mpi = False):
+    def sample(galaxies,xi,mpi = False, **kwargs):
         m_eff =[]
         for  m, n in zip(galaxies['mB'],galaxies['nsne']):
             m_eff.append(m.sum()/n)
         m_eff=numpy.array(m_eff)
         Deltam=m_eff- galaxies['mB_expected']
-        sampler = Fit.fit(m_eff- galaxies['mB_expected'],  galaxies['nsne'],xi, mpi)
+        sampler = Fit.fit(m_eff- galaxies['mB_expected'],  galaxies['nsne'],xi, mpi, **kwargs)
         return sampler
  
 if __name__ == "__main__":
@@ -109,19 +110,54 @@ if __name__ == "__main__":
                     help="random number generator seed")
     parser.add_argument('--path', dest='path', default='.', type = str, required=False)
     parser.add_argument('--frac', dest='frac', default=1, type = float, required=False)
+    parser.add_argument('--savef', dest='savef', default=None, type = int, required=False)
+    parser.add_argument('--nchain', dest='nchain', default=2000, type = int, required=False)
+    parser.add_argument('--antecedent', dest='antecedent', default=None, type=int,required=False)
     parser.add_argument('--mpi', dest='mpi', action='store_true')
     parser.add_argument('--no-mpi', dest='mpi', action='store_false')
     parser.set_defaults(mpi=False)
     args = parser.parse_args()
 
-    hg = HostGalaxies(sigma_mu=args.sigma_mu, catseed=args.seed, path=args.path)
-    if (args.frac !=0):
-        hg_prune, xi = hg.getSubset(frac=args.frac)
-        sampler = Fit.sample(hg_prune['galaxies'],xi, mpi=args.mpi)
-    else:
-        sampler = Fit.sample(hg.galaxies,hg.xi)
-    pickle.dump(sampler.chain, open('{}/pvlist.{}.{}.{}.pkl'.format(args.path,args.sigma_mu,args.seed,args.frac), "wb" ) )
+    if args.savef is None:
+        args.savef = args.nchain
 
-#python fit.py --path ../out/  --frac 0.2
+    hg = HostGalaxies(sigma_mu=args.sigma_mu, catseed=args.seed, path=args.path)
+
+    if args.antecedent is not None:
+        chain = pickle.load(open('{}/pvlist.{}.{}.{}.pkl.{}'.format(args.path,args.sigma_mu,args.seed,args.frac,args.antecedent), "rb" ) )
+        p0=chain[-1]
+    else:
+        p0=None
+        chain=None
+
+    if (args.frac !=0):
+        usehg, usexi = hg.getSubset(frac=args.frac)
+    else:
+        usehg = hg
+        usexi = hg.xi
+
+    for i in range(0,args.nchain//args.savef):
+        if chain is None:
+            initp0 = None
+        else:
+            initp0 = chain[:,-1,:]
+
+        sampler = Fit.sample(usehg['galaxies'],usexi, mpi=args.mpi, nchain=args.savef, p0=initp0)
+        if chain is None:
+            chain=sampler.chain
+        else:
+            chain = numpy.concatenate((chain,sampler.chain),axis=1)
+
+        if args.antecedent is None:
+            indnm = i
+        else:
+            indnm = i+args.antecedent+1
+        pickle.dump(chain, open('{}/pvlist.{}.{}.{}.pkl.{}'.format(args.path,args.sigma_mu,args.seed,args.frac,indnm), "wb" ) )
+
+
+# python fit.py --path ../test/ --nchain 200 --savef 10
+
+
+
 #mpirun -n 16 python fit.py --path ../out/ --mpi
 #srun -n 2 -C haswell python fit.py --path ../out/
