@@ -108,16 +108,20 @@ if __name__ == "__main__":
     parser.add_argument("--seed", dest="seed", default=1234, type = int, required = False,
                     help="random number generator seed")
     parser.add_argument('--path', dest='path', default='.', type = str, required=False)
+    parser.add_argument('--frac', dest='frac', default=1, type = float, required=False)
     parser.add_argument('--mpi', dest='mpi', action='store_true')
     parser.add_argument('--no-mpi', dest='mpi', action='store_false')
     parser.set_defaults(mpi=False)
     args = parser.parse_args()
 
     hg = HostGalaxies(sigma_mu=args.sigma_mu, catseed=args.seed, path=args.path)
-    hg_prune, xi = hg.getSubset(frac=0.2)
-    sampler = Fit.sample(hg_prune['galaxies'],xi, mpi=args.mpi)
-    # sampler = Fit.sample(hg.galaxies,hg.xi)
-    pickle.dump(sampler.chain, open('{}/pvlist.{}.{}.pkl'.format(args.path,args.sigma_mu,args.seed), "wb" ) )
+    if (args.frac !=0):
+        hg_prune, xi = hg.getSubset(frac=args.frac)
+        sampler = Fit.sample(hg_prune['galaxies'],xi, mpi=args.mpi)
+    else:
+        sampler = Fit.sample(hg.galaxies,hg.xi)
+    pickle.dump(sampler.chain, open('{}/pvlist.{}.{}.{}.pkl'.format(args.path,args.sigma_mu,args.seed,args.frac), "wb" ) )
 
-#mpirun -n 8 python fit.py --path ../out/ --mpi
+#python fit.py --path ../out/  --frac 0.2
+#mpirun -n 16 python fit.py --path ../out/ --mpi
 #srun -n 2 -C haswell python fit.py --path ../out/
