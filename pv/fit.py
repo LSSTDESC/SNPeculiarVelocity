@@ -53,7 +53,7 @@ class Fit(object):
         return lp
 
     @staticmethod  
-    def fit(Deltam, nsne, xi, mpi=False, p0=None, nchain=2000):
+    def fit(Deltam, nsne, xi, mpi=False, p0=None, nchain=2000, **kwargs):
         ndim, nwalkers = 3, 8
         sig = numpy.array([0.1,0.01,0.01])
 
@@ -89,17 +89,16 @@ class Fit(object):
             print("End {}".format(endtime))
             print("Difference {}".format(endtime-starttime))   
 
-
         return sampler
 
     @staticmethod
-    def sample(galaxies,xi,mpi = False, **kwargs):
+    def sample(galaxies,xi, **kwargs):
         m_eff =[]
         for  m, n in zip(galaxies['mB'],galaxies['nsne']):
             m_eff.append(m.sum()/n)
         m_eff=numpy.array(m_eff)
         Deltam=m_eff- galaxies['mB_expected']
-        sampler = Fit.fit(m_eff- galaxies['mB_expected'],  galaxies['nsne'],xi, mpi, **kwargs)
+        sampler = Fit.fit(m_eff- galaxies['mB_expected'],  galaxies['nsne'],xi, **kwargs)
         return sampler
  
 if __name__ == "__main__":
@@ -141,6 +140,7 @@ if __name__ == "__main__":
             initp0 = chain[:,-1,:]
 
         sampler = Fit.sample(usehg['galaxies'],usexi, mpi=args.mpi, nchain=args.savef, p0=initp0)
+
         if chain is None:
             chain=sampler.chain
         else:
@@ -150,12 +150,9 @@ if __name__ == "__main__":
             indnm = i
         else:
             indnm = i+args.antecedent+1
+
         pickle.dump(chain, open('{}/pvlist.{}.{}.{}.pkl.{}'.format(args.path,args.sigma_mu,args.seed,args.frac,indnm), "wb" ) )
 
-
 # python fit.py --path ../test/ --nchain 200 --savef 10
-
-
-
 #mpirun -n 16 python fit.py --path ../out/ --mpi
 #srun -n 2 -C haswell python fit.py --path ../out/
