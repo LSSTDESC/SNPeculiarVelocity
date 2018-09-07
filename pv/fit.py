@@ -55,19 +55,16 @@ class Fit(object):
         # print ("cvx ",lp)
         # print("just algebra time ",time.time()-starttime)
 
-
-        starttime=time.time()
         # eigenvalues of C
         (w, v, info) = scipy.linalg.lapack.dsyev(C,0)
+        if (w.min() <= 0):
+            return -np.inf
+
         logdetC = numpy.log(w).sum()
 
         # chi-square
         (c, x, info)= scipy.linalg.lapack.dposv(C,mterm,overwrite_a=1)
         lp = -0.5* (logdetC +numpy.dot(mterm,x))
-        print("scipy lapack ",lp)
-        print("just algebra time ",time.time()-starttime)
-
-        wef
 
         if not numpy.isfinite(lp):
             return -np.inf
