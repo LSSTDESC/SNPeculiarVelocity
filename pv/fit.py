@@ -32,6 +32,7 @@ class Fit(object):
         #     lp = -0.5* (logdetC +( mterm.T @ (Cinv @ mterm) ))
         # else:
         dim = xi.shape[0]
+
         C_ = matrix(C)
         W = matrix(0,(dim,1),'d')
         lapack.syev(C_, W, jobz = 'N',uplo='U') 
@@ -112,6 +113,7 @@ if __name__ == "__main__":
     parser.add_argument('--savef', dest='savef', default=None, type = int, required=False)
     parser.add_argument('--nchain', dest='nchain', default=2000, type = int, required=False)
     parser.add_argument('--antecedent', dest='antecedent', default=None, type=int,required=False)
+    parser.add_argument('--zmax', dest='zmax', default=0.2, type=float,required=False)
     parser.add_argument('--mpi', dest='mpi', action='store_true')
     parser.add_argument('--no-mpi', dest='mpi', action='store_false')
     parser.set_defaults(mpi=False)
@@ -123,12 +125,15 @@ if __name__ == "__main__":
     hg = HostGalaxies(sigma_mu=args.sigma_mu, catseed=args.seed, path=args.path)
 
     if args.antecedent is not None:
-        chain = pickle.load(open('{}/pvlist.{}.{}.{}.pkl.{}'.format(args.path,args.sigma_mu,args.seed,args.frac,args.antecedent), "rb" ) )
+        chain = pickle.load(open('{}/pvlist.{}.{}.{}.{}.pkl.{}'.format(args.path,args.sigma_mu,args.seed,args.frac,args.zmax,args.antecedent), "rb" ) )
     else:
         chain=None
 
-    if (args.frac !=0):
+    if (args.frac !=1):
         usehg, usexi = hg.getSubset(frac=args.frac)
+    elif (args.zmax !=0.2):
+        usehg, usexi = hg.getSubset(zmax=args.zmax)
+        print(usexi.shape)
     else:
         usehg = hg
         usexi = hg.xi
@@ -151,8 +156,9 @@ if __name__ == "__main__":
         else:
             indnm = i+args.antecedent+1
 
-        pickle.dump(chain, open('{}/pvlist.{}.{}.{}.pkl.{}'.format(args.path,args.sigma_mu,args.seed,args.frac,indnm), "wb" ) )
+        pickle.dump(chain, open('{}/pvlist.{}.{}.{}.{}.pkl.{}'.format(args.path,args.sigma_mu,args.seed,args.frac,args.zmax,indnm), "wb" ) )
 
+#python fit.py --path ../out/ --nchain 2000  --zmax=0.1
 # python fit.py --path ../test/ --nchain 200 --savef 10
 #mpirun -n 16 python fit.py --path ../out/ --mpi
 #srun -n 2 -C haswell python fit.py --path ../out/
