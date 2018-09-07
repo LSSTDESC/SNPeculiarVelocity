@@ -7,9 +7,12 @@ import array
 import os
 import sys
 from emcee.utils import MPIPool
-import cvxopt.lapack as lapack
-import cvxopt.blas as blas
-from cvxopt import matrix
+# import cvxopt.lapack as lapack
+# import cvxopt.blas as blas
+# from cvxopt import matrix
+from scipy.linalg.lapack import *
+
+import time
 
 class Fit(object):
     """docstring for Fit"""
@@ -31,23 +34,40 @@ class Fit(object):
         #     logdetC = numpy.log(numpy.linalg.eigvalsh(C)).sum()
         #     lp = -0.5* (logdetC +( mterm.T @ (Cinv @ mterm) ))
         # else:
-        dim = xi.shape[0]
+        # starttime=time.time()
+        # dim = xi.shape[0]
 
-        C_ = matrix(C)
-        W = matrix(0,(dim,1),'d')
-        lapack.syev(C_, W, jobz = 'N',uplo='U') 
-        logdetC = sum(numpy.log(W))
+        # C_ = matrix(C)
+        # W = matrix(0,(dim,1),'d')
+        # lapack.syev(C_, W, jobz = 'N',uplo='U') 
+        # logdetC = sum(numpy.log(W))
 
-        C_ = matrix(C)
-        ipiv = matrix(0,(dim,1),'i')
-        lapack.sytrf(C_, ipiv,uplo='U')
-        lapack.sytri(C_, ipiv,uplo='U')
+        # C_ = matrix(C)
+        # ipiv = matrix(0,(dim,1),'i')
+        # lapack.sytrf(C_, ipiv,uplo='U')
+        # lapack.sytri(C_, ipiv,uplo='U')
+        # print(C_[0:5,0:5])
+        # mterm_  = matrix(mterm)
+        # y = matrix(0,(dim,1),'d')
 
-        mterm  = matrix(mterm)
-        y = matrix(0,(dim,1),'d')
+        # blas.hemv(C_, mterm_, y ,uplo='U')
+        # lp = -0.5* (logdetC +blas.dot(mterm_, y) )
+        # print ("cvx ",lp)
+        # print("just algebra time ",time.time()-starttime)
 
-        blas.hemv(C_, mterm, y ,uplo='U')
-        lp = -0.5* (logdetC +blas.dot(mterm, y) )
+
+        starttime=time.time()
+        # eigenvalues of C
+        (w, v, info) = scipy.linalg.lapack.dsyev(C,0)
+        logdetC = numpy.log(w).sum()
+
+        # chi-square
+        (c, x, info)= scipy.linalg.lapack.dposv(C,mterm,overwrite_a=1)
+        lp = -0.5* (logdetC +numpy.dot(mterm,x))
+        print("scipy lapack ",lp)
+        print("just algebra time ",time.time()-starttime)
+
+        wef
 
         if not numpy.isfinite(lp):
             return -np.inf
@@ -135,7 +155,7 @@ if __name__ == "__main__":
         usehg, usexi = hg.getSubset(zmax=args.zmax)
         print(usexi.shape)
     else:
-        usehg = hg
+        usehg = hg.data
         usexi = hg.xi
 
     for i in range(0,args.nchain//args.savef):
@@ -158,7 +178,7 @@ if __name__ == "__main__":
 
         pickle.dump(chain, open('{}/pvlist.{}.{}.{}.{}.pkl.{}'.format(args.path,args.sigma_mu,args.seed,args.frac,args.zmax,indnm), "wb" ) )
 
-#python fit.py --path ../out/ --nchain 2000  --zmax=0.1
+#srun -n 1 -c 64 -u --cpu-bind=sockets python fit.py --path ../out/ --frac 0.5  --nchain=2
+#python fit.py --path ../out/ --nchain 1 frac=0.19
 # python fit.py --path ../test/ --nchain 200 --savef 10
 #mpirun -n 16 python fit.py --path ../out/ --mpi
-#srun -n 2 -C haswell python fit.py --path ../out/
