@@ -7,9 +7,9 @@ import array
 import os
 import sys
 from emcee.utils import MPIPool
-# import cvxopt.lapack as lapack
-# import cvxopt.blas as blas
-# from cvxopt import matrix
+import cvxopt.lapack as lapack
+import cvxopt.blas as blas
+from cvxopt import matrix
 from scipy.linalg.lapack import *
 
 import time
@@ -34,38 +34,59 @@ class Fit(object):
         #     logdetC = numpy.log(numpy.linalg.eigvalsh(C)).sum()
         #     lp = -0.5* (logdetC +( mterm.T @ (Cinv @ mterm) ))
         # else:
+        starttime=time.time()
+        dim = xi.shape[0]
+
+        C_ = matrix(C)
+        W = matrix(0,(dim,1),'d')
+        try:
+            lapack.syev(C_, W, jobz = 'N')
+        except ArithmeticError: 
+            return -np.inf
+
+        if (min(W) <= 0):
+            return -np.inf
+
+        logdetC = sum(numpy.log(W))
+
         # starttime=time.time()
-        # dim = xi.shape[0]
-
-        # C_ = matrix(C)
-        # W = matrix(0,(dim,1),'d')
-        # lapack.syev(C_, W, jobz = 'N',uplo='U') 
-        # logdetC = sum(numpy.log(W))
-
+        C_ = matrix(C)
+        W  = matrix(mterm)
+        try:
+            lapack.posv(C_, W, uplo = 'U')
+        except ArithmeticError: 
+            return -np.inf
+                       
+        lp = -0.5* (logdetC +blas.dot(matrix(mterm), W) )
+        # print(lp,time.time()-starttime)
+        # starttime=time.time()
         # C_ = matrix(C)
         # ipiv = matrix(0,(dim,1),'i')
         # lapack.sytrf(C_, ipiv,uplo='U')
         # lapack.sytri(C_, ipiv,uplo='U')
-        # print(C_[0:5,0:5])
         # mterm_  = matrix(mterm)
         # y = matrix(0,(dim,1),'d')
 
         # blas.hemv(C_, mterm_, y ,uplo='U')
         # lp = -0.5* (logdetC +blas.dot(mterm_, y) )
-        # print ("cvx ",lp)
+        # print ("cvx ",lp,time.time()-starttime)
+        # wfew
         # print("just algebra time ",time.time()-starttime)
 
         # eigenvalues of C
-        (w, v, info) = scipy.linalg.lapack.dsyev(C,0)
-        if (w.min() <= 0):
-            return -np.inf
 
-        logdetC = numpy.log(w).sum()
+        # (w, v, info) = scipy.linalg.lapack.dsyev(C,0)
+        # if (w.min() <= 0 or info != 0):
+        #     print("unhappy eigenvalue")
+        #     return -np.inf
 
-        # chi-square
-        (c, x, info)= scipy.linalg.lapack.dposv(C,mterm,overwrite_a=1)
-        lp = -0.5* (logdetC +numpy.dot(mterm,x))
+        # logdetC = numpy.log(w).sum()
 
+        # # chi-square
+        # (c, x, info)= scipy.linalg.lapack.dposv(C,mterm,overwrite_a=1)
+        # if (info !=0):
+        #     return -np.inf
+        # lp = -0.5* (logdetC +numpy.dot(mterm,x))
         if not numpy.isfinite(lp):
             return -np.inf
         return lp
@@ -175,7 +196,7 @@ if __name__ == "__main__":
 
         pickle.dump(chain, open('{}/pvlist.{}.{}.{}.{}.pkl.{}'.format(args.path,args.sigma_mu,args.seed,args.frac,args.zmax,indnm), "wb" ) )
 
-#srun -n 1 -c 64 -u --cpu-bind=sockets python fit.py --path ../out/ --frac 0.5  --nchain=2
-#python fit.py --path ../out/ --nchain 1 frac=0.19
+#srun -n 1 -c 64 --cpu-bind=sockets python fit.py --path ../out/ --frac 0.5  --nchain 2
+#python fit.py --path ../out/ --nchain 1 frac 0.19
 # python fit.py --path ../test/ --nchain 200 --savef 10
 #mpirun -n 16 python fit.py --path ../out/ --mpi
