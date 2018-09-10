@@ -29,13 +29,13 @@ class Fit(object):
         numpy.fill_diagonal(C,C.diagonal()+ sigma**2/nsne)
         mterm  = Deltam-M
 
-        C_ = matrix(C)
+        C = matrix(C)
         W  = matrix(mterm)
         try:
-            lapack.posv(C_, W, uplo = 'U')
+            lapack.posv(C, W, uplo = 'U')
         except ArithmeticError: 
             return -np.inf
-        logdetC= 2*numpy.log(numpy.array(C_).diagonal()).sum()
+        logdetC= 2*numpy.log(numpy.array(C).diagonal()).sum()
                        
         lp = -0.5* (logdetC +blas.dot(matrix(mterm), W) )
 
