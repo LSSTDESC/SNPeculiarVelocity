@@ -29,64 +29,16 @@ class Fit(object):
         numpy.fill_diagonal(C,C.diagonal()+ sigma**2/nsne)
         mterm  = Deltam-M
 
-        # if (usenp):
-        #     Cinv= numpy.linalg.inv(C)
-        #     logdetC = numpy.log(numpy.linalg.eigvalsh(C)).sum()
-        #     lp = -0.5* (logdetC +( mterm.T @ (Cinv @ mterm) ))
-        # else:
-        starttime=time.time()
-        dim = xi.shape[0]
-
-        C_ = matrix(C)
-        W = matrix(0,(dim,1),'d')
-        try:
-            lapack.syev(C_, W, jobz = 'N')
-        except ArithmeticError: 
-            return -np.inf
-
-        if (min(W) <= 0):
-            return -np.inf
-
-        logdetC = sum(numpy.log(W))
-
-        # starttime=time.time()
         C_ = matrix(C)
         W  = matrix(mterm)
         try:
             lapack.posv(C_, W, uplo = 'U')
         except ArithmeticError: 
             return -np.inf
+        logdetC= 2*numpy.log(numpy.array(C_).diagonal()).sum()
                        
         lp = -0.5* (logdetC +blas.dot(matrix(mterm), W) )
-        # print(lp,time.time()-starttime)
-        # starttime=time.time()
-        # C_ = matrix(C)
-        # ipiv = matrix(0,(dim,1),'i')
-        # lapack.sytrf(C_, ipiv,uplo='U')
-        # lapack.sytri(C_, ipiv,uplo='U')
-        # mterm_  = matrix(mterm)
-        # y = matrix(0,(dim,1),'d')
 
-        # blas.hemv(C_, mterm_, y ,uplo='U')
-        # lp = -0.5* (logdetC +blas.dot(mterm_, y) )
-        # print ("cvx ",lp,time.time()-starttime)
-        # wfew
-        # print("just algebra time ",time.time()-starttime)
-
-        # eigenvalues of C
-
-        # (w, v, info) = scipy.linalg.lapack.dsyev(C,0)
-        # if (w.min() <= 0 or info != 0):
-        #     print("unhappy eigenvalue")
-        #     return -np.inf
-
-        # logdetC = numpy.log(w).sum()
-
-        # # chi-square
-        # (c, x, info)= scipy.linalg.lapack.dposv(C,mterm,overwrite_a=1)
-        # if (info !=0):
-        #     return -np.inf
-        # lp = -0.5* (logdetC +numpy.dot(mterm,x))
         if not numpy.isfinite(lp):
             return -np.inf
         return lp
@@ -194,7 +146,7 @@ if __name__ == "__main__":
         else:
             indnm = i+args.antecedent+1
 
-        pickle.dump(chain, open('{}/pvlist.{}.{}.{}.{}.pkl.{}'.format(args.path,args.sigma_mu,args.seed,args.frac,args.zmax,indnm), "wb" ) )
+        pickle.dump(chain, open('{}/pvlist.{}.{}.{}.{}.pkl.{}'.format(args.path,args.sigma_mu,args.seed,args.frac,args.zmax,chain.shape[1]), "wb" ) )
 
 #srun -n 1 -c 64 --cpu-bind=sockets python fit.py --path ../out/ --frac 0.5  --nchain 2
 #python fit.py --path ../out/ --nchain 1 frac 0.19
