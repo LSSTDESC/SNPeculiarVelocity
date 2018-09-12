@@ -8,6 +8,8 @@ import array
 
 class HostGalaxies(object):
     """docstring for HostGalaxies"""
+    # out dec [0.0161435347419 89.7359068657]
+    # out b [-62.7640357412 78.3530163744]
 
     def __init__(self, sigma_mu=0.08, catseed=1234, seed=123, path='../test/'):
         super(HostGalaxies, self).__init__()
@@ -57,7 +59,7 @@ class HostGalaxies(object):
                 self.galaxies['l'][sortin[i]],self.galaxies['b'][sortin[i]], self.galaxies['mB_expected'][sortin[i]])),file=f)
         f.close()
 
-    def getSubset(self,decmin=-90, decmax=90, zmax=0.2, frac=1):
+    def getSubset(self,decmin=-90, decmax=90, zmax=0.2, bmin=-90, bmax=90, frac=1):
         out = copy.deepcopy(self.data)
 
         # decide if supernovae are discovered or not
@@ -77,7 +79,8 @@ class HostGalaxies(object):
                 sindex += self.galaxies["nsne"][i]
 
         w = numpy.logical_and.reduce((out['galaxies']['nsne'] > 0,out['galaxies']['dec'] > decmin,
-            out['galaxies']['dec'] < decmax,
+            out['galaxies']['dec'] < decmax, out['galaxies']['b'] >= bmin,
+            out['galaxies']['b'] < bmax,
             out['galaxies']['redshift'] < zmax))
 
         for key, value in out["galaxies"].items():
@@ -110,6 +113,6 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     hg = HostGalaxies(sigma_mu=args.sigma_mu, catseed=args.seed, path=args.path)
-    #sg, sxi = hg.getSubset(zmax=0.01)
-
+    # sg, sxi = hg.getSubset(decmax=60, bmin=-34, bmax=34)
+    # print (hg.xi.shape[0], sxi.shape[0])
     # HostGalaxies(sigma_mu=args.sigma_mu, catseed=args.seed, path=args.path).draganFormat()
