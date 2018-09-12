@@ -104,6 +104,9 @@ if __name__ == "__main__":
     parser.add_argument('--nchain', dest='nchain', default=2000, type = int, required=False)
     parser.add_argument('--antecedent', dest='antecedent', default=None, type=int,required=False)
     parser.add_argument('--zmax', dest='zmax', default=0.2, type=float,required=False)
+    parser.add_argument('--skycut', dest='skycut', action='store_true')
+    parser.add_argument('--no-skycut', dest='skycut', action='store_false')
+    parser.set_defaults(skycut=False)
     parser.add_argument('--mpi', dest='mpi', action='store_true')
     parser.add_argument('--no-mpi', dest='mpi', action='store_false')
     parser.set_defaults(mpi=False)
@@ -112,18 +115,28 @@ if __name__ == "__main__":
     if args.savef is None:
         args.savef = args.nchain
 
-    hg = HostGalaxies(sigma_mu=args.sigma_mu, catseed=args.seed, path=args.path)
+    if args.skycut:
+        decmax=60.
+        bmin=-34.
+        bmax=34
+        fstr='skycut.'
+    else:
+        fstr=''
 
+    hg = HostGalaxies(sigma_mu=args.sigma_mu, catseed=args.seed, path=args.path)
+    
     if args.antecedent is not None:
-        chain = pickle.load(open('{}/pvlist.{}.{}.{}.{}.pkl.{}'.format(args.path,args.sigma_mu,args.seed,args.frac,args.zmax,args.antecedent), "rb" ) )
+        chain = pickle.load(open('{}/pvlist.{}.{}.{}.{}.{}pkl.{}'.format(args.path,args.sigma_mu,args.seed,args.frac,args.zmax,fstr,args.antecedent), "rb" ) )
     else:
         chain=None
 
-    if (args.frac !=1):
-        usehg, usexi = hg.getSubset(frac=args.frac)
-    elif (args.zmax !=0.2):
-        usehg, usexi = hg.getSubset(zmax=args.zmax)
-        print(usexi.shape)
+    if (args.frac !=1 or args.zmax !=0.2 or args.skycut):
+        usehg, usexi = hg.getSubset(frac=args.frac, zmax=args.zmax,decmax=decmax, bmin=bmin, bmax=bmax)
+    # elif (args.zmax !=0.2):
+    #     usehg, usexi = hg.getSubset(zmax=args.zmax, decmax=decmax, bmin=bmin, bmax=bmax)
+    #     print(usexi.shape)
+    # elif (args.skycut)
+        print (usexi.shape)
     else:
         usehg = hg.data
         usexi = hg.xi
@@ -146,7 +159,7 @@ if __name__ == "__main__":
         else:
             indnm = i+args.antecedent+1
 
-        pickle.dump(chain, open('{}/pvlist.{}.{}.{}.{}.pkl.{}'.format(args.path,args.sigma_mu,args.seed,args.frac,args.zmax,chain.shape[1]), "wb" ) )
+        pickle.dump(chain, open('{}/pvlist.{}.{}.{}.{}.{}pkl.{}'.format(args.path,args.sigma_mu,args.seed,args.frac,args.zmax,fstr,chain.shape[1]), "wb" ) )
 
 #srun -n 1 -c 64 --cpu-bind=sockets python fit.py --path ../out/ --frac 0.5  --nchain 2
 #python fit.py --path ../out/ --nchain 1 frac 0.19
