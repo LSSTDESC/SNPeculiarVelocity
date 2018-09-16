@@ -34,7 +34,7 @@ def main(seed, test = True):
     numpy.random.seed(seed)
 
     # catalog quantities necessary to do the analysis
-    quantities = ["redshift", "redshift_true","ra","dec","galaxy_id",
+    quantities = ["redshift_true","ra","dec","galaxy_id",'position_x','position_y','position_z','velocity_x','velocity_y','velocity_z',
                   "truth/COEFFS/0","truth/COEFFS/1","truth/COEFFS/2","truth/COEFFS/3","truth/COEFFS/4"]
 
     # GCRCatalog is not efficient for one-step filtering since derived quantities calculated for everything.  Hence do a first coarse filter.
@@ -50,6 +50,8 @@ def main(seed, test = True):
 
     out = None
 
+    c_light = 299792.458
+
     for data in coadd_cat.get_quantities(quantities, filters = filts, return_iterator=True):
         sfr_met_smass=gdq.get_derived_quantities(numpy.array([data["truth/COEFFS/0"],data["truth/COEFFS/1"],
                                                   data["truth/COEFFS/2"],data["truth/COEFFS/3"],
@@ -63,6 +65,13 @@ def main(seed, test = True):
         data['random_realize'] = []
         for nsn in data['nsne']:
             data['random_realize'].append(numpy.random.normal(scale=1,size=nsn))
+
+        data['redshift']=  data['position_x']*data['velocity_x'] + data['position_y'] * data['velocity_y'] + data['position_z']*data['velocity_z']
+        data['redshift'] = data['redshift']/numpy.sqrt(data['position_x']**2 + data['position_y']**2+data['position_z']**2)
+        data['redshift'] = (1+data['redshift']/c_light)/numpy.sqrt(1-(data['velocity_x']**2 + data['velocity_y']**2+data['velocity_z']**2)/c_light**2)
+        data['redshift'] = (1+data['redshift_true'])*data['redshift'] -1
+
+
         data['mB_true_mn'] = MB + cosmo.distmod(data["redshift_true"]).value
         data['mB_expected'] = MB + cosmo.distmod(data["redshift"]).value
         c = SkyCoord(ra=data["ra"]*u.degree, dec=data["dec"]*u.degree, frame='icrs')
