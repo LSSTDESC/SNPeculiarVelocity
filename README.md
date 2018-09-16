@@ -56,16 +56,16 @@ these executables in a `bin` directory.
 
 * Make the SNe and galaxies.
 ```
-python PVHostGalaxies.py
+python PVHostGalaxies.py --no-test
 ```
 * Make ASCII file readable by Dragan's code.  In python:
 ```
 from HostGalaxies import *
 HostGalaxies().draganFormat() 
 ```
-* Run Dragan's code from directory where ascii file is created.
+* Run Dragan's code
 ```
-sig
+srun -n  5248 -c 1 --cpu_bind=cores ./sig 0 $HOME/desc/PeculiarVelocity/out/pv.1234
 ```
 * Fit parameters.
 ```

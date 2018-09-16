@@ -73,14 +73,14 @@ class GetDerivedQuantities:
 
         smass = np.dot(self.mass_tot, coeff.T) * (da * 1e6 / 10) ** 2
         ssfr  = np.dot(coeff, self.sfh_tot)
-        met   = np.dot(coeff, self.sfh_tot * self.sfh_met) / ssfr
+        # met   = np.dot(coeff, self.sfh_tot * self.sfh_met) / ssfr
         sfr   = ssfr * smass[:,np.newaxis]
 
         #get the values at z_galaxy
-        met   = met[:,-1]
+        # met   = met[:,-1]
         sfr   = sfr[:,-1]
 
-        return np.vstack((sfr, met, smass))
+        return np.vstack((sfr, np.zeros(len(smass)), smass))
 
     def __init__(self,template_path):
         self.sfh_tot = fitsio.read(template_path, 12)
@@ -140,5 +140,4 @@ if __name__=='__main__':
 
     galaxies  = fitsio.FITS(filename)[-1].read(columns=['COEFFS','Z','DELTAM']) # read relevant info from files
     coeffs    = galaxies['COEFFS']*10**(galaxies['DELTAM'].reshape(-1,1)/2.5)
-    
     sfr, met, smass = get_derived_quantities(kfile,coeffs,galaxies['Z'])

@@ -112,7 +112,7 @@ if __name__ == "__main__":
     parser.add_argument('--path', dest='path', default='../test/', type = str, required=False)
     args = parser.parse_args()
 
-    hg = HostGalaxies(sigma_mu=args.sigma_mu, catseed=args.seed, path=args.path)
+    # hg = HostGalaxies(sigma_mu=args.sigma_mu, catseed=args.seed, path=args.path)
     # sg, sxi = hg.getSubset(decmax=60, bmin=-34, bmax=34)
     # print (hg.xi.shape[0], sxi.shape[0])
-    # HostGalaxies(sigma_mu=args.sigma_mu, catseed=args.seed, path=args.path).draganFormat()
+    HostGalaxies(sigma_mu=args.sigma_mu, catseed=args.seed, path=args.path).draganFormat()
