@@ -121,6 +121,9 @@ if __name__ == "__main__":
         bmax=34
         fstr='skycut.'
     else:
+        decmax=90
+        bmin=-90
+        bmax=90
         fstr=''
 
     hg = HostGalaxies(sigma_mu=args.sigma_mu, catseed=args.seed, path=args.path)
