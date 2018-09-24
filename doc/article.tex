@@ -3,6 +3,7 @@
 								% TeX will automatically convert eps --> pdf in pdflatex		
 \usepackage{amssymb}
 \usepackage{natbib}
+\usepackage{grffile}
 
 %SetFonts
 
@@ -33,8 +34,7 @@ Arbor, MI 48109, USA }
 Peculiar velocities provide a measure of $f\sigma_8$, which in turn probes gravity.  As precise distance indicators Type~Ia supernovae
 can provide precise peculiar velocities (expressed equivalently as peculiar magnitudes)
 of their host galaxies \citep{2006PhRvD..73l3526H,2011ApJ...741...67D}.
-\citet{2015JCAP...12..033H, 2017JCAP...05..015H}  test and ultimately find consistency between
-$\Lambda$CDM and the peculiar velocities of existing SN~Ia samples.
+\citet{2015JCAP...12..033H, 2017JCAP...05..015H}  test and ultimately detect correlations in the peculiar velocities of existing SN~Ia samples.
 
 Surveys such as ZTF and LSST are and will discover orders of magnitude more nearby SNe~Ia than currently available.
 The motivation of this work is to quantify the probative power of SN~Ia-derived peculiar velocities in the LSST era.
@@ -45,41 +45,88 @@ posteriors using MCMC on reasonable computing timescales.   We can use our machi
 compare different survey parameters, such as redshift depth, total numbers of supernovae,
 solid angle/survey geometry, and SN~Ia intrinsic magnitude dispersion.
 
-The cross-correlation between galaxy-count and peculiar velocity surveys is not yet implemented but is a planned extension of this work.  We would like to
+The cross-correlation between galaxy-count and peculiar-velocity surveys is not yet implemented but is a planned extension of this work.  We would like to
 quantify the suppression of sample variance achieved when considering matter-densities and velocities 
 within the same volume \citep{2007PhRvL..99h1301G}.
 
 \section{Simulated Data}
-The Buzzard (v1.6) galaxy catalog is used.  This is because it is the survey, among those currently available
-in the Generic Catalog Reader of the DESC, with a light cone that covers the largest solid angle of 10,313.24 sq.~deg.  However,
+The Buzzard (v1.6) galaxy catalog is used.  This is because it is the survey, with a light cone that covers 10,313.24 sq.~deg., that covers
+the largest solid angle among those currently available
+in the DESC Generic Catalog Reader.  However,
 the survey geometry is different
-from that of LSST.  The catalog is based on a Flat $\Lambda$CDM model with $\Omega_M=0.286$, $\Omega_B=0.047$, and
-$\Omega_\nu=0$,
-The catalog contains140M galaxies with observed $z<0.2$.  Each galaxies cosmological redshift, redshift that combines
-which the star formation rate and stellar mass are available; from these  parameters the
-supernova rate of each host is determined using the rates of
+from that of LSST.  The catalog is based on a Flat $\Lambda$CDM model with $H_0=70$~km~s$^{-1}$,  $\Omega_M=0.286$, $\Omega_B=0.047$, and
+$\Omega_\nu=0$.
+The catalog contains 140M galaxies with observed redshift $z<0.2$.
+Each galaxy has its cosmological redshift, the $x$-, $y$-, $z$-components of its peculiar velocity from which
+the radial peculiar velocity is determined, and its
+star formation rate and stellar mass from which the
+supernova rate of each host is determined using 
 \citet{2012ApJ...755...61S}.  Supernovae are realized for a span of 10 observer-years yielding 17,205 objects.  This total supernova
-production underestimates the expected discovery of 134,574 supernovae in 10 observer-years based on the volumetric
+production underestimates the expected discovery of 130,000 supernovae in 10 observer-years based on the volumetric
 rate of \citet{2010ApJ...713.1026D}.  The volumetric rate is more robust, so the sample under consideration in this article
 corresponds to 1.3 years worth of discoveries. 
 
+Each supernova is assigned a magnitude based on the distance modulus of its cosmological
+redshift plus a random term drawn from a Normal distribution $\sigma_M$, which for simplicity is the same for all supernovae and captures both
+intrinsic magnitude dispersion and measurement uncertainty.  No other corrections are applied to the observed magnitude.  Dipole effects of the heliocentric
+motion with respect to the CMB and of the galaxies with respect to the CMB  are ignored: referring to
+\citet{2011ApJ...741...67D}, the effects in Eq.~18 are ignored.
+
 \section{Analysis}
-The analysis of this article is identical to that of \citet{2015JCAP...12..033H, 2017JCAP...05..015H}.   The peculiar magnitude correlation
-function $\xi_{\delta m \delta m}$ expected from General Relativity, the matter density power spectrum at the CMB assuming the same
-cosmological parameters used for the Buzzard catalog, is calculated using CAMB \citep{Lewis:2002ah}.  Our model for the data covariance
+The analysis of this article is  almost identical to that of \citet{2015JCAP...12..033H, 2017JCAP...05..015H}.   The peculiar magnitude correlation
+function $\xi_{\delta m \delta m}$ expected from General Relativity starting with the CMB
+matter density power spectrum is calculated using CAMB \citep{Lewis:2002ah}  assuming the same
+cosmological parameters used for the Buzzard catalog.  Our model for the data covariance
 is
 \begin{equation}
-C_{ij} = A\xi_{\delta m \delta m}(\mathbf{r_i},\mathbf{r_j}) + \frac{\sigma_M^2}{N_i} \delta_{ij}.
+C_{ij} = A\xi_{\delta m \delta m}(\mathbf{r_i},\mathbf{r_j}) + \frac{\sigma_M^2}{N_i} \delta_{ij} + \sigma^2_{NL}(z_i;\sigma_{v})\delta_{ij}.
 \end{equation}
-In this model, we treat the shape of the power spectrum $\xi$ as fixed, and use the parameter $A$ to represent
+In this model, we treat the shape of the power spectrum $\xi$ as fixed and use the parameter $A$ to represent
 deviations from General Relativity $A=1$.  This model is not sensitive to  the shape of
 the power spectrum between gravitational models.  Nevertheless, for
-convenience we make the association that our model gives $f\sigma_8 = A f\sigma_8^{GR}$, where $ f\sigma_8^{GR}$ is the expectation
+convenience we say that our model gives $f\sigma_8 = A (f\sigma_8)^{GR}$, where $(f\sigma_8)^{GR}$ is the expectation
 from General Relativity.  Special cases of modified gravity could give $A=1$, but inconsistency with $A=1$ is is evidence against General Relativity.
-
+The final term includes extra magnitude dispersion produced by non-linear effects on velocity, parameterized with $\sigma_{v}$, such that
+\begin{equation}
+\sigma_{NL} = \frac{5}{\ln{10}} \frac{1+\bar{z}}{\bar{z}} \sigma_v,
+\end{equation}
+where $\bar{z}$ is the cosmological redshift of the host galaxy.
 \section{Results of Subsets}
 
+For all analyses we remove supernovae below observed $z_{min}=0.01$ in order to
+reduce errors made in the first-order transformation between velocity and
+magnitude.  This cut removes a  small volume relative to the full survey.
 
+We consider two different scenarios cutting at different redshift depths $z_{max}=0.1$ and  $z_{max}=0.15$.  All the objects in the first
+scenario are in the second scenario.  The results are shown in Fig.~\ref{zmax:fig}.  The points of interest are:
+\begin{itemize}
+\item There is a bias toward low $f\sigma_8$ for low-redshift ($z_{max}=0.1$).  Adding more supernova with increasing redshift
+ decreases the bias  ($z_{max}=0.15$), and $A$ eventually approaches 1 ($z_{max}=0.2$ not shown).
+ \item Based on the analysis of \citet{2017MNRAS.471.3135H}, I added an intrinsic velocity dispersion $\sigma_v$ (km~s$^{-1}$) due to non-linear effects.  This was not
+ in Dragan's model.  My fit finds that this  dispersion is consistent with zero, not well constrained, and not strongly correlated with
+ $A$.  The lack of covariance is consistent with Dragan's own tests.
+ \item The fit intrinsic magnitude dispersion, on the other hand, is larger than the input $\sigma_M=0.08$ mag.  This  indicates that the catalogs
+ contain 
+ extra  velocity dispersion better attributed to intrinsic magnitude dispersion rather than correlated peculiar velocities.
+\end{itemize}
+
+
+\begin{figure}
+\includegraphics[width=0.5\textwidth]{../out/pvlist.0.08.1234.1.0.1.pkl.2000.png}
+\includegraphics[width=0.5\textwidth]{../out/pvlist.0.08.1234.1.0.15.pkl.2000.png}
+\caption{Confidence regions for the model parameters.  $A=(f\sigma_8)/(f\sigma_8)_{GR}$, $M$ is the supernova
+absolute magnitude, $\sigma_M$ is the magnitude dispersion, and $\sigma_v$ is the non-linear contribution
+to peculiar velocity.   The parameters for which I controlled the input, $M=0$ and $\sigma_M=0.08$~mag, are shown in dotted lines.
+ Left: A survey truncated at $z_{max}=0.1$.  Right: A survey truncated at $z_{max}=0.15$.
+\label{zmax:fig}}
+\end{figure}
+
+\begin{itemize}
+\item Dragan: Is there some way that the formalism in your article breaks down at low-redshift?  I do remove very low-redshift objects at $z<0.01$,
+which I think is conservative.
+ \item Risa/Joe: Is there any reasons for the Buzzard catalog to not capture correlated peculiar velocities on small scales (box size to large?) nor capture
+ non-linear velocities?  (I don't know how to translate a mass resolution of 2.7e10 $M_{\odot}/h$ into a spatial resolution!)
+\end{itemize}
 
 \bibliographystyle{aasjournal}
 \bibliography{/Users/akim/Documents/alex}

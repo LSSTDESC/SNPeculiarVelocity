@@ -11,7 +11,8 @@ import cvxopt.lapack as lapack
 import cvxopt.blas as blas
 from cvxopt import matrix
 from scipy.linalg.lapack import *
-
+import astropy.cosmology
+from scipy.stats import cauchy
 import time
 
 class Fit(object):
@@ -19,14 +20,13 @@ class Fit(object):
     # def __init__(self):
     #     super(Fit, self).__init__()
 
-
     @staticmethod        
-    def lnprob(theta, Deltam, nsne, xi):
-        A, M, sigma = theta
-        if (A <=0 or sigma <0):
+    def lnprob(theta, Deltam, nsne, xi,redshiftterm):
+        A, M, sigma, pv = theta
+        if (A <=0 or sigma <0 or pv<0):
             return -numpy.inf
         C = A*numpy.array(xi)
-        numpy.fill_diagonal(C,C.diagonal()+ sigma**2/nsne)
+        numpy.fill_diagonal(C,C.diagonal()+ sigma**2/nsne + (pv*redshiftterm)**2)
         mterm  = Deltam-M
 
         C = matrix(C)
@@ -37,19 +37,19 @@ class Fit(object):
             return -np.inf
         logdetC= 2*numpy.log(numpy.array(C).diagonal()).sum()
                        
-        lp = -0.5* (logdetC +blas.dot(matrix(mterm), W) )
+        lp = -0.5* (logdetC +blas.dot(matrix(mterm), W) ) + cauchy.logpdf(sigma, loc=0.08, scale=0.5) + cauchy.logpdf(pv, loc=0, scale=600/3e5)
 
         if not numpy.isfinite(lp):
             return -np.inf
         return lp
 
     @staticmethod  
-    def fit(Deltam, nsne, xi, mpi=False, p0=None, nchain=2000, **kwargs):
-        ndim, nwalkers = 3, 8
-        sig = numpy.array([0.1,0.01,0.01])
+    def fit(Deltam, nsne, xi, redshiftterm,mpi=False, p0=None, nchain=2000, **kwargs):
+        ndim, nwalkers = 4, 8
+        sig = numpy.array([0.1,0.01,0.01,50/3e5])
 
         if p0 is None:
-            p0 = [numpy.array([1,0,0.08])+numpy.random.uniform(low = -sig, high=sig) for i in range(nwalkers)]
+            p0 = [numpy.array([1,0,0.08,200/3e5])+numpy.random.uniform(low = -sig, high=sig) for i in range(nwalkers)]
 
         if mpi:
             pool = MPIPool()
@@ -60,12 +60,12 @@ class Fit(object):
                 import time
                 starttime = time.time()
                 print("Start {}".format(starttime))
-            sampler = emcee.EnsembleSampler(nwalkers, ndim, Fit.lnprob, args=[Deltam, nsne,xi], pool=pool)
+            sampler = emcee.EnsembleSampler(nwalkers, ndim, Fit.lnprob, args=[Deltam, nsne,xi,redshiftterm], pool=pool)
         else:
             import time
             starttime = time.time()
             print("Start {}".format(starttime))
-            sampler = emcee.EnsembleSampler(nwalkers, ndim, Fit.lnprob, args=[Deltam, nsne,xi])
+            sampler = emcee.EnsembleSampler(nwalkers, ndim, Fit.lnprob, args=[Deltam, nsne,xi,redshiftterm])
 
         sampler.run_mcmc(p0, nchain)
 
@@ -89,7 +89,8 @@ class Fit(object):
             m_eff.append(m.sum()/n)
         m_eff=numpy.array(m_eff)
         Deltam=m_eff- galaxies['mB_expected']
-        sampler = Fit.fit(m_eff- galaxies['mB_expected'],  galaxies['nsne'],xi, **kwargs)
+        sampler = Fit.fit(m_eff- galaxies['mB_expected'],  galaxies['nsne'],xi, \
+            5/numpy.log(10)*(1+galaxies['redshift_true'])/galaxies['redshift_true'],**kwargs)
         return sampler
  
 if __name__ == "__main__":

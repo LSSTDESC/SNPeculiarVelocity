@@ -4,6 +4,7 @@ import copy
 import argparse
 import os.path
 import array
+import astropy.cosmology
 
 
 class HostGalaxies(object):
@@ -19,6 +20,15 @@ class HostGalaxies(object):
         self.catseed=catseed
         self.sigma_mu = sigma_mu
         self.seed=seed
+        # self.nonlinear = 200./2.99792458e5
+
+        # dm/dv = dm/dz dz/dzv dzv/dv
+        #       = dm/dz (1+z)
+        # cosmology = astropy.cosmology.FlatLambdaCDM(70, 0.286)
+        # onepluszv=numpy.sqrt((1-self.nonlinear)/(1+self.nonlinear))
+        # dm = (cosmology.distmod(self.galaxies['redshift_true'])-cosmology.distmod((1+self.galaxies['redshift_true'])*onepluszv-1)).value \
+        #     *(1+self.galaxies['redshift_true'])
+
 
         numpy.random.seed(self.seed)
         rand = []
@@ -26,8 +36,9 @@ class HostGalaxies(object):
             rand.append(numpy.random.normal(scale=sigma_mu,size=nsn))
 
         self.galaxies['mB'] = []
-        for ran , mag in zip(rand, self.galaxies['mB_true_mn']):
-            self.galaxies['mB'].append(ran + mag)
+        for ran , mag, red, red_true in zip(rand, self.galaxies['mB_true_mn'],self.galaxies['redshift'],self.galaxies['redshift_true']):
+            # onepluszspec = (1+red)/(1+red_true)
+            self.galaxies['mB'].append(ran + mag)   # + 10*numpy.log10(onepluszspec))
 
         self.xi = None
 
@@ -45,8 +56,11 @@ class HostGalaxies(object):
                 self.xi[i,j] =v
                 if (i !=j):
                     self.xi[j,i]=v
-            pickle.dump(self.xi,open("{}/pvlist.{}.xi.pkl".format(path,catseed), "wb" ))
+            # pickle.dump(self.xi,open("{}/pvlist.{}.xi.pkl".format(path,catseed), "wb" ))
 
+        # for i in range(ngal):
+        #     print (self.xi[i,i],dm[i]**2)
+        #     self.xi[i,i] = self.xi[i,i]+dm[i]**2
 
     def draganFormat(self, sort=False):
         if sort:
@@ -81,7 +95,7 @@ class HostGalaxies(object):
         w = numpy.logical_and.reduce((out['galaxies']['nsne'] > 0,out['galaxies']['dec'] > decmin,
             out['galaxies']['dec'] < decmax, out['galaxies']['b'] >= bmin,
             out['galaxies']['b'] < bmax,
-            out['galaxies']['redshift'] < zmax))
+            out['galaxies']['redshift'] < zmax,out['galaxies']['redshift'] > 0.01))
 
         for key, value in out["galaxies"].items():
             if (key != 'random_realize' and key != 'mB'):   #everything is a numpy array
