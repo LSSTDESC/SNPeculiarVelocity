@@ -9,6 +9,7 @@
 #include"recipes/nrutil.h"
 #include"recipes/nr.h"
 
+//This is branch periodic2. I'm updating the code so that rho-rho and rho-v matrices can be calculated. 09/30/2018.
 
 int main()
 {
