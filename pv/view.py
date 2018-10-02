@@ -30,7 +30,7 @@ for name,nsn,zma,fra in zip(names,nsne,zmax,frac):
     # c.add_chain(dum, parameters=["$A$", "$M$","$\sigma_M$","$\sigma_{v}$"])
     # c.plotter.plot(filename="/Users/akim/project/PeculiarVelocity/outcosmo/"+name+".png", figsize="column",truth=[None,0,0.08,None])
 
-    print("{:4.2f} & {:4.1f} & {} & {:6.3f} & {:6.2f} & {:6.2f} & {:6.3f}  \\\\ \n".format( \
+    print("{:4.2f} & {:4.1f} & {} & {:6.3f} & {:6.2f} & {:6.3f} & {:6.2f} \\\\ \n".format( \
         zma,fra,nsn,cutchain[:,:,0].mean(), cutchain[:,:,0].std(), \
-        cutchain[:,:,0].mean()/cutchain[:,:,0].std()*numpy.sqrt(12000./4000), \
-        cutchain[:,:,0].mean()/cutchain[:,:,0].std()/numpy.sqrt(nsn)))
+        cutchain[:,:,0].mean()/cutchain[:,:,0].std()/numpy.sqrt(nsn), \
+        cutchain[:,:,0].mean()/cutchain[:,:,0].std()*numpy.sqrt(12000./4000)))
