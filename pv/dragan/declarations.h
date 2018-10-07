@@ -222,8 +222,12 @@ double Cl_vel_integrand(double log10k, void *p) ;
 double vel_integrand(double log10k, int ell, double z);
 
 double Cij_theta_vel_integrand(double log10k, void *p);
+
+double Cij_theta_density_integrand(double log10k, void *p);
+
 double Cij_theta_gsl_int(int i, int j, double z1, double z2, double costh, double omega_m, double w0, double wa);
 
+double Cij_theta_gsl_density_int(int i, int j, double z1, double z2, double costh, double omega_m, double w0, double wa);
 
 void run_camb_get_Tk_friendly_format(int do_nonlinear, double omega_m, double omhh_local, double obhh_local, double ns, 
                                      double dn_dlnk, double A_k_WMAP, double w0);

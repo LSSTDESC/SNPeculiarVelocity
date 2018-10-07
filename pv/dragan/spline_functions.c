@@ -598,6 +598,86 @@ double Cij_theta_vel_integrand(double log10k, void *p)
 
     return(prefac0*prefac1*prefac2*prefac3*sum );
 }
+
+//Chao: This is the integrand for density-density matrix
+
+double Cij_theta_density_integrand(double log10k, void *p)
+{
+    // velocity power spectrum, following the note of Hui
+    int ell;
+    double k;
+    double sum=0, fac;
+
+    struct Cij_theta_params * params = (struct Cij_theta_params *)p;
+
+    int     i = (params->a);
+    int     j = (params->b);
+    double z1 = (params->c);
+    double z2 = (params->d);
+    double costh = (params->e);
+    double om = (params->f);
+    double w0 = (params->g);
+    double wa = (params->h);
+
+    k    = pow(10.0, log10k);  // units are h Mpc^{-1}
+
+    double chi1 = r_dimless_tab(z1)/H0_hmpcinv;
+    double chi2 = r_dimless_tab(z2)/H0_hmpcinv;
+
+ 
+    // checked very small diff in results if the starting 1s are zeroed out
+   
+    if (PRINT_FLAG == 1) printf("density-density matrix, no prefactor\n");
+    
+    // Chao: note that we don't have the k^2 factor for the  density-density integral
+    double prefac3 =  1/(2*M_PI*M_PI) *
+        log(10.0) * k * k * k *                       // conversion: they have dk, I want dlog10(k)
+        Pk_CAMB_NR_tab(k);                        // P(k) from CAMB
+    int lmax;
+
+    /////////////////////////////////////////////////////////////////////////
+    // 16 October 2016: found sufficient conditions on lmax;
+    // drastically smaller lmax in all cases except aligned, high-z objects
+    /////////////////////////////////////////////////////////////////////////
+    //if ((z1 > 0.05) && (z2 > 0.05) && (costh > 0.95)) lmax = LMAX_CIJ_THETA;
+    if (costh > 0.95)  lmax = LMAX_CIJ_THETA;
+    else               lmax = 20.0;
+    //FIX
+    //lmax=10;
+
+    for (ell=0; ell<=lmax; ell++)
+    {
+        if (WINDOW == 3) // no mean of magnitude subtracted
+            fac = gsl_sf_legendre_Pl(ell,costh);
+        if (WINDOW == 2) // mean subtracted with arbitrary window
+        {
+            fac = gsl_sf_legendre_Pl(ell,costh) -
+                4*M_PI/(2*ell+1) * Wl_nhat_sn_glob[ell][i] -
+                4*M_PI/(2*ell+1) * Wl_nhat_sn_glob[ell][j] +
+                4*M_PI           * Wl_glob[ell];
+        }
+        if (WINDOW == 1) // mean subtracted with window = all sky
+        {
+            if (ell == 0) // W_l and W_l(nhat) are nonzero only for ell=0
+                fac = gsl_sf_legendre_Pl(ell,costh) - 2 + 1;
+            else
+                fac = gsl_sf_legendre_Pl(ell,costh);
+        }
+
+        //sum += (2*ell+1) * jl_prime(ell, k*chi1) *  jl_prime(ell, k*chi2) * fac;
+        // checked same result with jlprime_NR_tab as with jlprime_tab and jl_prime - Apr 2016
+        sum += (2*ell+1) * jlprime_NR_tab(ell, k*chi1) *  jlprime_NR_tab(ell, k*chi2) * fac;
+    }	
+    return(prefac3*sum);
+}                          
+
+
+
+
+
+
+
+
 double Cij_theta_gsl_int(int i, int j, double z1, double z2, double costh, double omega_m, double w0, double wa)
 {
     /*********************************/
@@ -643,3 +723,51 @@ double Cij_theta_gsl_int(int i, int j, double z1, double z2, double costh, doubl
     return(result);
 }
 
+
+//Chao: This is the integration code for density. Note that it might be cleaner to incorporate this in the above code for velocity integration
+//by using a switch or if-else statement. This can be implemented later.
+
+double Cij_theta_gsl_density_int(int i, int j, double z1, double z2, double costh, double omega_m, double w0, double wa)
+{
+    /*********************************/
+    /** Following the Hui_note.pdf  **/
+    /*********************************/
+
+    /*******************************************************************/
+    /**             !!!!  I M P O R T A N T !!!!                      **/
+    /** Turn off the error handler since things are already accurate  **/
+    /*******************************************************************/
+    gsl_set_error_handler_off ();
+
+    /* for gsl integration */
+    gsl_integration_workspace * work = gsl_integration_workspace_alloc (1000);
+    double result, error;
+
+    gsl_function F;
+    F.function = &Cij_theta_density_integrand;
+
+    struct Cij_theta_params params = {i, j, z1, z2, costh, omega_m, w0, wa};
+    F.params = &params;
+
+    //printf("%f %f\n", LOG10_KMIN_CIJ_INT, LOG10_KMAX_CIJ_INT);
+    /* run the integrator! */
+    /************************************************************************************/
+    /*** Oct 16, 2016: found that need high kmax only for very low z, and vice versa.  **/
+    /************************************************************************************/
+    double log10_kmax_func_of_z;
+    if     ((z1 < 0.005) && (z2 < 0.005))  log10_kmax_func_of_z = 2.0;
+    else if ((z1 < 0.03) && (z2 < 0.03))   log10_kmax_func_of_z = 1.0;
+    else                                   log10_kmax_func_of_z = 0.5; // agrees with LOG10_KMAX_CIJ_INT
+    //FIX
+    //log10_kmax_func_of_z=0.0;
+
+    gsl_integration_qag (&F, LOG10_KMIN_CIJ_INT, log10_kmax_func_of_z,
+                         1.0e-7, 1.0e-2, 1000, 1, work, &result, &error);  // -2 is good enough for rel, given LMAX and KMAX unc
+    //printf ("result          = % .18f\n", result);
+    //printf ("estimated error = % .18f\n", error);
+    //printf ("intervals =  %d\n", work->size);
+
+    gsl_integration_workspace_free (work);
+
+    return(result);
+}
