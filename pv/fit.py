@@ -7,7 +7,7 @@ import array
 
 class Fit(object):
     """docstring for Fit"""
-    def __init__(self,  sigma_mu=0.08, catseed=1234, path='../test/'):
+    def __init__(self,  sigma_mu=0.08, catseed=1234, path='/project/projectdirs/m1727/akim/pvoutcosmo/'):
         super(Fit, self).__init__()
         self.sigma_mu = sigma_mu
         self.catseed=catseed
@@ -30,7 +30,7 @@ class Fit(object):
         logdetC = numpy.log(numpy.linalg.eigvalsh(C)).sum()
         mterm  = Deltam-M
 
-        lp = -0.5* (logdetC +( mterm.T @ (Cinv @ mterm) ))
+        lp = -0.5* (logdetC +( mterm.T * (Cinv *  mterm) ))
         if not numpy.isfinite(lp):
             return -np.inf
         return lp
@@ -53,6 +53,5 @@ class Fit(object):
         Deltam=m_eff- self.hg.galaxies['mB_expected']
         sampler = Fit.fit(m_eff- self.hg.galaxies['mB_expected'],  self.hg.galaxies['nsne'],self.xi)
         pickle.dump(sampler.chain, open('{}pvlist.{}.{}.pkl'.format(self.path,self.sigma_mu,self.catseed), "wb" ) )
-
 fit=Fit()
 fit.sample()

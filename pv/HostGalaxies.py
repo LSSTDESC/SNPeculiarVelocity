@@ -5,9 +5,10 @@ import copy
 class HostGalaxies(object):
     """docstring for HostGalaxies"""
 
-    def __init__(self, sigma_mu=0.08, catseed=1234, seed=124, path='../test/'):
+    def __init__(self, sigma_mu=0.08, catseed=1234, seed=124, path='/project/projectdirs/m1727/akim/pvoutcosmo'):
         super(HostGalaxies, self).__init__()
-        self.data = pickle.load(open("{}/tenyear.{}.{}.pkl".format(path,sigma_mu,catseed), "rb" ))
+        #self.data = pickle.load(open("{}/tenyear.{}.{}.pkl".format(path,sigma_mu,catseed), "rb" ))
+        self.data = pickle.load(open("{}/tenyear.{}.pkl".format(path,catseed), "rb" ))
         self.path = path
         self.galaxies = self.data['galaxies']
         self.catseed=catseed
@@ -20,9 +21,8 @@ class HostGalaxies(object):
         else:
             sortin = numpy.arange(len(self.galaxies['redshift']))
         f = open('{}/pvlist.{}.dat'.format(self.path,self.catseed), 'w')
-        for i in range(len(sortin)):
-            print(' '.join(str(e) for e in (self.galaxies['redshift'][sortin[i]],self.galaxies['mB'][sortin[i]][0],0, \
-                self.galaxies['l'][sortin[i]],self.galaxies['b'][sortin[i]], self.galaxies['mB_expected'][sortin[i]])),file=f)
+        #for i in range(len(sortin)):
+            #print(' '.join(str(e) for e in (self.galaxies['redshift'][sortin[i]],self.galaxies['mB'][sortin[i]][0],0, self.galaxies['l'][sortin[i]],self.galaxies['b'][sortin[i]], self.galaxies['mB_expected'][sortin[i]])),file=f)
         f.close()
 
     def getSubset(self,decmin=-90, decmax=90, zmax=0.2, frac=1):

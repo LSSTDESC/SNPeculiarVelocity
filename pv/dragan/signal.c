@@ -83,7 +83,7 @@ int main()
     double **all_SN_z_th_phi, **all_Noise_SN, *all_delta_m;
     double **SN_z_th_phi, **Signal_SN,  **Noise_SN, *delta_m;
     char SN_filename[256];
-    sprintf(SN_filename , "pvlist.1234.dat");
+    sprintf(SN_filename , "/project/projectdirs/m1727/akim/pvoutcosmo/pvlist.1234.dat");
     // sprintf(SN_filename , "small_data_clean.txt");
 
     /************************/
@@ -135,13 +135,13 @@ int main()
     printf("%e %e\n", Signal_SN[1][1], Signal_SN[N_USED][N_USED]);
     // printf("%e %e\n", Noise_SN[1][1], Noise_SN[N_USED][N_USED]);
 
-    FILE *f = fopen("client.data", "wb");
+    FILE *f = fopen("/project/projectdirs/m1727/akim/pvoutcosmo/client.data", "wb");
     for(i=1;i<=N_SN;i++){
             fwrite(Signal_SN[i]+1, sizeof(double), N_SN, f);
     }
     fclose(f);
 
-    ifp=fopen("pvlist.1234.xi", "w");
+    ifp=fopen("/project/projectdirs/m1727/akim/pvoutcosmo/pvlist.1234.xi", "w");
     for(i=1;i<=N_SN;i++){
         for(j=1;j<=N_SN;j++)
             fprintf(ifp,"%0.9e ",Signal_SN[i][j]);
