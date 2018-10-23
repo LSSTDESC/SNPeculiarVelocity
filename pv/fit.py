@@ -99,7 +99,7 @@ if __name__ == "__main__":
                     help="distance modulus standard deviation")
     parser.add_argument("--seed", dest="seed", default=1234, type = int, required = False,
                     help="random number generator seed")
-    parser.add_argument('--path', dest='path', default='.', type = str, required=False)
+    parser.add_argument('--path', dest='path', default='/project/projectdirs/m1727/akim/pvoutcosmo', type = str, required=False)
     parser.add_argument('--frac', dest='frac', default=1, type = float, required=False)
     parser.add_argument('--savef', dest='savef', default=None, type = int, required=False)
     parser.add_argument('--nchain', dest='nchain', default=2000, type = int, required=False)

@@ -12,7 +12,7 @@ class HostGalaxies(object):
     # out dec [0.0161435347419 89.7359068657]
     # out b [-62.7640357412 78.3530163744]
 
-    def __init__(self, sigma_mu=0.08, catseed=1234, seed=123, path="~/project/projectdirs/m1727/akim/pvoutcosmo"):
+    def __init__(self, sigma_mu=0.08, catseed=1234, seed=123, path='/project/projectdirs/m1727/akim/pvoutcosmo'):
         super(HostGalaxies, self).__init__()
         self.data = pickle.load(open("{}/tenyear.{}.pkl".format(path,catseed), "rb" ))
         self.path = path
