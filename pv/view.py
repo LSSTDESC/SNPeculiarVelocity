@@ -88,7 +88,7 @@ def plotter(chain):
     c = ChainConsumer()
     dum = numpy.reshape(cutchain,(cutchain.shape[0]*cutchain.shape[1],cutchain.shape[2]))
     dum[:,3] = dum[:,3]*3e5
-    c.add_chain(dum, parameters=["$A$", "$M$","$\sigma_M$","$\sigma_{v}$"])
+    c.add_chain(dum, parameters=["$A$", "$\mathcal{M}$","$\sigma_M$","$\sigma_{v}$"])
     c.plotter.plot(filename="/Users/akim/project/PeculiarVelocity/outcosmo/"+name+".png", figsize="column",truth=[None,0,0.08,None])
 
 print("{} & {} & {} & {} & {} & {} & {} & {} \\\\".format("$z_{max}$", "fraction", "$\\sigma_{SN}$", "$N_{gal}$", \
@@ -102,7 +102,7 @@ for name,nsn,zma,fra,snsi in zip(names,nsne,zmax,frac,snsig):
     # c = ChainConsumer()
     # dum = numpy.reshape(cutchain,(cutchain.shape[0]*cutchain.shape[1],cutchain.shape[2]))
     # dum[:,3] = dum[:,3]*3e5
-    # c.add_chain(dum, parameters=["$A$", "$M$","$\sigma_M$","$\sigma_{v}$"])
+    # c.add_chain(dum, parameters=["$A$", "$\mathcal{M}$","$\sigma_M$","$\sigma_{v}$"])
     # c.plotter.plot(filename="/Users/akim/project/PeculiarVelocity/outcosmo/"+name+".png", figsize="column",truth=[None,0,0.08,None])
 
     effston.append(cutchain[:,:,0].mean()/cutchain[:,:,0].std()*numpy.sqrt(18000./760))
@@ -127,8 +127,8 @@ volume = FlatLambdaCDM(71,0.265).comoving_volume(0.2).value
 slope, intercept, r_value, p_value, std_err = scipy.stats.linregress(1e3*nsne[w]/volume/snsig[w]**2,effston[w])
 plt.scatter(1e3*nsne[w]/volume/snsig[w]**2,effston[w])
 plt.plot([0,.7],[intercept,intercept+slope*0.7])
-plt.xlabel(r'$n/\sigma^2$ $\left[10^{-3} mag^{-2} Mpc^{-3}\right]$')
-plt.ylabel('ston')
+plt.xlabel(r'$n \sigma^{-2}_M$ $\left[10^{-3} mag^{-2} Mpc^{-3}\right]$')
+plt.ylabel('Effective LSST STON')
 plt.savefig('fracsnsig2_.png')
 plt.clf()
 
@@ -137,7 +137,7 @@ slope, intercept, r_value, p_value, std_err = scipy.stats.linregress(zmax[w],eff
 plt.scatter(zmax[w],effston[w])
 plt.plot([0,.2],[intercept,intercept+slope*0.2])
 plt.xlabel(r'$z_{max}$')
-plt.ylabel('ston')
+plt.ylabel('Effective LSST STON')
 plt.savefig('zmax_.png')
 plt.clf()
 
