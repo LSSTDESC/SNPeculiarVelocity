@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+
 import pickle
 import numpy
 from chainconsumer import *
@@ -16,7 +18,7 @@ tag = ["","","","","","","","","","","","","","", "skycut."]
 
 zmax_ = [0.07,0.1,0.15,0.2]
 frac_ = [0.2, 0.3,0.5, 0.65, 1]
-snsig_ = [0.08,0.1,0.12]
+snsig_ = [0.08,0.1,0.12,0.15]
 
 names =[]
 zmax=[]
@@ -47,8 +49,8 @@ nsne_d[(0.07, 0.65)]=392
 
 from pathlib import Path
 
-for a2 in frac_:
-    for a1 in zmax_:
+for a1 in zmax_:
+    for a2 in frac_:
         for a3 in snsig_:
             f = Path('/Users/akim/project/PeculiarVelocity/outcosmo/pvlist.{}.1234.{}.{}.pkl'.format(a3,a2,a1))
             print(a1, a2, a3,end='')
@@ -121,25 +123,47 @@ effston = numpy.array(effston)
 # plt.ylabel('ston')
 # plt.savefig('frac_.png')
 # plt.clf()
-
-w = zmax ==0.2
-volume = FlatLambdaCDM(71,0.265).comoving_volume(0.2).value
-slope, intercept, r_value, p_value, std_err = scipy.stats.linregress(1e3*nsne[w]/volume/snsig[w]**2,effston[w])
-plt.scatter(1e3*nsne[w]/volume/snsig[w]**2,effston[w])
-plt.plot([0,.7],[intercept,intercept+slope*0.7])
+volumen = FlatLambdaCDM(71,0.265).comoving_volume(0.01).value
+for usez in numpy.unique(zmax):
+    w = zmax ==usez
+    volume = FlatLambdaCDM(71,0.265).comoving_volume(usez).value-volumen
+    slope, intercept, r_value, p_value, std_err = scipy.stats.linregress(1e3*nsne[w]/volume/snsig[w]**2,effston[w])
+    plt.scatter(1e3*nsne[w]/volume/snsig[w]**2,effston[w],label=r"$z_{{max}}={}$".format(usez))
 plt.xlabel(r'$n \sigma^{-2}_M$ $\left[10^{-3} mag^{-2} Mpc^{-3}\right]$')
 plt.ylabel('Effective LSST STON')
+plt.legend(loc=2)
 plt.savefig('fracsnsig2_.png')
 plt.clf()
+# wefwe
+# w = zmax ==0.2
+# volume = FlatLambdaCDM(71,0.265).comoving_volume(0.2).value
+# slope, intercept, r_value, p_value, std_err = scipy.stats.linregress(1e3*nsne[w]/volume/snsig[w]**2,effston[w])
+# plt.scatter(1e3*nsne[w]/volume/snsig[w]**2,effston[w])
+# plt.plot([0,.7],[intercept,intercept+slope*0.7])
+# plt.xlabel(r'$n \sigma^{-2}_M$ $\left[10^{-3} mag^{-2} Mpc^{-3}\right]$')
+# plt.ylabel('Effective LSST STON')
+# plt.savefig('fracsnsig2_.png')
+# plt.clf()
 
-w = numpy.logical_and.reduce((frac==1 ,snsig==0.08))
-slope, intercept, r_value, p_value, std_err = scipy.stats.linregress(zmax[w],effston[w])
-plt.scatter(zmax[w],effston[w])
-plt.plot([0,.2],[intercept,intercept+slope*0.2])
-plt.xlabel(r'$z_{max}$')
-plt.ylabel('Effective LSST STON')
-plt.savefig('zmax_.png')
-plt.clf()
+# from mpl_toolkits.mplot3d import Axes3D
+# fig = plt.figure()
+# ax = fig.add_subplot(111, projection='3d')
+# ax.scatter(zmax, 1e3*nsne/volume/snsig**2,effston)
+# ax.set_xlabel(r'$z_{max}$')
+# ax.set_ylabel(r'$n \sigma^{-2}_M$ $\left[10^{-3} mag^{-2} Mpc^{-3}\right]$')
+# ax.set_zlabel('Effective LSST STON')
+# plt.savefig('3d_.png')
+# plt.clf()
+
+# wefwe
+# w = numpy.logical_and.reduce((frac==1 ,snsig==0.08))
+# slope, intercept, r_value, p_value, std_err = scipy.stats.linregress(zmax[w],effston[w])
+# plt.scatter(zmax[w],effston[w])
+# plt.plot([0,.2],[intercept,intercept+slope*0.2])
+# plt.xlabel(r'$z_{max}$')
+# plt.ylabel('Effective LSST STON')
+# plt.savefig('zmax_.png')
+# plt.clf()
 
 # w = numpy.logical_and.reduce((frac==1 , zmax==0.2))
 # slope, intercept, r_value, p_value, std_err = scipy.stats.linregress(snsig[w],effston[w])
