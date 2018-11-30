@@ -548,53 +548,75 @@ double Cij_theta_vel_integrand(double log10k, void *p)
     
     double chi1 = r_dimless_tab(z1)/H0_hmpcinv;
     double chi2 = r_dimless_tab(z2)/H0_hmpcinv;
-
+    
+    //v-v covariance fast computation
+    /*
     double prefac0 = pow(5/log(10.0), 2);
     // checked very small diff in results if the starting 1s are zeroed out
     double prefac1 = 1 - (1+z1)/H_dimless(z1, om, w0, wa)/r_dimless_tab(z1);
     double prefac2 = 1 - (1+z2)/H_dimless(z2, om, w0, wa)/r_dimless_tab(z2);
-    if (PRINT_FLAG == 1) printf("%f %f %d\n",  prefac0, prefac1, NSPLINE_PK_CAMB);
+    //if (PRINT_FLAG == 1) printf("%f %f %d\n",  prefac0, prefac1, NSPLINE_PK_CAMB);
     double prefac3 =  1/(2*M_PI*M_PI) *
         log(10.0) * k *                        // conversion: they have dk, I want dlog10(k)
         Pk_CAMB_NR_tab(k) *                       // P(k) from CAMB
         dD_deta_tab(z1) * dD_deta_tab(z2)      // units are [h Mpc^{-1}]^2
         ;
-
-    int lmax;
-
-    /////////////////////////////////////////////////////////////////////////
-    // 16 October 2016: found sufficient conditions on lmax;
-    // drastically smaller lmax in all cases except aligned, high-z objects
-    /////////////////////////////////////////////////////////////////////////
-    //if ((z1 > 0.05) && (z2 > 0.05) && (costh > 0.95)) lmax = LMAX_CIJ_THETA;
-    if (costh > 0.95)  lmax = LMAX_CIJ_THETA;
-    else               lmax = 20.0;
-    //FIX
-    //lmax=10;
     
-    for (ell=0; ell<=lmax; ell++)
-    {
-        if (WINDOW == 3) // no mean of magnitude subtracted
-            fac = gsl_sf_legendre_Pl(ell,costh);
-        if (WINDOW == 2) // mean subtracted with arbitrary window
-        {
-            fac = gsl_sf_legendre_Pl(ell,costh) -
-                4*M_PI/(2*ell+1) * Wl_nhat_sn_glob[ell][i] -
-                4*M_PI/(2*ell+1) * Wl_nhat_sn_glob[ell][j] +
-                4*M_PI           * Wl_glob[ell];
-        }
-        if (WINDOW == 1) // mean subtracted with window = all sky
-        {
-            if (ell == 0) // W_l and W_l(nhat) are nonzero only for ell=0
-                fac = gsl_sf_legendre_Pl(ell,costh) - 2 + 1;
-            else 
-                fac = gsl_sf_legendre_Pl(ell,costh);
-        }
+    
+    
+    if(i!=j){
+    double r=sqrt(chi1*chi1+chi2*chi2-2*chi1*chi2*costh);
+    double rr=chi1*chi1+chi2*chi2-2*chi1*chi2*costh;
+    sum=costh*(gsl_sf_bessel_jl(0, k*r)-2*gsl_sf_bessel_jl(2, k*r))/3+chi1*chi2*gsl_sf_bessel_jl(2,k*r)*(1-costh*costh)/rr;}
+    else {sum=1.0/3;}
+    */
+    //rho-v covariance fast computation
+    /*
+    double prefac0=5/log(10.0);
+    double prefac1 = 1;
+    double prefac2 = 1 - (1+z2)/H_dimless(z2, om, w0, wa)/r_dimless_tab(z2);
+    double prefac3 =  k/(2*M_PI*M_PI) *
+        log(10.0) * k *                        // conversion: they have dk, I want dlog10(k)
+        Pk_CAMB_NR_tab(k) *                       // P(k) from CAMB
+        D_tab(z1) * dD_deta_tab(z2);
 
-        //sum += (2*ell+1) * jl_prime(ell, k*chi1) *  jl_prime(ell, k*chi2) * fac;
-        // checked same result with jlprime_NR_tab as with jlprime_tab and jl_prime - Apr 2016
-        sum += (2*ell+1) * jlprime_NR_tab(ell, k*chi1) *  jlprime_NR_tab(ell, k*chi2) * fac;
+    if(i!=j){
+    double r=sqrt(chi1*chi1+chi2*chi2-2*chi1*chi2*costh);
+    sum=gsl_sf_bessel_jl(1,k*r)*(chi1-costh*chi2)/r;
     }
+    else return 0;*/
+   
+    //v-rho covariance fast computation
+    
+    
+    double prefac0=-5/log(10.0);
+    double prefac1 = 1;
+    double prefac2 = 1 - (1+z1)/H_dimless(z1, om, w0, wa)/r_dimless_tab(z1);
+    double prefac3 =  k/(2*M_PI*M_PI) *
+        log(10.0) * k *                        // conversion: they have dk, I want dlog10(k)
+        Pk_CAMB_NR_tab(k) *                       // P(k) from CAMB
+        D_tab(z2) * dD_deta_tab(z1);
+
+    if(i!=j){
+    double r=sqrt(chi1*chi1+chi2*chi2-2*chi1*chi2*costh);
+    sum=gsl_sf_bessel_jl(1,k*r)*(chi1*costh-chi2)/r;
+    }
+    else return 0; 
+
+    //rho-rho covariance fast computation 
+   
+    /*
+     double prefac0=1;
+    double prefac1 = 1;
+    double prefac2 = 1;
+    double prefac3 =  k*k/(2*M_PI*M_PI) * log(10.0) * k*Pk_CAMB_NR_tab(k)*D_tab(z2)*D_tab(z1);
+
+    if(i!=j){
+    double r=sqrt(chi1*chi1+chi2*chi2-2*chi1*chi2*costh);
+    sum=gsl_sf_bessel_jl(0,k*r);
+    }
+    else sum=1;*/
+
 
     return(prefac0*prefac1*prefac2*prefac3*sum );
 }
