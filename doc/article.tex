@@ -15,6 +15,8 @@
 \author[0000-0001-6315-8743]{A.~G.~Kim}
 \affiliation{    Physics Division, Lawrence Berkeley National Laboratory, 
     1 Cyclotron Road, Berkeley, CA, 94720}
+\author{S.~BenZvi}
+\affiliation{Department of Physics and Astronomy, University of Rochester, Rochester, NY 14627, USA}
 \author{C.~Harper}
 \affiliation{    Physics Division, Lawrence Berkeley National Laboratory, 
     1 Cyclotron Road, Berkeley, CA, 94720}
@@ -89,7 +91,7 @@ One such SN is worth $\gtrsim 25$ galaxies with 0.4~mag absolute magnitude uncer
 Secondly,  ZTF today and LSST in the upcoming decade will increase the number of identified  $z<0.3$ Type~Ia supernovae (SNe~Ia)  from the hundreds to the
 hundreds of thousands.  This is a sample size comparable to those projected by WALLABY and TAIPAN.
 
-The precision in  $f\sigma_8$ derived from an ten-year LSST-discovered  SN~Ia survey has been projected by \citet{2017ApJ...847..128H},
+The precision in  $f\sigma_8$ derived from the baseline WFD ten-year SN~Ia discoveries has been projected by \citet{2017ApJ...847..128H},
 from both their RSD and peculiar velocities.
 The results are summarized in Table~\ref{tab:howlett}, where a 5\% distance uncertainty is assumed for each supernova.
 SNe~Ia alone can provide a $2\%$ measurement of $f\sigma_8$ at $z<0.3$ redshifts lower than where galaxy, cluster, and Ly$\alpha$
@@ -170,6 +172,8 @@ LSST can be taken to be a SN~Ia discovery plus light-curve builder, or a discove
 and/or redshift collection but with higher intrinsic magnitude dispersion.  The latter requires additional follow-up resources to gather more information per supernova to
 lower the intrinsic magnitude dispersion.
 
+ZTF and Future-ZTF.  Access close to $4\pi$.  LSST does not survey the southern equatorial pole.
+
 \appendix
 \section{Reanalysis in Configuration Space}
 
@@ -236,9 +240,9 @@ C_{ij} = A\xi_{\delta m \delta m}(\mathbf{r_i},\mathbf{r_j}) + \frac{\sigma_M^2}
 \label{cov:eqn}
 \end{equation}
 where $N_i$ is the number of SNe~Ia in galaxy $i$ and $\sigma_M$ is the intrinsic SN magnitude dispersion.
-In this model, we treat the shape of the power spectrum $\xi$ as fixed and use the amplitude parameter $A$ to represent
-deviations from General Relativity $A=1$.  This model is not sensitive to differences in the shapes
-of  power spectra from different gravitational models.   Special cases of modified gravity could give $A=1$, but inconsistency with $A=1$ is is evidence against General Relativity.
+The model is used to test General Relativity through deviations from $A=1$ but is not sensitive to deviations
+from the linearized GR expectation of the shape of the power spectrum 
+$\xi$.
 Nevertheless, for
 convenience we say that our model gives $f\sigma_8 = A (f\sigma_8)^{GR}$, where $(f\sigma_8)^{GR}$ is the expectation
 from General Relativity. 
@@ -258,6 +262,8 @@ The posterior of the parameters is sampled using emcee.  The likelihood is the N
 covariance matrix in Eq.~\ref{cov:eqn}.
 The priors are positive and flat for $A$, flat for $M$, positive Cauchy(0.08, 0.5) for $\sigma_M$, and  positive Cauchy(0, 600 km~s$^{-1}$) for $\sigma_{v}$.
 
+Direct tests of non-GR models for which Poisson's equation or the linear approximation
+does not apply requires a model-dependent $\xi$.  We defer the analysis of such higher-fidelity models to later work. 
 
 \section{Results of Subsets}
 
