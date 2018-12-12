@@ -32,13 +32,13 @@ Arbor, MI 48109, USA }
 %\date{}							% Activate to display a given date or no date
 
 \begin{abstract}
-ZTF today and LSST in the upcoming decade will increase the number of identified  $z<0.2$ Type~Ia supernovae (SNe~Ia)  from the hundreds to the
+ZTF today and LSST in the upcoming decade will increase the number of identified  $z<0.3$ Type~Ia supernovae (SNe~Ia)  from the hundreds to the
 hundreds of thousands.  The increase in the number density of SNe~Ia, in parallel with improvements in the standardization of
 their absolute magnitudes, now make them competitive probes of the growth of structure.  The peculiar velocity power spectrum
 is sensitive to $f\sigma_8$,
 the product of the linear growth and amplitude of density perturbations.  Cross-correlation with synergistic galaxy surveys further constrains $f \sigma_8$ and the galaxy bias. 
 Thus, in the next decade the peculiar velocities of
-SNe~Ia will provide the growth of structure  in the local $z<0.2$ Universe as a powerful test of General Relativity and other models of gravity.
+SNe~Ia will provide the growth of structure  in the local $z<0.3$ Universe as a powerful test of General Relativity and other models of gravity.
 \end{abstract}
 
 \section{Connection between Type Ia Supernovae Correlations and Gravity}
@@ -75,26 +75,27 @@ than their naive sum.
 
 The probative power of a specific peculiar-velocity tracer primarily depends on its number density and the precision to which its absolute magnitudes are known.
 The current generation of peculiar velocity studies use $10^3-10^5$ galaxies with Fundamental Plane and Tully-Fisher distances \citep{2008AJ....135.1738M, 2014MNRAS.445.2677S,
-2016AJ....152...50T}. 
-Next generation surveys WALLABY \citep{2008ExA....22..151J} and TAIPAN \citep{2017PASA...34...47D} are designed to increase these sample size by an order of magnitude.
-These galaxies have absolute magnitude uncertainties of $\sim 0.4$~mag. 
+2016AJ....152...50T}.  These galaxies have absolute magnitude uncertainties of $\sim 0.4$~mag. 
+Next generation surveys WALLABY \citep{2008ExA....22..151J} and TAIPAN \citep{2017PASA...34...47D} are designed to increase these sample size by an order of magnitude
+over half the sky to a depth of $z=0.1$.
+
 
 The current sample of SNe~Ia has a low number density compared to Fundamental Plane and Tully-Fisher galaxies.
 Nevertheless, their low intrinsic-magnitude uncertainties can 
 can provide peculiar velocities (expressed equivalently as peculiar magnitudes)
 of their host galaxies \citep{2006PhRvD..73l3526H,2011ApJ...741...67D}.  Existing SN~Ia samples
 have been used to test and ultimately find spatial correlations in peculiar velocities that may be attributed to the growth of structure
-\citet{2008MNRAS.389L..47A,2015JCAP...12..033H, 2017JCAP...05..015H}.
-However, the ston is currently insufficient to perform a meaningful test of GR.
+\citep{2008MNRAS.389L..47A,2015JCAP...12..033H, 2017JCAP...05..015H}.
+However, the signal-to-noise is currently insufficient to perform a meaningful test of GR.
 
 Two advances in the upcoming decade will make SNe~Ia  important probes of $f\sigma_8$.
 First, the precision of SN~Ia distances can be improved.  The commonly-used empirical 2-parameter SED model yields $\sigma_M \gtrsim 0.12$~mag absolute magnitude
-dispersion.  However, SNe transmit more information than just the light curve shape and single color used in current analysis.
+dispersion.  However, SNe transmit more information than just the light-curve shape and single color used in current SN models.
 Recent studies indicate that with the right data, SNe absolute
 magnitudes can be calibrated to $\sigma_M \lesssim 0.08$ mag \citep[see e.g.][]{2012MNRAS.425.1007B, 2015ApJ...815...58F}.
 One such SN is worth $\gtrsim 25$ galaxies with 0.4~mag absolute magnitude uncertainty.
 Secondly,  ZTF today and LSST in the upcoming decade will increase the number of identified  $z<0.3$ Type~Ia supernovae (SNe~Ia)  from the hundreds to the
-hundreds of thousands.  This is a sample size comparable to those projected by WALLABY and TAIPAN.
+hundreds of thousands.  This is a sample size comparable to the number of galaxies projected by WALLABY and TAIPAN.
 
 The precision in  $f\sigma_8$ derived from the baseline WFD ten-year SN~Ia discoveries has been projected by \citet{2017ApJ...847..128H},
 from both their RSD and peculiar velocities.
@@ -124,17 +125,18 @@ RSD measurements are sensitive.  A joint galaxy RSD and SN peculiar velocity wil
    \label{tab:howlett}
 \end{table}
 
-The projected precisions for LSST-discovered SNe~Ia have a number of interesting features.  Relative to
-RSD, particular velocities contribute increasingly 
-$f\sigma_8$ precision with decreasing redshift.  At redshift 0.3 the differential gain from adding peculiar velocities to the RSD measurement is small.
-Despite the significant gain in volume and numbers of supernovae, the $f\sigma_8$ uncertainty in increasing redshift bins asymptotes such that
-the differential gain in the cumulative  uncertainty is small for surveys with increasing maximum redshift.
-For $z>0.1$, the volume is sufficiently large that we are not yet sample variance limited  given the LSST sample.
+The projected precisions for LSST-discovered SNe~Ia have a number of interesting features. 
+Despite the significant gain in volume and numbers of supernovae, the $f\sigma_8$ uncertainty in increasing redshift bins asymptotes such that 
+there is little benefit in going beyond
+$z=0.3$.
+The constraining power on  $f\sigma_8$ 
+comes primarily from peculiar velocities
+at $z<0.2$, but are dominated by RSD by $z=0.3$.
+It turns out that for $z>0.1$, the volume is sufficiently large that the LSST sample is not yet sample variance limited.
 
 \section{Important Elements in Designing a Supernova Survey to Measure $\MakeLowercase{f}\sigma_8$}
 \citet{2017ApJ...847..128H} perform their analysis in Fourier space, 
 where the Fisher information matrix of a random Gaussian field with mean zero and covariance $C(k)$ parameterized by $\lambda$ is
-approximated by
 \begin{equation}
 F_{ij} = \frac{V}{2}\int \frac{d^3k}{(2\pi)^3} \text{Tr}\left[ C^{-1} \frac{\partial C}{\partial \lambda_i} C^{-1}
 \frac{\partial C}{\partial \lambda_j} \right],
