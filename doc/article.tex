@@ -20,12 +20,12 @@
 \author{C.~Harper}
 \affiliation{    Physics Division, Lawrence Berkeley National Laboratory, 
     1 Cyclotron Road, Berkeley, CA, 94720}
-\author{C.~Ju}
-\affiliation{    Physics Division, Lawrence Berkeley National Laboratory, 
-    1 Cyclotron Road, Berkeley, CA, 94720}
 \author{D.~Huterer}
 \affiliation{Department of Physics, University of Michigan, 450 Church Street, Ann
 Arbor, MI 48109, USA }
+\author{C.~Ju}
+\affiliation{    Physics Division, Lawrence Berkeley National Laboratory, 
+    1 Cyclotron Road, Berkeley, CA, 94720}
 
 \author{others}
 
@@ -34,10 +34,11 @@ Arbor, MI 48109, USA }
 \begin{abstract}
 ZTF today and LSST in the upcoming decade will increase the number of identified  $z<0.2$ Type~Ia supernovae (SNe~Ia)  from the hundreds to the
 hundreds of thousands.  The increase in the number density of SNe~Ia, in parallel with improvements in the standardization of
-their absolute magnitudes, now make them competitive probes of the growth of structure.  The peculiar velocity power spectrum derived from SNe~Ia
-is sensitive to the product of the linear growth and amplitude of structure
-$f\sigma_8$.  Cross-correlation with synergistic galaxy surveys further constrains $f \sigma_8$ and the galaxy bias.  Velocities
-SNe~Ia in the next decade will measure the growth of structure  a powerful test of General Relativity in the local $z<0.2$ Universe.
+their absolute magnitudes, now make them competitive probes of the growth of structure.  The peculiar velocity power spectrum
+is sensitive to $f\sigma_8$,
+the product of the linear growth and amplitude of density perturbations.  Cross-correlation with synergistic galaxy surveys further constrains $f \sigma_8$ and the galaxy bias. 
+Thus, in the next decade the peculiar velocities of
+SNe~Ia will provide the growth of structure  in the local $z<0.2$ Universe as a powerful test of General Relativity and other models of gravity.
 \end{abstract}
 
 \section{Connection between Type Ia Supernovae Correlations and Gravity}
@@ -46,36 +47,37 @@ The growth of structure depends on the expansion history of the Universe, the na
 It is therefore a powerful probe of cosmology and dark energy.  Growth of structure can be measured from the baryonic structures
 in the Universe and from the peculiar velocities of test masses therein.
 Peculiar velocities are the motions, on top of the cosmological expansion, caused by the gravitational attraction
-and repulsion due to inhomogeneities in the Universe.  The peculiar velocity of an object wth a given absolute magnitude
-is determined from its observer magnitude and redshift.  Given a background cosmology, the observed magnitude provides
-an estimate of the cosmological redshift.  Peculiar velocity accounts for the difference between the cosmological and observer redshift.
+and repulsion of densitiy inhomogeneities in the Universe.  The peculiar velocity of an object with a known absolute magnitude
+is determined from its observer magnitude and redshift. For a given a background cosmology, the observed magnitude provides
+an estimate of the cosmological redshift, the peculiar velocity is then the difference between the cosmological and observer redshifts.
 
 Baryonic structures and peculiar velocities  provide a measurement of the combination $fD$.  $D$ is the ``linear growth factor'' that
-gives the overall amplitude of  overdensities and the ``linear growth rate''
+gives the overall amplitude of  overdensities, and the ``linear growth rate''
 $$f \equiv \frac{d\ln{D}}{d\ln{a}}$$ is how that amplitude changes with redshift.  General Relativity predicts
-$f \approx \Omega_M^\gamma$ (with $D$ determined accordingly) when $\gamma=0.55$, whereas other gravity models can be similarly described
+$f \approx \Omega_M^\gamma$ (with $D$ determined accordingly) with $\gamma=0.55$, whereas other gravity models can be similarly described
 with different values of $\gamma$
-\citep{2007APh....28..481L}.  Thus growth of structure, through the measurement of $fD$, provides a test of General Relativity and breaks degeneracies
+\citep{2007APh....28..481L}.  The growth of structure, through the measurement of $fD$, provides a test of General Relativity and breaks degeneracies
 between gravitational and dark energy models that explain the accelerating expansion of the Universe.
 The parameter $\sigma_8$, the  standard deviation of overdensities in 8$h^{-1}$Mpc spheres, is 
-commonly used to normalize the
-overall amplitude of  overdensities instead of $D$, and so the standard parameterization used by the community is $f\sigma_8$.
+commonly used in place of $D$ to normalize the
+overall amplitude of  overdensities, so the standard parameterization used by the community is $f\sigma_8$.
 
 Baryonic structures are sensitive to $f\sigma_8$ through redshift space distortions (RSD), 
 which gives the combination $(b + f \mu^2)\sigma_8$ where $b$ is the bias between the tracer and dark matter
 and $\mu$ gives the angular separation.  Correlations between peculiar velocities are sensitive to  $f\sigma_8 (H_0 d_L)^{-1}$.
-They are independent of the tracer bias because all sources of mass, predominantly dark matter, contribute to the dynamics. As
+Although the velocities may be measured off of biased tracers, the tracers' dynamics are driven by all mass (including dark matter) and are so bias-free.
+As
 mentioned earlier, peculiar velocities are measured relative to the background cosmological expansion that
-leads to the dependence on $H_0 d_L$.  The cross-correlation between structure and peculiar velocity within the same volume come from the same
-overdensities and hence
-provide independent information unsusceptible to sample variance \citep{2007PhRvL..99h1301G}.
+leads to the dependence on $H_0 d_L$. 
+Baryonic structures and peculiar velocities within the same volume are induced by the same overdensities  making their cross-correlation 
+insensitive to sample variance \citep{2007PhRvL..99h1301G}: galaxy and peculiar velocity surveys provide synergistic constraints more powerful
+than their naive sum.
 
-
-Tracers with precisely known absolute magnitude provide precise cosmological redshifts and hence peculiar velocities.  
+The probative power of a specific peculiar-velocity tracer primarily depends on its number density and the precision to which its absolute magnitudes are known.
 The current generation of peculiar velocity studies use $10^3-10^5$ galaxies with Fundamental Plane and Tully-Fisher distances \citep{2008AJ....135.1738M, 2014MNRAS.445.2677S,
 2016AJ....152...50T}. 
 Next generation surveys WALLABY \citep{2008ExA....22..151J} and TAIPAN \citep{2017PASA...34...47D} are designed to increase these sample size by an order of magnitude.
-The galaxies have absolute magnitude uncertainties of $\sim 0.4$~mag. 
+These galaxies have absolute magnitude uncertainties of $\sim 0.4$~mag. 
 
 The current sample of SNe~Ia has a low number density compared to Fundamental Plane and Tully-Fisher galaxies.
 Nevertheless, their low intrinsic-magnitude uncertainties can 
@@ -299,7 +301,7 @@ part of the simulation.
    %\topcaption{Table captions are better up top} % requires the topcapt package
    \begin{tabular}{|ccc|ccccc|} % Column formatting, @{} suppresses leading/trailing space
    \hline
-$z_{max}$ & $\phi$ & $\sigma_{M}$ & $N_{gal}$ & $\bar{A}$ & $\sigma_A$ & $\bar{A} \sigma_A^{-1} N_{gal}^{0.5}$ & $\bar{A} \sigma_A^{-1} (18000/760)^{0.5}$ \\
+$z_{max}$ & $\phi$ & $\sigma_{M}$ & $N_{gal}$ & $\bar{A}$ & $\sigma_A$ & $\bar{A} \sigma_A^{-1} N_{gal}^{-0.5}$ & $\bar{A} \sigma_A^{-1} (18000/760)^{0.5}$ \\
 \hline
 0.07 & 0.65 & 0.08 & 392 &   1.34 &   0.49 &  0.137 &  13.21 \\
 0.07 & 1.00 & 0.08 & 563 &   1.16 &   0.36 &  0.135 &  15.55 \\
