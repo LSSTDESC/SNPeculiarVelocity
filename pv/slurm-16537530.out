@@ -1,0 +1,13 @@
+Could not find conda environment: py36
+You can list all discoverable environments with `conda info --envs`.
+
+/var/spool/slurmd/job16537530/slurm_script: line 12: cd: /global/homes/c/cju_lbl/PeculiarVelocity/pv/: No such file or directory
+Traceback (most recent call last):
+  File "fit.py", line 1, in <module>
+    from HostGalaxies import *
+  File "/global/u1/c/cju_lbl/SNPeculiarVelocity/pv/HostGalaxies.py", line 73
+    self.galaxies['l'][sortin[i]],self.galaxies['b'][sortin[i]], self.galaxies['mB_expected'][sortin[i]])),file=f)
+                                                                                                               ^
+SyntaxError: invalid syntax
+srun: error: nid00758: task 0: Exited with exit code 1
+srun: Terminating job step 16537530.0

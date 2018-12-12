@@ -130,7 +130,7 @@ if __name__ == "__main__":
     hg = HostGalaxies(sigma_mu=args.sigma_mu, catseed=args.seed, path=args.path)
     
     if args.antecedent is not None:
-        chain = pickle.load(open('{}/pvlist.{}.{}.{}.{}.{}pkl.{}'.format(args.path,args.sigma_mu,args.seed,args.frac,args.zmax,fstr,args.antecedent), "rb" ) )
+        chain = pickle.load(open('{}/debug/pvlist.{}.{}.{}.{}.{}pkl.{}'.format(args.path,args.sigma_mu,args.seed,args.frac,args.zmax,fstr,args.antecedent), "rb" ) )
     else:
         chain=None
 
@@ -163,7 +163,7 @@ if __name__ == "__main__":
         else:
             indnm = i+args.antecedent+1
 
-        pickle.dump(chain, open('{}/pvlist.{}.{}.{}.{}.{}pkl.{}'.format(args.path,args.sigma_mu,args.seed,args.frac,args.zmax,fstr,chain.shape[1]), "wb" ) )
+        pickle.dump(chain, open('{}/debug/pvlist.{}.{}.{}.{}.{}pkl.{}'.format(args.path,args.sigma_mu,args.seed,args.frac,args.zmax,fstr,chain.shape[1]), "wb" ) )
 
 #srun -n 1 -c 64 --cpu-bind=sockets python fit.py --path ../out/ --frac 0.5  --nchain 2
 #python fit.py --path ../out/ --nchain 1 frac 0.19

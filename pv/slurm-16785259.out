@@ -1,0 +1,12 @@
+Could not find conda environment: py36
+You can list all discoverable environments with `conda info --envs`.
+
+/var/spool/slurmd/job16785259/slurm_script: line 12: cd: /global/homes/c/cju_lbl/PeculiarVelocity/pv/: No such file or directory
+Traceback (most recent call last):
+  File "fit.py", line 130, in <module>
+    hg = HostGalaxies(sigma_mu=args.sigma_mu, catseed=args.seed, path=args.path)
+  File "/global/u1/c/cju_lbl/SNPeculiarVelocity/pv/HostGalaxies.py", line 17, in __init__
+    self.data = pickle.load(open("{}/tenyear.{}.pkl".format(path,catseed), "rb" ))
+FileNotFoundError: [Errno 2] No such file or directory: '/project/projectdirs/m1727/akim/pvoutcosmo/tenyear.2345.pkl'
+srun: error: nid01114: task 0: Exited with exit code 1
+srun: Terminating job step 16785259.0
