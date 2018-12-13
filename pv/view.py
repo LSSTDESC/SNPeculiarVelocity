@@ -106,14 +106,37 @@ for name,nsn,zma,fra,snsi in zip(names,nsne,zmax,frac,snsig):
     # dum[:,3] = dum[:,3]*3e5
     # c.add_chain(dum, parameters=["$A$", "$\mathcal{M}$","$\sigma_M$","$\sigma_{v}$"])
     # c.plotter.plot(filename="/Users/akim/project/PeculiarVelocity/outcosmo/"+name+".png", figsize="column",truth=[None,0,0.08,None])
-
-    effston.append(cutchain[:,:,0].mean()/cutchain[:,:,0].std()*numpy.sqrt(18000./760))
-    print("{:4.2f} & {:4.2f} & {:4.2f} & {} & {:6.2f} & {:6.2f} & {:6.3f} & {:6.2f} & {:6.2f}\\\\".format( \
-        zma,fra,snsi,nsn,cutchain[:,:,0].mean(), cutchain[:,:,0].std(), \
-        cutchain[:,:,0].mean()/cutchain[:,:,0].std()/numpy.sqrt(nsn), \
-        effston[-1],effston[-1]*2))
+    fsigma8 = numpy.sqrt(cutchain[:,:,0])
+    effston.append(fsigma8.mean()/fsigma8.std()*numpy.sqrt(18000./760))
+    # print("{:4.2f} & {:4.2f} & {:4.2f} & {} & {:6.2f} & {:6.2f} & {:6.3f} & {:6.2f} \\\\".format( \
+    #     zma,fra,snsi,nsn,fsigma8 .mean(), fsigma8 .std(), \
+    #     fsigma8.mean()/fsigma8.std()/numpy.sqrt(nsn), \
+    #     effston[-1]))
+    print("{:4.2f} & {:4.2f} & {:4.2f}  & {:6.3f} & {:6.2f} \\\\".format( \
+        zma,fra,snsi, effston[-1], \
+        effston[-1]/numpy.sqrt(18000./760*nsn)\
+        ))
 
 effston = numpy.array(effston)
+
+for z_ in zmax_:
+    fs = []
+    ef = []
+    for f_ in frac_:
+        for sn_ in snsig_:
+            w = numpy.logical_and.reduce((frac==f_ ,zmax==z_, snsig==sn_))
+            if w.sum() != 0:
+                fs.append(sn_**2/f_)
+                ef.append(effston[w])
+    fs = numpy.array(fs)*0.65/0.1**2
+    plt.scatter(fs,ef,label=r"$z_{{max}}={}$".format(z_))
+
+plt.xlabel(r"$\frac{\sigma^2}{n} \left[\frac{n(10\ yr)}{(0.1\ mag)^2}\right]$",fontsize=14)
+plt.ylabel(r"STON",fontsize=14)
+plt.legend()
+plt.tight_layout()
+plt.savefig('notshot.png')
+plt.clf()
 
 # w = numpy.logical_and.reduce((zmax ==0.2, snsig==0.08))
 # slope, intercept, r_value, p_value, std_err = scipy.stats.linregress(frac[w],effston[w])
