@@ -148,22 +148,30 @@ C = P_{vv}(k) + \frac{\sigma^2}{n}
 \end{equation}
 is dependent on the power spectrum, noise in the velocity measurement, and the density of velocity probes
 \citep{2017MNRAS.464.2517H}.  
+The primary dependence on the growth of structure is through
+\begin{equation}
+\frac{\partial C}{\partial \lambda} = \frac{\partial P_{vv}}{\partial \lambda} = \text{constant}
+\end{equation}
+for the parameter choice
+$\lambda=(f\sigma_8)^2$.  In the sample-variance limit, $F_{\lambda \lambda} \propto V$ whereas in the shot noise limit $F_{\lambda \lambda} \propto V n^2 \sigma^{-4}$.
 
-The precision in the determination of the combination $\lambda= f\sigma_8$ is estimated using the Fisher matrix.  To first order, 
-$P_{vv} \propto (f\sigma_8)^2$.
 
 The survey parameters that determine parameter precision are the volume $V$, which
 in turn can be parameterized by the survey solid angle $\Omega$ and the redshift depth $z_{max}$ ; the number density of sources $n$; and the intrinsic
 magnitude dispersion $\sigma_M$, where magnitude and velocity dispersions are related by $\sigma_{M} = \frac{5}{\ln{10}} \frac{1+z}{z} \sigma$.
+LSST is expected to discover all $z<0.3$ SNe~Ia before maximum light in its active Wide Fast Deep (WFD) survey area.
+Equating LSST discovery with having a meaningful peculiar velocity, $n$ is thus a non-tunable parameter.
+
+
+
+
 For surveys of fixed depth, the variance of $f\sigma_8$ 
 in the sample-variance limit  
 is inversely proportional to the survey solid-angle $\Omega$, whereas
 in the shot-noise limit the variance is inversely proportional to $\Omega n^2 \propto N^2/\Omega$, where $n$ is the number density,
 and $N$ is the total number of supernovae.  
 
-LSST is expected to discover all $z<0.3$ SNe~Ia before maximum light in its active Wide Fast Deep (WFD) survey area.
-Equating LSST discovery with having a meaningful peculiar velocity, $n$ is thus a non-tunable parameter.  This leaves
-solid angle, redshift depth, and intrinsic magnitude dispersion as the important tunable parameters in the design of a peculiar velocity survey.
+
 
 
 \subsection{Solid Angle}
