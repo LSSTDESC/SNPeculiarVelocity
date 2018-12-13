@@ -108,10 +108,10 @@ for name,nsn,zma,fra,snsi in zip(names,nsne,zmax,frac,snsig):
     # c.plotter.plot(filename="/Users/akim/project/PeculiarVelocity/outcosmo/"+name+".png", figsize="column",truth=[None,0,0.08,None])
 
     effston.append(cutchain[:,:,0].mean()/cutchain[:,:,0].std()*numpy.sqrt(18000./760))
-    print("{:4.2f} & {:4.2f} & {:4.2f} & {} & {:6.2f} & {:6.2f} & {:6.3f} & {:6.2f} \\\\".format( \
+    print("{:4.2f} & {:4.2f} & {:4.2f} & {} & {:6.2f} & {:6.2f} & {:6.3f} & {:6.2f} & {:6.2f}\\\\".format( \
         zma,fra,snsi,nsn,cutchain[:,:,0].mean(), cutchain[:,:,0].std(), \
         cutchain[:,:,0].mean()/cutchain[:,:,0].std()/numpy.sqrt(nsn), \
-        effston[-1]))
+        effston[-1],effston[-1]*2))
 
 effston = numpy.array(effston)
 
