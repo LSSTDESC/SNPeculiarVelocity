@@ -112,8 +112,8 @@ for name,nsn,zma,fra,snsi in zip(names,nsne,zmax,frac,snsig):
     #     zma,fra,snsi,nsn,fsigma8 .mean(), fsigma8 .std(), \
     #     fsigma8.mean()/fsigma8.std()/numpy.sqrt(nsn), \
     #     effston[-1]))
-    print("{:4.2f} & {:4.2f} & {:4.2f}  & {:6.3f} & {:6.2f} \\\\".format( \
-        zma,fra,snsi, effston[-1], \
+    print("{:4.2f} & {:4.2f} & {:4.2f} & {} & {:6.3f} & {:6.2f} \\\\".format( \
+        zma,fra,snsi, nsn*18000./760, effston[-1], \
         effston[-1]/numpy.sqrt(18000./760*nsn)\
         ))
 
@@ -131,11 +131,30 @@ for z_ in zmax_:
     fs = numpy.array(fs)*0.65/0.1**2
     plt.scatter(fs,ef,label=r"$z_{{max}}={}$".format(z_))
 
-plt.xlabel(r"$\frac{\sigma^2}{n} \left[\frac{n(10\ yr)}{(0.1\ mag)^2}\right]$",fontsize=14)
+plt.xlabel(r"$\frac{\sigma_M^2}{n} \left[\frac{n(10\ \mathrm{yr})}{(0.1\ \mathrm{mag})^2}\right]$",fontsize=14)
 plt.ylabel(r"STON",fontsize=14)
 plt.legend()
 plt.tight_layout()
 plt.savefig('notshot.png')
+plt.clf()
+
+for z_ in zmax_:
+    fs = []
+    ef = []
+    for f_ in frac_:
+        for sn_ in snsig_:
+            w = numpy.logical_and.reduce((frac==f_ ,zmax==z_, snsig==sn_))
+            if w.sum() != 0:
+                fs.append(sn_**2/f_)
+                ef.append(effston[w]/numpy.sqrt(18000./760*nsne[w]))
+    fs = numpy.array(fs)*0.65/0.1**2
+    plt.scatter(fs,ef,label=r"$z_{{max}}={}$".format(z_))
+
+plt.xlabel(r"$\frac{\sigma_M^2}{n} \left[\frac{n(10\ \mathrm{yr})}{(0.1\ \mathrm{mag})^2}\right]$",fontsize=14)
+plt.ylabel(r"STON per SN",fontsize=14)
+plt.legend()
+plt.tight_layout()
+plt.savefig('perSN.png')
 plt.clf()
 
 # w = numpy.logical_and.reduce((zmax ==0.2, snsig==0.08))
@@ -152,7 +171,7 @@ for usez in numpy.unique(zmax):
     volume = FlatLambdaCDM(71,0.265).comoving_volume(usez).value-volumen
     slope, intercept, r_value, p_value, std_err = scipy.stats.linregress(1e3*nsne[w]/volume/snsig[w]**2,effston[w])
     plt.scatter(1e3*nsne[w]/volume/snsig[w]**2,effston[w],label=r"$z_{{max}}={}$".format(usez))
-plt.xlabel(r'$n \sigma^{-2}_M$ $\left[10^{-3} mag^{-2} Mpc^{-3}\right]$')
+plt.xlabel(r'$n \sigma_M^{-2}$ $\left[10^{-3} mag^{-2} Mpc^{-3}\right]$')
 plt.ylabel('Effective LSST STON')
 plt.legend(loc=2)
 plt.savefig('fracsnsig2_.png')
