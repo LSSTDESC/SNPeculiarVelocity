@@ -13,18 +13,21 @@
 
 \title{Testing Gravity using Type Ia Supernovae Discovered by LSST}
 \author[0000-0001-6315-8743]{A.~G.~Kim}
-\affiliation{    Physics Division, Lawrence Berkeley National Laboratory, 
+\affiliation{Physics Division, Lawrence Berkeley National Laboratory, 
     1 Cyclotron Road, Berkeley, CA, 94720}
 \author{S.~BenZvi}
 \affiliation{Department of Physics and Astronomy, University of Rochester, Rochester, NY 14627, USA}
 \author{C.~Harper}
-\affiliation{    Physics Division, Lawrence Berkeley National Laboratory, 
+\affiliation{Physics Division, Lawrence Berkeley National Laboratory, 
     1 Cyclotron Road, Berkeley, CA, 94720}
 \author{D.~Huterer}
 \affiliation{Department of Physics, University of Michigan, 450 Church Street, Ann
 Arbor, MI 48109, USA }
 \author{C.~Ju}
-\affiliation{    Physics Division, Lawrence Berkeley National Laboratory, 
+\affiliation{Physics Division, Lawrence Berkeley National Laboratory, 
+    1 Cyclotron Road, Berkeley, CA, 94720}
+\author{E.~V.~Linder}
+\affiliation{Physics Division, Lawrence Berkeley National Laboratory, 
     1 Cyclotron Road, Berkeley, CA, 94720}
 
 \author{others}
@@ -43,13 +46,19 @@ SNe~Ia will provide the growth of structure  in the local $z<0.3$ Universe as a 
 
 \section{Connection between Type Ia Supernovae Correlations and Gravity}
 
+In the late 1990's, Type~Ia supernovae (SNe~Ia) were used as distance probes to measure the homogeneous expansion history of the Universe.  The remarkable discovery
+that the expansion is accelerating  has called into question our basic understanding of the gravitational forces within the Universe.  Either it
+is dominated by a ``dark energy'' that is gravitationally repulsive, or General Relativity is inadequate and needs to be replaced by a modified theory of
+gravity.  It is only appropriate that in the upcoming decade, with their sheer numbers and improved distance precisions, SNe~Ia will provide measurements of the {\it inhomogeneous} motions of structures in the Universe
+that will provide an unmatched test of whether dark energy or modified gravity is responsible for the accelerating expansion of the Universe.
+
 The growth of structure depends on the expansion history of the Universe, the nature and density of its contents, and gravity. 
-It is therefore a powerful probe of cosmology and dark energy.  Growth of structure can be measured from the baryonic structures
+It is therefore a powerful probe of cosmology and dark energy.  Growth of structure can be measured from the light-emittting structures
 in the Universe and from the peculiar velocities of test masses therein.
 Peculiar velocities are the motions, on top of the cosmological expansion, caused by the gravitational attraction
-and repulsion of densitiy inhomogeneities in the Universe.  The peculiar velocity of an object with a known absolute magnitude
-is determined from its observer magnitude and redshift. For a given a background cosmology, the observed magnitude provides
-an estimate of the cosmological redshift, the peculiar velocity is then the difference between the cosmological and observer redshifts.
+and repulsion of density inhomogeneities in the Universe.  The peculiar velocity of an object with a known absolute magnitude
+can be determined from its observer-frame magnitude and redshift. For a given background cosmology, the observed magnitude provides
+an estimate of the cosmological redshift, the peculiar velocity is then the difference between the cosmological and CMB-frame redshifts.
 
 Baryonic structures and peculiar velocities  provide a measurement of the combination $fD$.  $D$ is the ``linear growth factor'' that
 gives the overall amplitude of  overdensities, and the ``linear growth rate''
@@ -64,8 +73,8 @@ overall amplitude of  overdensities, so the standard parameterization used by th
 
 Baryonic structures are sensitive to $f\sigma_8$ through redshift space distortions (RSD), 
 which gives the combination $(b + f \mu^2)\sigma_8$ where $b$ is the bias between the tracer and dark matter
-and $\mu$ gives the angular separation.  Correlations between peculiar velocities are sensitive to  $f\sigma_8 (H_0 d_L)^{-1}$.
-Although the velocities may be measured off of biased tracers, the tracers' dynamics are driven by all mass (including dark matter) and are so bias-free.
+and $\mu$ gives the angular separation of Fourier modes to the line-of-sight.  Correlations between peculiar velocities are sensitive to  $f\sigma_8 (H_0 d_L)^{-1}$.
+Although the velocities may be measured off of biased tracers, the tracers' dynamics are driven by all mass (including dark matter) and so are bias-free.
 As
 mentioned earlier, peculiar velocities are measured relative to the background cosmological expansion that
 leads to the dependence on $H_0 d_L$. 
@@ -74,14 +83,14 @@ insensitive to sample variance \citep{2007PhRvL..99h1301G}: galaxy and peculiar 
 than their naive sum.
 
 The probative power of a specific peculiar-velocity tracer primarily depends on its number density and the precision to which its absolute magnitudes are known.
-The current generation of peculiar velocity studies use $10^3-10^5$ galaxies with Fundamental Plane and Tully-Fisher distances \citep{2008AJ....135.1738M, 2014MNRAS.445.2677S,
+The current generation of peculiar velocity studies uses $10^3-10^5$ galaxies with Fundamental Plane and Tully-Fisher distances \citep{2008AJ....135.1738M, 2014MNRAS.445.2677S,
 2016AJ....152...50T}.  These galaxies have absolute magnitude uncertainties of $\sim 0.4$~mag. 
-Next generation surveys WALLABY \citep{2008ExA....22..151J} and TAIPAN \citep{2017PASA...34...47D} are designed to increase these sample size by an order of magnitude
+Next generation surveys WALLABY \citep{2008ExA....22..151J} and TAIPAN \citep{2017PASA...34...47D} are designed to increase these sample sizes by an order of magnitude
 over half the sky to a depth of $z=0.1$.
 
 
 The current sample of SNe~Ia has a low number density compared to Fundamental Plane and Tully-Fisher galaxies.
-Nevertheless, their low intrinsic-magnitude uncertainties can 
+Nevertheless, their low intrinsic-magnitude uncertainties 
 can provide peculiar velocities (expressed equivalently as peculiar magnitudes)
 of their host galaxies \citep{2006PhRvD..73l3526H,2011ApJ...741...67D}.  Existing SN~Ia samples
 have been used to test and ultimately find spatial correlations in peculiar velocities that may be attributed to the growth of structure
@@ -99,11 +108,16 @@ hundreds of thousands, over the course of 10-years, LSST will find $\sim150,000$
 
 The precision in  $f\sigma_8$ derived from the baseline WFD ten-year SN~Ia discoveries has been projected by \citet{2017ApJ...847..128H},
 from both their RSD and peculiar velocities.
-The results are summarized in Table~\ref{tab:howlett}, where a 5\% distance uncertainty is assumed for each supernova.
-SNe~Ia alone can provide a $2\%$ measurement of $f\sigma_8$ at $z<0.3$ redshifts lower than where galaxy, cluster, and Ly$\alpha$
+The results are summarized in Table~\ref{tab:howlett}, where a 5\% distance (0.1~mag) uncertainty is assumed for each supernova.
+SNe~Ia alone can provide a $2\%$ measurement of $f\sigma_8$ at $z<0.3$ redshifts lower than where galaxy, cluster (through the
+kinematic S-Z effect), and Ly$\alpha$
 RSD measurements are sensitive.  A joint galaxy RSD and SN peculiar velocity will be even more powerful.
-SNe~Ia peculiar velocities will measure $f\sigma_8$ at $z<-.3$  was well as galaxy surveys will at $z \sim 0.6$ using RSD. 
-{\bf Add a SN PV + DESI-like BGS column and/or a PV-only column with Cullan's code? }
+SNe~Ia peculiar velocities will measure $f\sigma_8$ at $z<0.3$  as well as galaxy surveys will at $z \sim 0.6$ using RSD. 
+This can be compared to the current 15\% uncertainty from 6dF \citep{2017MNRAS.471..839A}, 3\% uncertainty projected
+for the combined TAIPAN and WALLABY+WNSHS surveys \citep{2017MNRAS.464.2517H} for low-redshift measurements of $f\sigma_8$.
+At larger $z>0.3$ redshifts DESI projects 10\% accuracies.
+
+%{\bf Add a SN PV + DESI-like BGS column and/or a PV-only column with Cullan's code? }
 % Requires the booktabs if the memoir class is not being used
 \begin{table}
    \centering
@@ -121,7 +135,7 @@ SNe~Ia peculiar velocities will measure $f\sigma_8$ at $z<-.3$  was well as gala
    \end{tabular}
    \caption{Projected percent uncertainties in $f\sigma_8$ from a 10-year LSST SN survey with 5\% distance uncertainties from
    \citet{2017ApJ...847..128H}. RSD is from clustering, and RSD~+~PV is from joint clustering and peculiar velocities.
-   The cumulative column shows the effective uncertainty from combining the redshift and all other shallower redshift bins.}
+   The cumulative column shows the effective uncertainty from combining its and all other shallower redshift bins.}
    \label{tab:howlett}
 \end{table}
 
@@ -138,7 +152,7 @@ It turns out that for $z>0.1$, the volume is sufficiently large that the LSST sa
 \subsection{Survey Parameters that Determine Scientific Performance}
 \citet{2017ApJ...847..128H} project how well peculiar velocity surveys can measure $f\sigma_8$. 
 They perform their analysis in Fourier space, 
-where the Fisher information matrix of a random Gaussian field with mean zero and covariance $C(k)$ parameterized by $\lambda$ is
+where the Fisher information matrix of parameters $\lambda_i$ from random Gaussian field with mean zero and covariance $C(k)$ is
 \begin{equation}
 F_{ij} = \frac{V}{2}\int \frac{d^3k}{(2\pi)^3} \text{Tr}\left[ C^{-1} \frac{\partial C}{\partial \lambda_i} C^{-1}
 \frac{\partial C}{\partial \lambda_j} \right],
@@ -160,16 +174,16 @@ $\lambda=(f\sigma_8)^2$.  In the sample-variance limit, $F_{\lambda \lambda} \pr
 
 The survey parameters that  enter the Fisher matrix are the volume $V$, which
 in turn can be parameterized by the survey solid angle $\Omega$ and the redshift depth $z_{max}$ ; the number density of sources $n$; and the intrinsic
-magnitude dispersion $\sigma_M$, where magnitude and velocity dispersions are related by $\sigma_{M} = \frac{5}{\ln{10}} \frac{1+z}{z} \sigma$.
+magnitude dispersion $\sigma_M$, where magnitude and velocity dispersions are related at low-redshift by $\sigma_{M} \approx \frac{5}{\ln{10}} \frac{1+z}{z} \sigma$.
 LSST is expected to discover all $z<0.3$ SNe~Ia before maximum light in its active Wide Fast Deep (WFD) survey area.
-Equating LSST discovery with having a meaningful peculiar velocity, the number density $n$ is thus a non-tunable parameter, which only increases with survey duration.
+Equating LSST discovery with having a meaningful peculiar velocity, the number density $n$ is thus a fixed parameter, which only increases with survey duration.
 Thus $\Omega$, $z_{max}$, and $\sigma_M$ are left as the relevant parameters.
 
 
 
 \begin{itemize}
 \item Solid Angle $\Omega$:
-The variance in $f\sigma_8$ is proportional to solid angle $\Omega$.  The baseline
+The variance in $f\sigma_8$ is inversely proportional to solid angle $\Omega$.  The baseline
 LSST survey covers 18,000 sq.~deg, at $-75 \lesssim \delta \lesssim15$ avoiding the Galactic plane.  Larger solid-angle coverage for $z<0.3$ SN~Ia searches, beyond
 the LSST baseline, benefits peculiar-velocity science.  Complementary northern-hemisphere surveys and LSST-expanded or independent
 coverage of the southern equatorial pole, could double
@@ -178,14 +192,14 @@ the sky coverage and halve the variance in $f\sigma_8$.
 For the number densities generated by LSST and the SN~Ia intrinsic magnitude dispersion, the noise is not sample-variance
 limited.  We have run simulations of LSST SN surveys
 and calculated the signal-to-noise (STON) of $f\sigma_8$ from the peculiar-velocity correlations. These simulations show, as seen in the left plot
-of  Figure~\ref{notshot:fig}, that an increase in the number the number density of tracers leads to a significant improvement in STON.
+of  Figure~\ref{notshot:fig}, that an increase in the number density of tracers leads to a significant improvement in STON.
 It is also worth noting that sample variance is not negligible, as seen by the non-linear dependence of the  STON on $\sigma_M^2/n$. 
 
 \begin{figure}
 \centering
 \includegraphics[width=0.48\textwidth]{../outcosmo/notshot.png}
 \includegraphics[width=0.48\textwidth]{../outcosmo/perSN.png}
-\caption{Left: STON of $f\sigma_8$ from simulated LSST SN peculiar-velocities.  For several limiting redshift depths, the STON is plotted as a
+\caption{Left: STON of $f\sigma_8$ from simulated LSST SN peculiar-velocities only (no RSD).  For several limiting redshift depths, the STON is plotted as a
 function of $\sigma_M^2/n$, normalized to intrinsic magnitude dispersion $\sigma_M=0.1$~mag and 10-year LSST number densities.
 Right: The effective contribution to the STON per supernova, quantified as STON divided by the root of the number of tracers.
 \label{notshot:fig}}
@@ -202,15 +216,16 @@ A decrease in the supernova intrinsic magnitude dispersion leads to a significan
 as shown in Figure~\ref{notshot:fig} in parallel to our earlier discussion of the dependence of $n$.  We are not sample-variance
 limited so the $\sigma^2_M/n$-term
 in the Fisher matrix is important.
-Survey follow-up stratey,
+Survey follow-up strategy,
 which determines which data are available per SN~Ia, influences the accuracy to which their distances can be determined. 
 This dependence is non-trivial: the improvement between $\sigma_M=0.08$ and 0.15~mag dispersions is equivalent to a factor of 3.52
  in number density, or equivalently in survey duration. 
  
 The intrinsic magnitude dispersion depends on the purity of the sample. Conservatively we consider
 a pure SN~Ia sample obtained through
-spectroscopic classification.  The feasibility of using photometric classification is an important subject of research
-that can have implications for survey planning.
+spectroscopic classification, as the requisite follow-up resources for a  complete $z<0.3$ sample is within reason. 
+The feasibility of using photometric classification is an important subject of research
+that can have implications for survey planning, particularly in extending the redshift range.
 \end{itemize}
 
 \subsection{Designing an SN~Ia Peculiar Velocity Survey}
@@ -229,13 +244,13 @@ endeavor that will benefit peculiar-velocity  and other SN~Ia science.
 to the error budget.  We thus conclude that there is the need for spectroscopic $R>200$ host-galaxy redshifts.  In most cases this redshift will be
 available in the classification spectrum.  Planned bright-galaxy redshift surveys can also observe a significant fraction of nearby SN hosts.
 \item Role of LSST:
-LSST can be taken to be a SN~Ia discovery and distance machine, or a discovery machine only.   The nominal cadence of 
+LSST can be taken to be a SN~Ia discovery and distance machine, or a discovery machine only.   The nominal cadence  
  produces sparse per-band light curves, which limits the intrinsic magnitude dispersion possible with LSST data alone to $\sigma_M \approx 0.15$~mag.
 The wide-field of LSST is
  well suited for discoveries over a larger area of sky, but does not provide significant multiplex advantage for the low surface-density of active
 $z<0.3$ SNe~Ia.  LSST is  suited for maximizing $\Omega$ while other (cheaper) resources can improve $\sigma_M$.
 \item Follow-up resources to determine per-SN distances:
-Supplemental non-LSST follow-up data in the form or improved temporal light-curve sampling (accurate rise and decline times), 
+Supplemental non-LSST follow-up data in the form of improved temporal light-curve sampling (accurate rise and decline times), 
 expanded (UV, NIR) wavelength coverage, and spectral features
 can access high-fidelity SN~Ia models with lower intrinsic magnitude dispersion and residual systematic bias.
 For example, infrared data \citep{2012MNRAS.425.1007B} or spectrophotometry at peak brightness
@@ -253,12 +268,12 @@ brighter than $r \sim 20.5$~mag and so will be accessible to 2--4m-class telesco
 \section{Conclusions}
 SNe~Ia are already powerful probes of the homogeneous cosmological expansion of the Universe.  In the next decade.
 high-cadence, wide-field imaging surveys, together with improved precision in their distance determinations, will make SNe~Ia powerful probes
-of the gravity induced-motion caused by the inhomogeneous Universe.  SNe~Ia peculiar velocities at $z<0.3$ will measure $f \sigma_8$ as well
-as galaxy surveys, but at lower redshifts that provide better leverage to test gravity models.
+of the gravity induced-motion caused by the inhomogeneous Universe.  SNe~Ia peculiar velocities at $z<0.3$ will measure $f \sigma_8$ significantly better
+than galaxy surveys, at lower redshifts that provide better leverage to test gravity models.
 While imaging surveys will provide a steady stream of SNe~Ia, a coordinated plan of follow-up is required to take advantage of
 their probative power.  The resources necessary to follow hundreds of thousands of SNe depend on specific follow-up choices, and 
 access to those resources will define the redshift limits of the survey.  Fortunately, the lowest-redshift, and hence brightest, supernovae
-are of the highest interest, so that a modest suite of $\sim 5$ 2--4m telescopes should already provide leading measurements of
+are of the highest interest, so that a modest suite of $\sim 5$ 2--4m telescopes should be capable of providing leading measurements of
 $f\sigma_8$ at $z\sim 0.1$.
 
 

@@ -118,8 +118,8 @@ for name,nsn,zma,fra,snsi in zip(names,nsne,zmax,frac,snsig):
         ))
 
 effston = numpy.array(effston)
-
-for z_ in zmax_:
+mkrs=['o','s','*','D']
+for z_,m in zip(zmax_,mkrs):
     fs = []
     ef = []
     for f_ in frac_:
@@ -129,16 +129,17 @@ for z_ in zmax_:
                 fs.append(sn_**2/f_)
                 ef.append(effston[w])
     fs = numpy.array(fs)*0.65/0.1**2
-    plt.scatter(fs,ef,label=r"$z_{{max}}={}$".format(z_))
+    plt.scatter(fs,ef,label=r"$z_{{max}}={}$".format(z_),marker=m)
 
-plt.xlabel(r"$\frac{\sigma_M^2}{n} \left[\frac{n(10\ \mathrm{yr})}{(0.1\ \mathrm{mag})^2}\right]$",fontsize=14)
+plt.xlabel(r"$\frac{\sigma_M^2}{n} \left[\frac{n(10\ \mathrm{yr})}{(0.1\ \mathrm{mag})^2}\right]$",fontsize=16)
 plt.ylabel(r"STON",fontsize=14)
-plt.legend()
+plt.legend(fontsize=14)
 plt.tight_layout()
 plt.savefig('notshot.png')
 plt.clf()
 
-for z_ in zmax_:
+
+for z_,m in zip(zmax_,mkrs):
     fs = []
     ef = []
     for f_ in frac_:
@@ -148,11 +149,11 @@ for z_ in zmax_:
                 fs.append(sn_**2/f_)
                 ef.append(effston[w]/numpy.sqrt(18000./760*nsne[w]))
     fs = numpy.array(fs)*0.65/0.1**2
-    plt.scatter(fs,ef,label=r"$z_{{max}}={}$".format(z_))
+    plt.scatter(fs,ef,label=r"$z_{{max}}={}$".format(z_), marker=m)
 
-plt.xlabel(r"$\frac{\sigma_M^2}{n} \left[\frac{n(10\ \mathrm{yr})}{(0.1\ \mathrm{mag})^2}\right]$",fontsize=14)
+plt.xlabel(r"$\frac{\sigma_M^2}{n} \left[\frac{n(10\ \mathrm{yr})}{(0.1\ \mathrm{mag})^2}\right]$",fontsize=16)
 plt.ylabel(r"STON per SN",fontsize=14)
-plt.legend()
+plt.legend(fontsize=14)
 plt.tight_layout()
 plt.savefig('perSN.png')
 plt.clf()
