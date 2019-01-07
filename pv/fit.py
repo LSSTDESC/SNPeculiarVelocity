@@ -117,9 +117,9 @@ if __name__ == "__main__":
         args.savef = args.nchain
 
     if args.skycut:
-        decmax=60.
-        bmin=-34.
-        bmax=34
+        decmax=-35.65
+        bmin=-90.
+        bmax=90
         fstr='skycut.'
     else:
         decmax=90
@@ -128,7 +128,7 @@ if __name__ == "__main__":
         fstr=''
 
     hg = HostGalaxies(sigma_mu=args.sigma_mu, catseed=args.seed, path=args.path)
-    
+
     if args.antecedent is not None:
         chain = pickle.load(open('{}/debug/pvlist.{}.{}.{}.{}.{}pkl.{}'.format(args.path,args.sigma_mu,args.seed,args.frac,args.zmax,fstr,args.antecedent), "rb" ) )
     else:
@@ -141,6 +141,7 @@ if __name__ == "__main__":
     #     print(usexi.shape)
     # elif (args.skycut)
         print (usexi.shape)
+
     else:
         usehg = hg.data
         usexi = hg.xi
