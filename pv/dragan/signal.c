@@ -151,9 +151,10 @@ int main(int argc, char *argv[])
         double **all_SN_z_th_phi, **all_Noise_SN, *all_delta_m;
         double **SN_z_th_phi, **Signal_SN,  **Noise_SN, *delta_m;
         char SN_filename[256];
-
-        sprintf(SN_filename , "%s.dat",fileroot);
-
+    
+        //sprintf(SN_filename , "%s.dat",fileroot);
+        sprintf(SN_filename, "/project/projectdirs/m1727/akim/pvoutcosmo/pvlist.1234.dat");
+        sprintf(fileroot,"/project/projectdirs/m1727/akim/pvoutcosmo/v_rho_list");
             // sprintf(SN_filename , "small_data_clean.txt");
 
             /************************/

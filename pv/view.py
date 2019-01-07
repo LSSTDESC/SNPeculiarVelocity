@@ -8,6 +8,7 @@ from astropy.cosmology import FlatLambdaCDM
 import scipy.stats
 
 # names = ['pvlist.0.08.1234.0.2.0.2.pkl','pvlist.0.08.1234.0.3.0.2.pkl','pvlist.0.08.1234.0.5.0.2.pkl','pvlist.0.08.1234.1.0.2.pkl','pvlist.0.08.1234.1.0.1.pkl','pvlist.0.08.1234.1.0.15.pkl']
+
 nsne = [2021,3023, 5015, 9901,1294,3870, 9901, 9901, 1215,746,563,6491, 873,2541,6491,6491, 3023, 3023, 4950]
 zmax = [0.2,0.2,0.2,0.2,0.1,0.15,0.2,0.2, 0.15,0.12,0.07,0.2,0.1, 0.15,0.2, 0.2,0.2, 0.2]
 frac = [0.2,0.3,0.5,1,1,1,1,1,0.3,0.3,1,0.65,0.65, 0.65, 0.65,0.65, 0.3, 0.3, 1]
@@ -70,13 +71,6 @@ for a1 in zmax_:
 # frac=frac[:-1]
 # snsig=snsig[:-1]
 # tag=tag[:-1]
-
-# volume=[]
-# cosmology = FlatLambdaCDM(70, 0.286)
-# for z in zmax:
-#     volume.append(cosmology.comoving_volume(z).value - cosmology.comoving_volume(0.01).value)
-# volume = numpy.array(volume)
-
 
 # names = []
 # for fra,zma,snsi,ta in zip(frac,zmax,snsig,tag):
