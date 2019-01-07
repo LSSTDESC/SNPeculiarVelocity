@@ -550,7 +550,7 @@ double Cij_theta_vel_integrand(double log10k, void *p)
     double chi2 = r_dimless_tab(z2)/H0_hmpcinv;
     
     //v-v covariance fast computation
-    /*
+    
     double prefac0 = pow(5/log(10.0), 2);
     // checked very small diff in results if the starting 1s are zeroed out
     double prefac1 = 1 - (1+z1)/H_dimless(z1, om, w0, wa)/r_dimless_tab(z1);
@@ -569,22 +569,76 @@ double Cij_theta_vel_integrand(double log10k, void *p)
     double rr=chi1*chi1+chi2*chi2-2*chi1*chi2*costh;
     sum=costh*(gsl_sf_bessel_jl(0, k*r)-2*gsl_sf_bessel_jl(2, k*r))/3+chi1*chi2*gsl_sf_bessel_jl(2,k*r)*(1-costh*costh)/rr;}
     else {sum=1.0/3;}
-    */
-    //rho-v covariance fast computation
-    /*
-    double prefac0=5/log(10.0);
+
+
+    return(prefac0*prefac1*prefac2*prefac3*sum );
+}
+
+double Cij_theta_rho_integrand(double log10k, void *p)
+{ 
+    // velocity power spectrum, following the note of Hui
+    int ell;
+    double k;
+    double sum=0, fac;
+
+    struct Cij_theta_params * params = (struct Cij_theta_params *)p;
+
+    int     i = (params->a);
+    int     j = (params->b);
+    double z1 = (params->c);
+    double z2 = (params->d);
+    double costh = (params->e);
+    double om = (params->f);
+    double w0 = (params->g);       
+    double wa = (params->h);
+
+    k    = pow(10.0, log10k);  // units are h Mpc^{-1}
+    
+    double chi1 = r_dimless_tab(z1)/H0_hmpcinv;
+    double chi2 = r_dimless_tab(z2)/H0_hmpcinv;
+
+    //rho-rho covariance fast computation 
+   
+    
+    double prefac0=1;
     double prefac1 = 1;
-    double prefac2 = 1 - (1+z2)/H_dimless(z2, om, w0, wa)/r_dimless_tab(z2);
-    double prefac3 =  k/(2*M_PI*M_PI) *
-        log(10.0) * k *                        // conversion: they have dk, I want dlog10(k)
-        Pk_CAMB_NR_tab(k) *                       // P(k) from CAMB
-        D_tab(z1) * dD_deta_tab(z2);
+    double prefac2 = 1;
+    double prefac3 =  k*k/(2*M_PI*M_PI) * log(10.0) * k*Pk_CAMB_NR_tab(k)*D_tab(z2)*D_tab(z1);
 
     if(i!=j){
     double r=sqrt(chi1*chi1+chi2*chi2-2*chi1*chi2*costh);
-    sum=gsl_sf_bessel_jl(1,k*r)*(chi1-costh*chi2)/r;
+    sum=gsl_sf_bessel_jl(0,k*r);
     }
-    else return 0;*/
+    else sum=1;
+
+
+    return(prefac0*prefac1*prefac2*prefac3*sum );
+}
+
+double Cij_theta_v_rho_integrand(double log10k, void *p)
+{ 
+    // velocity power spectrum, following the note of Hui
+    int ell;
+    double k;
+    double sum=0, fac;
+
+    struct Cij_theta_params * params = (struct Cij_theta_params *)p;
+
+    int     i = (params->a);
+    int     j = (params->b);
+    double z1 = (params->c);
+    double z2 = (params->d);
+    double costh = (params->e);
+    double om = (params->f);
+    double w0 = (params->g);       
+    double wa = (params->h);
+
+    k    = pow(10.0, log10k);  // units are h Mpc^{-1}
+    
+    double chi1 = r_dimless_tab(z1)/H0_hmpcinv;
+    double chi2 = r_dimless_tab(z2)/H0_hmpcinv;
+    
+
    
     //v-rho covariance fast computation
     
@@ -603,23 +657,9 @@ double Cij_theta_vel_integrand(double log10k, void *p)
     }
     else return 0; 
 
-    //rho-rho covariance fast computation 
-   
-    /*
-     double prefac0=1;
-    double prefac1 = 1;
-    double prefac2 = 1;
-    double prefac3 =  k*k/(2*M_PI*M_PI) * log(10.0) * k*Pk_CAMB_NR_tab(k)*D_tab(z2)*D_tab(z1);
-
-    if(i!=j){
-    double r=sqrt(chi1*chi1+chi2*chi2-2*chi1*chi2*costh);
-    sum=gsl_sf_bessel_jl(0,k*r);
-    }
-    else sum=1;*/
-
-
     return(prefac0*prefac1*prefac2*prefac3*sum );
 }
+
 double Cij_theta_gsl_int(int i, int j, double z1, double z2, double costh, double omega_m, double w0, double wa)
 {
     /*********************************/
