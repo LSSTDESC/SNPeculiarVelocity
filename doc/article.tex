@@ -1,7 +1,7 @@
 \documentclass{aastex62}   	% use "amsart" instead of "article" for AMSLaTeX format
 \usepackage{graphicx}				% Use pdf, png, jpg, or eps§ with pdflatex; use eps in DVI mode
 								% TeX will automatically convert eps --> pdf in pdflatex		
-\usepackage{amssymb}
+\usepackage{amssymb,amsmath}
 \usepackage{natbib}
 \usepackage{grffile}
 \usepackage{textcase}
@@ -157,6 +157,8 @@ SNe~Ia has been previously quantified by \citet{2011PhRvD..83d3004B,2017JCAP...0
 The precision in  $f\sigma_8$ derived from the baseline WFD ten-year SN~Ia discoveries has been projected by \citet{2017ApJ...847..128H},
 from both their RSD and peculiar velocities.
 The results are summarized in Table~\ref{tab:howlett}, where a 5\% distance (0.1~mag) uncertainty is assumed for each supernova.
+Their Figure~4b) shows how well these measurements can distinguish between $\gamma=0.42, 0.55, 0.68$
+\citep[$f(R)$, GR,  and DGP gravities,][]{2007APh....28..481L} gravities respectively.
 SNe~Ia alone can provide a $2\%$ measurement of $f\sigma_8$ at $z<0.3$ redshifts lower than where galaxy and cluster (through the
 kinematic S-Z effect)
 RSD measurements are sensitive.  A joint galaxy RSD and SN peculiar velocity will be even more powerful.
@@ -197,28 +199,87 @@ comes primarily from peculiar velocities
 but by $z=0.3$ RSD is more important.
 It turns out that for $z>0.1$, the volume is sufficiently large that the LSST sample is not yet sample variance limited.
 
+
+
 \section{Designing a Supernova Survey to Measure $\MakeLowercase{f}\sigma_8$}
 \subsection{Survey Parameters that Determine Scientific Performance}
-\citet{2017ApJ...847..128H} project how well peculiar velocity surveys can measure $f\sigma_8$. 
+
+The expected peculiar velocity signal  is described by its power spectrum $P_{vv}$.
+The range $k$'s  used in an analysis depends on the depth of the survey $k_{min} \approx (2 z_{max})^{-1}$, and the smallest
+scales where the theoretical predictions are reliable, say $k_{max} \approx 0.1$~$h$\,Mpc$^{-1}$.
+The top panel of Figure~\ref{detC:fig} shows the volume-weighted power spectrum $k^3 P_{vv}$
+at $z=0$ assuming General Relativity and linear theory.  The panel shows available $k$ ranges for several surveys with different
+maximum redshift: the $0.02 <k< 0.1$~$h$\,Mpc$^{-1}$ modes contribute the bulk of the peculiar velocity signal.
+The sensitivity to gravity primarily resides in the normalization of the power spectrum, as  $P_{vv} \propto (f\sigma_8)^2$.
+Non-GR models can also predict differences in the shape and the redshift-dependence of GR prediction $P_{vv}$  in Figure~\ref{power:fig}.
+
+\begin{figure}
+\centering
+\includegraphics[width=0.5\textwidth]{src/power.png}
+%\includegraphics[width=0.5\textwidth]{../outcosmo/zmax_.png}
+\caption{ 
+\label{power:fig}}
+\end{figure}
+
+
+\citet{2017ApJ...847..128H} project how complementary galaxy and peculiar velocity surveys in a common volume can measure $f\sigma_8$. 
 They perform their analysis in Fourier space, 
-where the Fisher information matrix of parameters $\lambda_i$ from random Gaussian field with mean zero and covariance $C(k)$ is
+where the Fisher information matrix of parameters $\lambda_i$ from random Gaussian field with mean zero and covariance $C$ is
 \begin{equation}
 F_{ij} = \frac{V}{2}\int \frac{d^3k}{(2\pi)^3} \text{Tr}\left[ C^{-1} \frac{\partial C}{\partial \lambda_i} C^{-1}
-\frac{\partial C}{\partial \lambda_j} \right],
+\frac{\partial C}{\partial \lambda_j} \right]
+\label{fisher:eqn}
 \end{equation}
-where the covariance for the velocity-velocity correlation
+and the covariance is 
 \begin{equation}
-C = P_{vv}(k) + \frac{\sigma^2}{n}
+C(k,\mu)  =
+  \begin{bmatrix}
+   P_{gg}(k,\mu) + \frac{1}{n_g} &
+   P_{vg}(k,\mu)  \\
+   P_{vg}(k,\mu)  &
+  P_{vv}(k,\mu) + \frac{\sigma^2}{n}
+   \end{bmatrix}.
 \label{cov:eq}
 \end{equation}
-is dependent on the power spectrum, noise in the velocity measurement dominated by the intrinsic velocity dispersion $\sigma$, and the density of velocity probes
-\citep{2017MNRAS.464.2517H}.  
-The primary dependence on the growth of structure is through the normalization of the velocity power spectrum, such that 
+The covariance depends on $P_{vv}$, the galaxy power spectrum $P_{gg}\propto (b\sigma_8 + f\sigma_8\mu^2)^2$, and the galaxy-velocity cross-correlation $P_{vg}
+\propto  (b\sigma_8 + f\sigma_8\mu^2)f\sigma_8$, where $b$ is the bias parameter.
+The galaxy number density is $n_g$, the number density of velocity probes is $n$, and the probe velocity dispersion
+is $\sigma$. 
+ The Fisher matrix in  Eq.~\ref{fisher:eqn} is evaluated by \citet{2017MNRAS.464.2517H}  to generate the $f \sigma_8$ uncertainties in Table~\ref{tab:howlett}.
+
+The integrand
 \begin{equation}
- \frac{\partial P_{vv}}{\partial \lambda} = \text{constant}
+I = \text{Tr}\left[ C^{-1} \frac{\partial C}{\partial (f\sigma_8)} C^{-1}
+\frac{\partial C}{\partial  (f\sigma_8)} \right]
 \end{equation}
-for the parameter choice
-$\lambda=(f\sigma_8)^2$.  In the sample-variance limit, $F_{\lambda \lambda} \propto V$ whereas in the shot noise limit $F_{\lambda \lambda} \propto V n^2 \sigma^{-4}$.
+in Eq.~\ref{fisher:eqn}  represents how much a differential Fourier
+volume element with wavenumber $k$ and line of sight $\mu$ contributes to $F_{f\sigma_{8}\,f\sigma_{8}}$;
+it is therefore  useful in evaluating the design of peculiar velocity surveys. 
+We evaluate these surveys relative to the $I_{max}$ of a sample-variance limited
+peculiar velocity survey with\ $\sigma/n =0$.
+In the following we consider as given a  TAIPAN-like
+galaxy survey with $b=1.2$ and number density $n_g=10^{-3}h^3$\,Mpc$^{-3}$ that overlaps with the peculiar velocity surveys.
+
+First, we show the benefit of having the  galaxy and velocity surveys in a common volume by considering the degradation that occurs when 
+they are treated as being
+independent.  For this exercise the velocity survey is taken to be sample-variance limited.
+The resulting $I/I_{max}$  is shown as the black dashed curves in the bottom two panels of Figure~\ref{power:fig},
+and is found to lie between $0.1-0.2$.
+Taking advantage of the fact that the same dark-matter fluctuations produce the galaxies and velocities 
+in the common volume decreases
+the variance in $f\sigma_8$ by factors of 5 to 10.
+
+Realistic surveys have shot noise. We consider two- and ten-year
+supernova densities $n$  based on SN~Ia rates 
+with 0.65 sample efficiency, and velocity dispersions $\sigma \approx (\frac{5}{\ln{10}} \frac{1+z}{z})^{-1} \sigma_M$
+assuming a supernova magnitude dispersion of $\sigma_M=0.08$ and inserting values of $z=0.05,0.1, 0.2$.
+The $I/I_{max}$ of these survey scenarios are shown in the bottom two panels of Figure~\ref{power:fig}.
+Generally, $k<0.01$ modes have $I/I_{max}\sim 1$ meaning that they are sample-noise limited.
+Individual $k>0.01$ modes have  $I/I_{max}<1$ showing that shot noise
+is significant.  Recall that collectively,  larger $k$ modes are the important contributors to the peculiar-velocity signal;
+basically all  supernovae found in  the next decade contribute to improving the statistical measurement of $f\sigma_8$..
+The figure also shows how the statistical gain from additional supernovae diminish as the survey duration increases, and when they are at lower-redshift  (by virtue of their lower intrinsic velocity dispersion).
+
 
 
 The survey parameters that  enter the Fisher matrix are the volume $V$, which
@@ -243,18 +304,18 @@ limited.  We have run simulations of LSST SN surveys
 and calculated the signal-to-noise (STON) of $f\sigma_8$ from the peculiar-velocity correlations. These simulations show, as seen in the left plot
 of  Figure~\ref{notshot:fig}, that an increase in the number density of tracers leads to a significant improvement in STON.
 It is also worth noting that sample variance is not negligible, as seen by the non-linear dependence of the  STON on $\sigma_M^2/n$. 
-
-\begin{figure}
-\centering
-\includegraphics[width=0.48\textwidth]{../outcosmo/notshot.png}
-\includegraphics[width=0.48\textwidth]{../outcosmo/perSN.png}
-\caption{Left: STON of $f\sigma_8$ from simulated LSST SN peculiar-velocities only (no RSD).  There is a small level of scatter in the plots idue to the random
-realizations made in simulating the surveys.
-For several limiting redshift depths, the STON is plotted as a
-function of $\sigma_M^2/n$, normalized to intrinsic magnitude dispersion $\sigma_M=0.1$~mag and 10-year LSST number densities.
-Right: The effective contribution to the STON per supernova, quantified as STON divided by the root of the number of tracers.
-\label{notshot:fig}}
-\end{figure}
+%
+%\begin{figure}
+%\centering
+%\includegraphics[width=0.48\textwidth]{../outcosmo/notshot.png}
+%\includegraphics[width=0.48\textwidth]{../outcosmo/perSN.png}
+%\caption{Left: STON of $f\sigma_8$ from simulated LSST SN peculiar-velocities only (no RSD).  There is a small level of scatter in the plots idue to the random
+%realizations made in simulating the surveys.
+%For several limiting redshift depths, the STON is plotted as a
+%function of $\sigma_M^2/n$, normalized to intrinsic magnitude dispersion $\sigma_M=0.1$~mag and 10-year LSST number densities.
+%Right: The effective contribution to the STON per supernova, quantified as STON divided by the root of the number of tracers.
+%\label{notshot:fig}}
+%\end{figure}
 
 The effective contribution to the STON per supernova, quantified as STON divided by the root of the number of tracers, is higher for lower
 $z_{max}$.  This is shown in the
@@ -317,6 +378,11 @@ A follow-up survey with $z_{max}=0.2$ would have $\sim 150,000$ targets over 10 
 brighter than $r \sim 20.5$~mag and so will be accessible to 2--4m-class telescopes.  
 \end{itemize}
 
+A low-redshift supernova survey is insensitive to two important uncertainties
+associated with the SN~Ia Hubble diagram. The measurement is relatively insensitive to absolute color calibration, due to the limited
+range of {\it observer} wavelengths used to standardize restframe distance moduli.
+Depending on which cameras are used to derive distances, instrumental (rather than absolute)
+calibration may be sufficient.  Progenitor population  is not expected to evolve significantly in the $0.01<z<0.2$ Universe.
 
 \section{Conclusions}
 SNe~Ia are already powerful probes of the homogeneous cosmological expansion of the Universe.  In the next decade.
@@ -330,200 +396,225 @@ are of the highest interest, so that a modest suite of $\sim 5$ 2--4m telescopes
 $f\sigma_8$ at $z\sim 0.1$.
 
 
+
+
+\appendix
+\section{Reanalysis in Configuration Space}
+
+This Appendix describes a new analysis used to project precisions on $f\sigma_8$ using peculiar velocities derived from SNe~Ia.
+This analysis may or may not be useful for the Decadal Survey White Paper, but will be helpful for LSST planning.
+While there have been a number of articles on the subject,
+our analysis brings a higher level of fidelity than sought previously.  We simulate SNe~Ia hosted by galaxies in a mock galaxy
+catalog. The numbers of SNe are sufficiently small to allow fast evaluations of the likelihood, which enable the determination of parameter
+posteriors using MCMC on reasonable computing timescales.   We can use our machinery to 
+compare different survey parameters, such as redshift depth, total numbers of supernovae, non-uniform spatial density,
+solid angle/survey geometry, and SN~Ia intrinsic magnitude dispersion.
+Adding the cross-correlation between galaxy-count and peculiar-velocity surveys is active work, so we can
+quantify the suppression of sample variance achieved when considering matter-densities and velocities 
+within the same volume \citep{2007PhRvL..99h1301G}.
+
+\section{Simulated Data}
+The cosmoDC2 (v1.0) covering 706 sq.~deg is used\footnote{We previously used
+Buzzard (v1.6) galaxy catalog is used, but it was found to give peculiar velocities inconsistent with general relativity.  As we will see,
+cosmoDC2 (v1.0) is consistent with GR. }. 
+The catalog is based on a Flat $\Lambda$CDM model with $H_0=71$~km~s$^{-1}$,  $\Omega_M=0.265$, $\Omega_B=0.0448$, and
+$\Omega_\nu=0$.
+Each galaxy has its cosmological redshift, the $x$-, $y$-, $z$-components of its peculiar velocity from which
+the radial peculiar velocity is determined, and its
+star formation rate and stellar mass from which the
+supernova rate of each host is determined using 
+\citet{2012ApJ...755...61S}.   This host-based rate
+underestimates the expected discovery based on the volumetric
+rate of \citet{2010ApJ...713.1026D}.  The volumetric rate is more robust, so  we boost the SN production
+by a factor 2.4 to get the 10-year volumetric rate expectation. The total number of simulated SNe 
+is greater than the total number of possibly useful supernova discoveries, since most fields cannot be continuously monitored throughout the year
+from most ground-based observatories.
+
+
+Each supernova is assigned a magnitude based on the distance modulus of its cosmological
+redshift plus a random term drawn from a Normal distribution $\sigma_M$, which for simplicity is the same for all supernovae and captures both
+intrinsic magnitude dispersion and measurement uncertainty.  No other corrections are applied to the observed magnitude.  Dipole effects of the heliocentric
+motion with respect to the CMB and of the galaxies with respect to the CMB  are ignored: referring to
+\citet{2011ApJ...741...67D}, the effects in Eq.~18 are not included.  Including these effects are straightforward but is computationally expensive
+and does not affect our conclusions.
+
+We consider a maximum redshift of $z=0.2$ because over ten years the noise is not sample-variance dominated, meaning that the differential improvement
+in the precision of
+$f\sigma_8$ due to a lower-redshift supernova is greater than that due to a high-redshift supernova.  Following all LSST SNe~Ia below this redshift 
+would likely saturate available follow-up resources.
+
+
+\section{Analysis}
+The analysis is  almost identical to that of \citet{2015JCAP...12..033H, 2017JCAP...05..015H}, except as noted later.  
+The peculiar magnitude is given by 
+\begin{equation}
+\delta_m=(m - M) - \mu(z;H_0, \Omega_M, \Omega_\Lambda).
+\label{data:eqn}
+\end{equation}  We introduce one free parameter 
+$\mathcal{M} = M - 5\log{H_0} + \text{const}$ and do not consider the other cosmological parameters, whose effects are relatively weak at low-redshift.
+
+
+The peculiar magnitude correlation
+function $\xi_{\delta m \delta m}$ \citep{2011ApJ...741...67D,2015JCAP...12..033H} expected from General Relativity acting on the CMB
+matter density power spectrum is calculated using CAMB \citep{Lewis:2002ah}  assuming the same
+cosmological parameters used for the cosmoDC2 catalog.  Our model for the data covariance
+is
+\begin{equation}
+C_{ij} = A\xi_{\delta m \delta m}(\mathbf{r_i},\mathbf{r_j}) + \frac{\sigma_M^2}{N_i} \delta_{ij} + \sigma^2_{NL}(z_i;\sigma_{v})\delta_{ij},
+\label{cov:eqn}
+\end{equation}
+where $N_i$ is the number of SNe~Ia in galaxy $i$ and $\sigma_M$ is the intrinsic SN magnitude dispersion.
+The model is used to test General Relativity through deviations from $A=1$ but is not sensitive to deviations
+from the linearized GR expectation of the shape of the power spectrum 
+$\xi$.
+Nevertheless, for
+convenience we say that our model gives $f\sigma_8 = A (f\sigma_8)^{GR}$, where $(f\sigma_8)^{GR}$ is the expectation
+from General Relativity. 
+The final term includes extra magnitude dispersion produced by non-linear effects on velocity, parameterized with $\sigma_{v}$, such that
+\begin{equation}
+\sigma_{NL} = \frac{5}{\ln{10}} \frac{1+\bar{z}}{\bar{z}} \sigma_v,
+\end{equation}
+where $\bar{z}$ is the cosmological redshift of the host galaxy.
+We note that the CAMB calculation of $\xi$ includes non-linear corrections, which actually may be a bad thing for peculiar velocities \citep{2015MNRAS.454.3920H}. 
+Such subtleties are unimportant as \citet{2015JCAP...12..033H} find that their results are insensitive to whether non-linear corrections are or are not included.
+
+For all analyses we remove supernovae below observed $z_{min}=0.01$ in order to
+reduce errors made in the first-order transformation between velocity and
+magnitude.  This cut removes a  small volume relative to the full survey.
+
+The posterior of the parameters is sampled using emcee.  The likelihood is the Normal distribution with the data in Eq.~\ref{data:eqn} and
+covariance matrix in Eq.~\ref{cov:eqn}.
+The priors are positive and flat for $A$, flat for $M$, positive Cauchy(0.08, 0.5) for $\sigma_M$, and  positive Cauchy(0, 600 km~s$^{-1}$) for $\sigma_{v}$.
+
+Direct tests of non-GR models for which Poisson's equation or the linear approximation
+does not apply requires a model-dependent $\xi$.  We defer the analysis of such higher-fidelity models to later work. 
+
+\section{Results of Subsets}
+
+The  ston in $f\sigma_8$ is calculated for different subsamples of the simulated data.
+For each subsample  the mean  and standard deviation, $(\bar{A}, \sigma_A$) of the amplitude parameter is
+determined.  The ston in $f\sigma_8$ for the subsample is thus  $\bar{A} \sigma^{-1}_A$, and that for a 18,000 sq.~deg. survey  is approximated by
+$\sqrt{18000/760}\bar{A}\sigma^{-1}_A$.  The effective constraining power of a single supernova in the subset is chracterized by 
+ $\bar{A} \sigma^{-1}_A N_{gal}^{-0.5}$.
+
+Different parameters describing the input simulated data define the subsamples, 
+which are used to explore the range of possible survey strategies.   The varied parameters are the redshift range, $z_{max}$, intrinsic
+magnitude dispersion, $\sigma_M$, and SN number density, $n = \phi n_{10}$, where $ n_{10}$ is the  10-year total number density.  In general a given point
+of sky is not monitored over the full year.  
+The fit posterior for one representative subsample, with input  $z_{max}=0.2$, $\sigma_M=0.08$, $\phi=0.65$, is shown in Figure~\ref{zmax:fig}.
+For all subsamples, there is no evidence for non-convergence of the MCMC chains.  The parameter $\sigma_v$, not included in  \citet{2015JCAP...12..033H, 2017JCAP...05..015H},
+is found to be consistent with zero, poorly constrained, and very weakly correlated with $A$.  Table~\ref{tab:subsets} gives the results for the different subsamples.
+
+\begin{figure}
+\centering
+\includegraphics[width=0.5\textwidth]{../outcosmo/pvlist.0.08.1234.0.65.0.2.pkl.png}
+\caption{Confidence regions for the model parameters.  $A=(f\sigma_8)/(f\sigma_8)_{GR}$, $\mathcal{M}$ is the supernova
+absolute magnitude, $\sigma_M$ is the magnitude dispersion, and $\sigma_v$ is the non-linear contribution
+to peculiar velocity.  This result is for the subset $z_{max}=0.2$, $\sigma_M=0.08$, $\phi=0.65$.  The dotted lines represent the inputs of the supernova
+part of the simulation.
+\label{zmax:fig}}
+\end{figure}
+
+\begin{table}
+   \centering
+   %\topcaption{Table captions are better up top} % requires the topcapt package
+   \begin{tabular}{|ccc|cc|} % Column formatting, @{} suppresses leading/trailing space
+   \hline
+$z_{max}$ & $\phi$ & $\sigma_{M}$  &  STON $f\sigma_8$ & STON per SN \\
+\hline
+0.07 & 0.65 & 0.08  & 25.795 &   0.27 \\
+0.07 & 1.00 & 0.08  & 31.163 &   0.27 \\
+0.07 & 1.00 & 0.10  & 25.421 &   0.22 \\
+0.07 & 1.00 & 0.12  & 22.173 &   0.19 \\
+0.07 & 1.00 & 0.15  & 18.831 &   0.16 \\
+0.10 & 0.30 & 0.08  & 23.784 &   0.24 \\
+0.10 & 0.50 & 0.08  & 23.501 &   0.18 \\
+0.10 & 0.65 & 0.08  & 24.994 &   0.17 \\
+0.10 & 0.65 & 0.10  & 20.866 &   0.15 \\
+0.10 & 0.65 & 0.12  & 18.778 &   0.13 \\
+0.10 & 1.00 & 0.08  & 31.704 &   0.18 \\
+0.10 & 1.00 & 0.10  & 25.687 &   0.15 \\
+0.10 & 1.00 & 0.12  & 22.982 &   0.13 \\
+0.15 & 0.30 & 0.08  & 24.799 &   0.15 \\
+0.15 & 0.30 & 0.12  & 19.527 &   0.12 \\
+0.15 & 0.50 & 0.08  & 29.550 &   0.14 \\
+0.15 & 0.65 & 0.08  & 33.921 &   0.14 \\
+0.15 & 0.65 & 0.10  & 28.655 &   0.12 \\
+0.15 & 0.65 & 0.12  & 24.111 &   0.10 \\
+0.15 & 1.00 & 0.08  & 40.158 &   0.13 \\
+0.20 & 0.20 & 0.08  & 26.487 &   0.12 \\
+0.20 & 0.30 & 0.08  & 29.828 &   0.11 \\
+0.20 & 0.30 & 0.10  & 24.019 &   0.09 \\
+0.20 & 0.30 & 0.12  & 19.181 &   0.07 \\
+0.20 & 0.50 & 0.08  & 36.680 &   0.11 \\
+0.20 & 0.65 & 0.08  & 41.591 &   0.11 \\
+0.20 & 0.65 & 0.10  & 35.196 &   0.09 \\
+0.20 & 0.65 & 0.12  & 27.987 &   0.07 \\
+0.20 & 1.00 & 0.08  & 48.368 &   0.10 \\
+0.20 & 1.00 & 0.10  & 40.835 &   0.08 \\
+0.20 & 1.00 & 0.12  & 37.875 &   0.08 \\
+    \hline
+   \end{tabular}
+   \caption{ston in $A$ or equivalently $f\sigma_8$ for surveys parameterized by the maximum redshift $z_{max}$,
+   the fraction of total supernovae in 10 years ``fraction'', intrinsic magnitude dispersion $\sigma_{SN}$.  The number of galaxies
+   $N_{gal}$, the signal $\bar{A}$ and its uncertainty $\sigma_A$ are for the cosmoDC2 (v1.0) 760 sq.~deg. volume only.
+   The uncertainty ``per'' supernova is given by  $\sigma_A N_{gal}^{-0.5}$.  The ston, scaled to an LSST solid angle, is given as 
+    $\bar{A} \sigma_A^{-1} (18000/760)^{0.5}$.
+   \label{tab:subsets}}
+\end{table}
+
+In Fourier space, the data covariance is a combination of sample and shot noise (Eq.~\ref{cov:eq}).
+In Figure~\ref{scaling:fig} the effective LSST ston is plotted as a function of input $n \sigma^{-2}_M$ for different $z_{max}$.
+For all cases, the ston improves with larger $n \sigma^{-2}_M$ showing that the sample-variance limit has not been reached,
+though the shallowing of the slopes for shallower surveys shows that it does contribute non-negligibly.
+The fact that the ston is not constant indicates that not of the subsamples is sample-variance limited, though its non-linearity
+indicates that it is non-negligible.
+
+
+\begin{figure}
+\centering
+\includegraphics[width=0.5\textwidth]{../outcosmo/fracsnsig2_.png}
+%\includegraphics[width=0.5\textwidth]{../outcosmo/zmax_.png}
+\caption{ Effective LSST ston as a function of input  $n \sigma^{-2}_M$.  The points are color-coded for different $z_{max}$.
+\label{scaling:fig}}
+\end{figure}
+
+A SN peculiar survey benefits from greater redshift depth $z_{max}$ due to the increase in volume and numbers of supernovae.  However,  for fixed magnitude uncertainty
+peculiar-velocity uncertainties increase with redshift and the follow-up of fainter distant SNe requires more resources. 
+Table~\ref{tab:subsets}
+shows that the effective worth of each supernova ($\sigma_A N_{gal}^{-0.5}$) diminishes with increasing survey depth.
+The table also shows that for $\sigma_M=0.08$~mag, the subsample with $z_{max}=0.1$ with 1294 supernovae yields a ston of 15.96, whereas
+a sample with $z_{max}=0.2$ with 2021 supernovae has a lower ston of 13.61.  Within the range of surveys considered, a lower-redshift supernova
+is more valuable than one at high redshift.  For both scientific and resource reasons, it is best to devote resources to the lowest possible redshifts.
+
+
+$\phi \sim 0.65$ is an effective number density of discovered supernovae with light-curve coverage observed in 10 years
+
 %
 %
-%\appendix
-%\section{Reanalysis in Configuration Space}
-%
-%This Appendix describes a new analysis used to project precisions on $f\sigma_8$ using peculiar velocities derived from SNe~Ia.
-%This analysis may or may not be useful for the Decadal Survey White Paper, but will be helpful for LSST planning.
-%While there have been a number of articles on the subject,
-%our analysis brings a higher level of fidelity than sought previously.  We simulate SNe~Ia hosted by galaxies in a mock galaxy
-%catalog. The numbers of SNe are sufficiently small to allow fast evaluations of the likelihood, which enable the determination of parameter
-%posteriors using MCMC on reasonable computing timescales.   We can use our machinery to 
-%compare different survey parameters, such as redshift depth, total numbers of supernovae, non-uniform spatial density,
-%solid angle/survey geometry, and SN~Ia intrinsic magnitude dispersion.
-%Adding the cross-correlation between galaxy-count and peculiar-velocity surveys is active work, so we can
-%quantify the suppression of sample variance achieved when considering matter-densities and velocities 
-%within the same volume \citep{2007PhRvL..99h1301G}.
-%
-%\section{Simulated Data}
-%The cosmoDC2 (v1.0) covering 706 sq.~deg is used\footnote{We previously used
-%Buzzard (v1.6) galaxy catalog is used, but it was found to give peculiar velocities inconsistent with general relativity.  As we will see,
-%cosmoDC2 (v1.0) is consistent with GR. }. 
-%The catalog is based on a Flat $\Lambda$CDM model with $H_0=71$~km~s$^{-1}$,  $\Omega_M=0.265$, $\Omega_B=0.0448$, and
-%$\Omega_\nu=0$.
-%Each galaxy has its cosmological redshift, the $x$-, $y$-, $z$-components of its peculiar velocity from which
-%the radial peculiar velocity is determined, and its
-%star formation rate and stellar mass from which the
-%supernova rate of each host is determined using 
-%\citet{2012ApJ...755...61S}.   This host-based rate
-%underestimates the expected discovery based on the volumetric
-%rate of \citet{2010ApJ...713.1026D}.  The volumetric rate is more robust, so  we boost the SN production
-%by a factor 2.4 to get the 10-year volumetric rate expectation. The total number of simulated SNe 
-%is greater than the total number of possibly useful supernova discoveries, since most fields cannot be continuously monitored throughout the year
-%from most ground-based observatories.
-%
-%
-%Each supernova is assigned a magnitude based on the distance modulus of its cosmological
-%redshift plus a random term drawn from a Normal distribution $\sigma_M$, which for simplicity is the same for all supernovae and captures both
-%intrinsic magnitude dispersion and measurement uncertainty.  No other corrections are applied to the observed magnitude.  Dipole effects of the heliocentric
-%motion with respect to the CMB and of the galaxies with respect to the CMB  are ignored: referring to
-%\citet{2011ApJ...741...67D}, the effects in Eq.~18 are not included.  Including these effects are straightforward but is computationally expensive
-%and does not affect our conclusions.
-%
-%We consider a maximum redshift of $z=0.2$ because over ten years the noise is not sample-variance dominated, meaning that the differential improvement
-%in the precision of
-%$f\sigma_8$ due to a lower-redshift supernova is greater than that due to a high-redshift supernova.  Following all LSST SNe~Ia below this redshift 
-%would likely saturate available follow-up resources.
-%
-%
-%\section{Analysis}
-%The analysis is  almost identical to that of \citet{2015JCAP...12..033H, 2017JCAP...05..015H}, except as noted later.  
-%The peculiar magnitude is given by 
+%\citet{2017ApJ...847..128H} project how well peculiar velocity surveys can measure $f\sigma_8$. 
+%They perform their analysis in Fourier space, 
+%where the Fisher information matrix of parameters $\lambda_i$ from random Gaussian field with mean zero and covariance $C(k)$ is
 %\begin{equation}
-%\delta_m=(m - M) - \mu(z;H_0, \Omega_M, \Omega_\Lambda).
-%\label{data:eqn}
-%\end{equation}  We introduce one free parameter 
-%$\mathcal{M} = M - 5\log{H_0} + \text{const}$ and do not consider the other cosmological parameters, whose effects are relatively weak at low-redshift.
-%
-%
-%The peculiar magnitude correlation
-%function $\xi_{\delta m \delta m}$ \citep{2011ApJ...741...67D,2015JCAP...12..033H} expected from General Relativity acting on the CMB
-%matter density power spectrum is calculated using CAMB \citep{Lewis:2002ah}  assuming the same
-%cosmological parameters used for the cosmoDC2 catalog.  Our model for the data covariance
-%is
-%\begin{equation}
-%C_{ij} = A\xi_{\delta m \delta m}(\mathbf{r_i},\mathbf{r_j}) + \frac{\sigma_M^2}{N_i} \delta_{ij} + \sigma^2_{NL}(z_i;\sigma_{v})\delta_{ij},
-%\label{cov:eqn}
+%F_{ij} = \frac{V}{2}\int \frac{d^3k}{(2\pi)^3} \text{Tr}\left[ C^{-1} \frac{\partial C}{\partial \lambda_i} C^{-1}
+%\frac{\partial C}{\partial \lambda_j} \right],
 %\end{equation}
-%where $N_i$ is the number of SNe~Ia in galaxy $i$ and $\sigma_M$ is the intrinsic SN magnitude dispersion.
-%The model is used to test General Relativity through deviations from $A=1$ but is not sensitive to deviations
-%from the linearized GR expectation of the shape of the power spectrum 
-%$\xi$.
-%Nevertheless, for
-%convenience we say that our model gives $f\sigma_8 = A (f\sigma_8)^{GR}$, where $(f\sigma_8)^{GR}$ is the expectation
-%from General Relativity. 
-%The final term includes extra magnitude dispersion produced by non-linear effects on velocity, parameterized with $\sigma_{v}$, such that
+%where the covariance for the velocity-velocity correlation
 %\begin{equation}
-%\sigma_{NL} = \frac{5}{\ln{10}} \frac{1+\bar{z}}{\bar{z}} \sigma_v,
+%C = P_{vv}(k,\mu) + \frac{\sigma^2}{n}
+%\label{cov:eq}
 %\end{equation}
-%where $\bar{z}$ is the cosmological redshift of the host galaxy.
-%We note that the CAMB calculation of $\xi$ includes non-linear corrections, which actually may be a bad thing for peculiar velocities \citep{2015MNRAS.454.3920H}. 
-%Such subtleties are unimportant as \citet{2015JCAP...12..033H} find that their results are insensitive to whether non-linear corrections are or are not included.
+%is dependent on the power spectrum, noise in the velocity measurement dominated by the intrinsic velocity dispersion $\sigma$, and the density of velocity probes
+%\citep{2017MNRAS.464.2517H}.  
+%The primary dependence on the growth of structure is through the normalization of the velocity power spectrum, such that 
+%\begin{equation}
+% \frac{\partial P_{vv}}{\partial \lambda} = \text{constant}
+%\end{equation}
+%for the parameter choice
+%$\lambda=(f\sigma_8)^2$.  In the sample-variance limit, $F_{\lambda \lambda} \propto V$ whereas in the shot noise limit $F_{\lambda \lambda} \propto V n^2 \sigma^{-4}$.
 %
-%For all analyses we remove supernovae below observed $z_{min}=0.01$ in order to
-%reduce errors made in the first-order transformation between velocity and
-%magnitude.  This cut removes a  small volume relative to the full survey.
-%
-%The posterior of the parameters is sampled using emcee.  The likelihood is the Normal distribution with the data in Eq.~\ref{data:eqn} and
-%covariance matrix in Eq.~\ref{cov:eqn}.
-%The priors are positive and flat for $A$, flat for $M$, positive Cauchy(0.08, 0.5) for $\sigma_M$, and  positive Cauchy(0, 600 km~s$^{-1}$) for $\sigma_{v}$.
-%
-%Direct tests of non-GR models for which Poisson's equation or the linear approximation
-%does not apply requires a model-dependent $\xi$.  We defer the analysis of such higher-fidelity models to later work. 
-%
-%\section{Results of Subsets}
-%
-%The  ston in $f\sigma_8$ is calculated for different subsamples of the simulated data.
-%For each subsample  the mean  and standard deviation, $(\bar{A}, \sigma_A$) of the amplitude parameter is
-%determined.  The ston in $f\sigma_8$ for the subsample is thus  $\bar{A} \sigma^{-1}_A$, and that for a 18,000 sq.~deg. survey  is approximated by
-%$\sqrt{18000/760}\bar{A}\sigma^{-1}_A$.  The effective constraining power of a single supernova in the subset is chracterized by 
-% $\bar{A} \sigma^{-1}_A N_{gal}^{-0.5}$.
-%
-%Different parameters describing the input simulated data define the subsamples, 
-%which are used to explore the range of possible survey strategies.   The varied parameters are the redshift range, $z_{max}$, intrinsic
-%magnitude dispersion, $\sigma_M$, and SN number density, $n = \phi n_{10}$, where $ n_{10}$ is the  10-year total number density.  In general a given point
-%of sky is not monitored over the full year.  
-%The fit posterior for one representative subsample, with input  $z_{max}=0.2$, $\sigma_M=0.08$, $\phi=0.65$, is shown in Figure~\ref{zmax:fig}.
-%For all subsamples, there is no evidence for non-convergence of the MCMC chains.  The parameter $\sigma_v$, not included in  \citet{2015JCAP...12..033H, 2017JCAP...05..015H},
-%is found to be consistent with zero, poorly constrained, and very weakly correlated with $A$.  Table~\ref{tab:subsets} gives the results for the different subsamples.
-%
-%\begin{figure}
-%\centering
-%\includegraphics[width=0.5\textwidth]{../outcosmo/pvlist.0.08.1234.0.65.0.2.pkl.png}
-%\caption{Confidence regions for the model parameters.  $A=(f\sigma_8)/(f\sigma_8)_{GR}$, $\mathcal{M}$ is the supernova
-%absolute magnitude, $\sigma_M$ is the magnitude dispersion, and $\sigma_v$ is the non-linear contribution
-%to peculiar velocity.  This result is for the subset $z_{max}=0.2$, $\sigma_M=0.08$, $\phi=0.65$.  The dotted lines represent the inputs of the supernova
-%part of the simulation.
-%\label{zmax:fig}}
-%\end{figure}
-%
-%\begin{table}
-%   \centering
-%   %\topcaption{Table captions are better up top} % requires the topcapt package
-%   \begin{tabular}{|ccc|cc|} % Column formatting, @{} suppresses leading/trailing space
-%   \hline
-%$z_{max}$ & $\phi$ & $\sigma_{M}$  &  STON $f\sigma_8$ & STON per SN \\
-%\hline
-%0.07 & 0.65 & 0.08  & 25.795 &   0.27 \\
-%0.07 & 1.00 & 0.08  & 31.163 &   0.27 \\
-%0.07 & 1.00 & 0.10  & 25.421 &   0.22 \\
-%0.07 & 1.00 & 0.12  & 22.173 &   0.19 \\
-%0.07 & 1.00 & 0.15  & 18.831 &   0.16 \\
-%0.10 & 0.30 & 0.08  & 23.784 &   0.24 \\
-%0.10 & 0.50 & 0.08  & 23.501 &   0.18 \\
-%0.10 & 0.65 & 0.08  & 24.994 &   0.17 \\
-%0.10 & 0.65 & 0.10  & 20.866 &   0.15 \\
-%0.10 & 0.65 & 0.12  & 18.778 &   0.13 \\
-%0.10 & 1.00 & 0.08  & 31.704 &   0.18 \\
-%0.10 & 1.00 & 0.10  & 25.687 &   0.15 \\
-%0.10 & 1.00 & 0.12  & 22.982 &   0.13 \\
-%0.15 & 0.30 & 0.08  & 24.799 &   0.15 \\
-%0.15 & 0.30 & 0.12  & 19.527 &   0.12 \\
-%0.15 & 0.50 & 0.08  & 29.550 &   0.14 \\
-%0.15 & 0.65 & 0.08  & 33.921 &   0.14 \\
-%0.15 & 0.65 & 0.10  & 28.655 &   0.12 \\
-%0.15 & 0.65 & 0.12  & 24.111 &   0.10 \\
-%0.15 & 1.00 & 0.08  & 40.158 &   0.13 \\
-%0.20 & 0.20 & 0.08  & 26.487 &   0.12 \\
-%0.20 & 0.30 & 0.08  & 29.828 &   0.11 \\
-%0.20 & 0.30 & 0.10  & 24.019 &   0.09 \\
-%0.20 & 0.30 & 0.12  & 19.181 &   0.07 \\
-%0.20 & 0.50 & 0.08  & 36.680 &   0.11 \\
-%0.20 & 0.65 & 0.08  & 41.591 &   0.11 \\
-%0.20 & 0.65 & 0.10  & 35.196 &   0.09 \\
-%0.20 & 0.65 & 0.12  & 27.987 &   0.07 \\
-%0.20 & 1.00 & 0.08  & 48.368 &   0.10 \\
-%0.20 & 1.00 & 0.10  & 40.835 &   0.08 \\
-%0.20 & 1.00 & 0.12  & 37.875 &   0.08 \\
-%    \hline
-%   \end{tabular}
-%   \caption{ston in $A$ or equivalently $f\sigma_8$ for surveys parameterized by the maximum redshift $z_{max}$,
-%   the fraction of total supernovae in 10 years ``fraction'', intrinsic magnitude dispersion $\sigma_{SN}$.  The number of galaxies
-%   $N_{gal}$, the signal $\bar{A}$ and its uncertainty $\sigma_A$ are for the cosmoDC2 (v1.0) 760 sq.~deg. volume only.
-%   The uncertainty ``per'' supernova is given by  $\sigma_A N_{gal}^{-0.5}$.  The ston, scaled to an LSST solid angle, is given as 
-%    $\bar{A} \sigma_A^{-1} (18000/760)^{0.5}$.
-%   \label{tab:subsets}}
-%\end{table}
-%
-%In Fourier space, the data covariance is a combination of sample and shot noise (Eq.~\ref{cov:eq}).
-%In Figure~\ref{scaling:fig} the effective LSST ston is plotted as a function of input $n \sigma^{-2}_M$ for different $z_{max}$.
-%For all cases, the ston improves with larger $n \sigma^{-2}_M$ showing that the sample-variance limit has not been reached,
-%though the shallowing of the slopes for shallower surveys shows that it does contribute non-negligibly.
-%The fact that the ston is not constant indicates that not of the subsamples is sample-variance limited, though its non-linearity
-%indicates that it is non-negligible.
-%
-%
-%\begin{figure}
-%\centering
-%\includegraphics[width=0.5\textwidth]{../outcosmo/fracsnsig2_.png}
-%%\includegraphics[width=0.5\textwidth]{../outcosmo/zmax_.png}
-%\caption{ Effective LSST ston as a function of input  $n \sigma^{-2}_M$.  The points are color-coded for different $z_{max}$.
-%\label{scaling:fig}}
-%\end{figure}
-%
-%A SN peculiar survey benefits from greater redshift depth $z_{max}$ due to the increase in volume and numbers of supernovae.  However,  for fixed magnitude uncertainty
-%peculiar-velocity uncertainties increase with redshift and the follow-up of fainter distant SNe requires more resources. 
-%Table~\ref{tab:subsets}
-%shows that the effective worth of each supernova ($\sigma_A N_{gal}^{-0.5}$) diminishes with increasing survey depth.
-%The table also shows that for $\sigma_M=0.08$~mag, the subsample with $z_{max}=0.1$ with 1294 supernovae yields a ston of 15.96, whereas
-%a sample with $z_{max}=0.2$ with 2021 supernovae has a lower ston of 13.61.  Within the range of surveys considered, a lower-redshift supernova
-%is more valuable than one at high redshift.  For both scientific and resource reasons, it is best to devote resources to the lowest possible redshifts.
-%
-%
-%$\phi \sim 0.65$ is an effective number density of discovered supernovae with light-curve coverage observed in 10 years
-%
+
+
 
 \bibliographystyle{aasjournal}
 \bibliography{/Users/akim/Documents/alex}
