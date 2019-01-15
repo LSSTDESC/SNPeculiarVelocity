@@ -2,7 +2,7 @@
 \usepackage{graphicx}				% Use pdf, png, jpg, or eps§ with pdflatex; use eps in DVI mode
 								% TeX will automatically convert eps --> pdf in pdflatex		
 \usepackage{amssymb,amsmath}
-\usepackage{natbib}
+\usepackage{natbib,verbatim}
 \usepackage{grffile}
 \usepackage{textcase}
 \usepackage{hyperref}
@@ -197,40 +197,46 @@ $z=0.3$.
 At $z<0.2$ the constraining power on  $f\sigma_8$ 
 comes primarily from peculiar velocities
 but by $z=0.3$ RSD is more important.
-It turns out that for $z>0.1$, the volume is sufficiently large that the LSST sample is not yet sample variance limited.
 
 
 
 \section{Designing a Supernova Survey to Measure $\MakeLowercase{f}\sigma_8$}
-\subsection{Survey Parameters that Determine Scientific Performance}
+\subsection{Fisher Matrix of Velocity-Galaxy Surveys}
 
-The expected peculiar velocity signal  is described by its power spectrum $P_{vv}$.
-The range $k$'s  used in an analysis depends on the depth of the survey $k_{min} \approx (2 z_{max})^{-1}$, and the smallest
-scales where the theoretical predictions are reliable, say $k_{max} \approx 0.1$~$h$\,Mpc$^{-1}$.
-The top panel of Figure~\ref{detC:fig} shows the volume-weighted power spectrum $k^3 P_{vv}$
-at $z=0$ assuming General Relativity and linear theory.  The panel shows available $k$ ranges for several surveys with different
-maximum redshift: the $0.02 <k< 0.1$~$h$\,Mpc$^{-1}$ modes contribute the bulk of the peculiar velocity signal.
+The  peculiar velocity signal  can be described by its power spectrum $P_{vv}$.
 The sensitivity to gravity primarily resides in the normalization of the power spectrum, as  $P_{vv} \propto (f\sigma_8)^2$.
-Non-GR models can also predict differences in the shape and the redshift-dependence of GR prediction $P_{vv}$  in Figure~\ref{power:fig}.
+Non-GR models can also predict differences in the shape and the redshift-dependence of GR prediction $P_{vv}$,
+though this detail is not considered here.
+The top panel of Figure~\ref{power:fig} shows the volume-weighted power spectrum $k^3 P_{vv}$
+at $z=0$ expected from General Relativity and linear theory. Available $k$ ranges for surveys with different
+maximum redshift $z_{max}$ are also indicated, where $k_{min} \approx (2 z_{max})^{-1}$  and 
+$k_{max} \approx 0.1$~$h$\,Mpc$^{-1}$ represents  the smallest
+scale where  theory predictions are reliable.
+Figure~\ref{power:fig} shows  that the bulk of the peculiar velocity signal comes from $0.02 <k< 0.1$~$h$\,Mpc$^{-1}$ modes.
 
 \begin{figure}
 \centering
-\includegraphics[width=0.5\textwidth]{src/power.png}
+\includegraphics[width=0.8\textwidth]{src/power.png}
 %\includegraphics[width=0.5\textwidth]{../outcosmo/zmax_.png}
-\caption{ 
+\caption{Top panel: Volume-weighted velocity power spectrum $k^3P_{vv}$ at $z=0$ for $\mu=1, 0,5$ as predicted for General Relativity in the linear regime.
+Lower two panels: $I/I_{max}$ for $\mu=1, 0.5$  where $I=\text{Tr}\left(C^{-1}C_{,f\sigma_8}C^{-1}C_{,f\sigma_8}\right)$ represents the contribution of a single mode to
+the Fisher element $F_{f\sigma_8 f\sigma_8}$ and $I_{max}$ is the sample variance limit.  The dashed black curve represents galaxy and velocity surveys in
+independent volumes.  Two- and ten-year SN number densities are given by dotted and solid color lines respectively.  Different colors represent varying levels
+of intrinsic velocity dispersion.  The bottom solid horizontal lines show the approximate range of $k$ expected to be used in surveys with corresponding
+redshift depths $z_{max}$.
 \label{power:fig}}
 \end{figure}
 
-
-\citet{2017ApJ...847..128H} project how complementary galaxy and peculiar velocity surveys in a common volume can measure $f\sigma_8$. 
-They perform their analysis in Fourier space, 
-where the Fisher information matrix of parameters $\lambda_i$ from random Gaussian field with mean zero and covariance $C$ is
+\citet{2017ApJ...847..128H, 2017MNRAS.464.2517H} project the precision in $f\sigma_8$, summarized in   Table~\ref{tab:howlett},
+ obtained by  complementary galaxy and peculiar velocity surveys in a common volume.
+Their analysis is performed in Fourier space, 
+where the Fisher information matrix of parameters $\lambda_i$ from random Gaussian field with mean zero is given by
 \begin{equation}
 F_{ij} = \frac{V}{2}\int \frac{d^3k}{(2\pi)^3} \text{Tr}\left[ C^{-1} \frac{\partial C}{\partial \lambda_i} C^{-1}
 \frac{\partial C}{\partial \lambda_j} \right]
 \label{fisher:eqn}
 \end{equation}
-and the covariance is 
+ and covariance
 \begin{equation}
 C(k,\mu)  =
   \begin{bmatrix}
@@ -242,103 +248,135 @@ C(k,\mu)  =
 \label{cov:eq}
 \end{equation}
 The covariance depends on $P_{vv}$, the galaxy power spectrum $P_{gg}\propto (b\sigma_8 + f\sigma_8\mu^2)^2$, and the galaxy-velocity cross-correlation $P_{vg}
-\propto  (b\sigma_8 + f\sigma_8\mu^2)f\sigma_8$, where $b$ is the bias parameter.
-The galaxy number density is $n_g$, the number density of velocity probes is $n$, and the probe velocity dispersion
+\propto  (b\sigma_8 + f\sigma_8\mu^2)f\sigma_8$, where $b$ is the galaxy bias.
+The galaxy number density is $n_g$, the number density of velocity probes is $n$, and the per-probe velocity dispersion
 is $\sigma$. 
- The Fisher matrix in  Eq.~\ref{fisher:eqn} is evaluated by \citet{2017MNRAS.464.2517H}  to generate the $f \sigma_8$ uncertainties in Table~\ref{tab:howlett}.
-
-The integrand
+The integrand in the Fisher-element calculation
 \begin{equation}
 I = \text{Tr}\left[ C^{-1} \frac{\partial C}{\partial (f\sigma_8)} C^{-1}
 \frac{\partial C}{\partial  (f\sigma_8)} \right]
 \end{equation}
-in Eq.~\ref{fisher:eqn}  represents how much a differential Fourier
-volume element with wavenumber $k$ and line of sight $\mu$ contributes to $F_{f\sigma_{8}\,f\sigma_{8}}$;
-it is therefore  useful in evaluating the design of peculiar velocity surveys. 
-We evaluate these surveys relative to the $I_{max}$ of a sample-variance limited
-peculiar velocity survey with\ $\sigma/n =0$.
-In the following we consider as given a  TAIPAN-like
+represents the contribution to  $F_{f\sigma_{8}\,f\sigma_{8}}$ from a
+differential Fourier
+volume element.  
+
+\subsection{Precision in $f\sigma_8$ and Survey Design Parameters}
+The performance of a peculiar velocity survey depends on its overlap with galaxy surveys, solid-angle coverage, redshift depth, and intrinsic magnitude dispersion.
+In the following, we consider as given a  TAIPAN-like
 galaxy survey with $b=1.2$ and number density $n_g=10^{-3}h^3$\,Mpc$^{-3}$ that overlaps with the peculiar velocity surveys.
+While the expected variance in $f\sigma_8$ is $\left(F^{-1}\right)_{{f\sigma_{8}\,f\sigma_{8}}}$, we use $I$ as a proxy to help understand
+how survey densities and shot noise affect science performance.
+Surveys are compared relative to the $I_{max}$ of an idealized sample-variance limited peculiar-velocity survey with\ $\sigma/n =0$.
 
-First, we show the benefit of having the  galaxy and velocity surveys in a common volume by considering the degradation that occurs when 
-they are treated as being
-independent.  For this exercise the velocity survey is taken to be sample-variance limited.
-The resulting $I/I_{max}$  is shown as the black dashed curves in the bottom two panels of Figure~\ref{power:fig},
-and is found to lie between $0.1-0.2$.
-Taking advantage of the fact that the same dark-matter fluctuations produce the galaxies and velocities 
-in the common volume decreases
-the variance in $f\sigma_8$ by factors of 5 to 10.
-
-Realistic surveys have shot noise. We consider two- and ten-year
-supernova densities $n$  based on SN~Ia rates 
-with 0.65 sample efficiency, and velocity dispersions $\sigma \approx (\frac{5}{\ln{10}} \frac{1+z}{z})^{-1} \sigma_M$
+First, we demonstrate that the realistic surveys being considered have significant shot noise contributions in their error budgets. 
+Consider two- and ten-year
+SN~Ia densities $n$  based on SN~Ia rates 
+with 0.65 efficiency, and velocity dispersions $\sigma \approx (\frac{5}{\ln{10}} \frac{1+z}{z})^{-1} \sigma_M$
 assuming a supernova magnitude dispersion of $\sigma_M=0.08$ and inserting values of $z=0.05,0.1, 0.2$.
-The $I/I_{max}$ of these survey scenarios are shown in the bottom two panels of Figure~\ref{power:fig}.
-Generally, $k<0.01$ modes have $I/I_{max}\sim 1$ meaning that they are sample-noise limited.
-Individual $k>0.01$ modes have  $I/I_{max}<1$ showing that shot noise
-is significant.  Recall that collectively,  larger $k$ modes are the important contributors to the peculiar-velocity signal;
-basically all  supernovae found in  the next decade contribute to improving the statistical measurement of $f\sigma_8$..
-The figure also shows how the statistical gain from additional supernovae diminish as the survey duration increases, and when they are at lower-redshift  (by virtue of their lower intrinsic velocity dispersion).
+The $I/I_{max}$ of these  scenarios are shown in the bottom two panels of Figure~\ref{power:fig}.
+Generally, $k<0.01$ modes have $I/I_{max}\sim 1$ and so are sample-noise limited.
+Individual $k>0.01$ modes have  $I/I_{max}<1$ meaning  that shot noise
+is significant.  Recall that collectively, $k>0.01$ modes are the important contributors to the peculiar-velocity signal.
+Basically all  supernovae found in  the next decade contribute to improving the statistical measurement of $f\sigma_8$.
+%The figure also shows how the statistical gain from additional supernovae diminish as the survey duration increases, and when they are at lower-redshift  (by virtue of their lower intrinsic velocity dispersion).
 
-
-
-The survey parameters that  enter the Fisher matrix are the volume $V$, which
-in turn can be parameterized by the survey solid angle $\Omega$ and the redshift depth $z_{max}$ ; the number density of sources $n$; and the intrinsic
-magnitude dispersion $\sigma_M$, where magnitude and velocity dispersions are related at low-redshift by $\sigma_{M} \approx \frac{5}{\ln{10}} \frac{1+z}{z} \sigma$.
-LSST is expected to discover all $z<0.3$ SNe~Ia before maximum light in its active Wide Fast Deep (WFD) survey area.
-Equating LSST discovery with having a meaningful peculiar velocity, the number density $n$ is thus a fixed parameter, which only increases with survey duration.
-Thus $\Omega$, $z_{max}$, and $\sigma_M$ are left as the relevant parameters.
-
-
-
-\begin{itemize}
-\item Solid Angle $\Omega$:
-The variance in $f\sigma_8$ is inversely proportional to solid angle $\Omega$.  The baseline
-LSST survey covers 18,000 sq.~deg, at $-75 \lesssim \delta \lesssim15$ avoiding the Galactic plane.  Larger solid-angle coverage for $z<0.3$ SN~Ia searches, beyond
-the LSST baseline, benefits peculiar-velocity science.  Complementary northern-hemisphere surveys and LSST-expanded or independent
-coverage of the southern equatorial pole, could significantly increase
+{\bf Solid Angle $\Omega$:}
+$F_{f\sigma_{8}\,f\sigma_{8}}$ is  proportional to volume and hence the survey solid angle $\Omega$.  The baseline
+LSST survey covers 18,000 sq.~deg, at $-75 \lesssim \delta \lesssim15$ avoiding the Galactic plane.  Larger solid-angle coverage beyond
+the LSST baseline benefits peculiar-velocity science.  Complementary northern-hemisphere surveys and LSST-expanded or independent
+coverage of the southern equatorial pole could significantly increase
 the sky coverage with a corresponding decrease in the variance of $f\sigma_8$.
-\item Redshift Depth $z_{max}$:
-For the number densities generated by LSST and the SN~Ia intrinsic magnitude dispersion, the noise is not sample-variance
-limited.  We have run simulations of LSST SN surveys
-and calculated the signal-to-noise (STON) of $f\sigma_8$ from the peculiar-velocity correlations. These simulations show, as seen in the left plot
-of  Figure~\ref{notshot:fig}, that an increase in the number density of tracers leads to a significant improvement in STON.
-It is also worth noting that sample variance is not negligible, as seen by the non-linear dependence of the  STON on $\sigma_M^2/n$. 
-%
-%\begin{figure}
-%\centering
-%\includegraphics[width=0.48\textwidth]{../outcosmo/notshot.png}
-%\includegraphics[width=0.48\textwidth]{../outcosmo/perSN.png}
-%\caption{Left: STON of $f\sigma_8$ from simulated LSST SN peculiar-velocities only (no RSD).  There is a small level of scatter in the plots idue to the random
-%realizations made in simulating the surveys.
-%For several limiting redshift depths, the STON is plotted as a
-%function of $\sigma_M^2/n$, normalized to intrinsic magnitude dispersion $\sigma_M=0.1$~mag and 10-year LSST number densities.
-%Right: The effective contribution to the STON per supernova, quantified as STON divided by the root of the number of tracers.
-%\label{notshot:fig}}
-%\end{figure}
 
-The effective contribution to the STON per supernova, quantified as STON divided by the root of the number of tracers, is higher for lower
-$z_{max}$.  This is shown in the
-right plot of   Figure~\ref{notshot:fig}.
+%s
+% and so helps illustrate 
+%how how the density, $n$, and intrinsic SN magnitude dispersion of peculiar velocity probes, as
+%$\sigma \approx (\frac{5}{\ln{10}} \frac{1+z}{z})^{-1} \sigma_M$, affect survey precision.
 
-A low-redshift tracer is more valuable than one at higher redshift.
+{\bf Common-Volume Galaxy  Survey:}
+Galaxy and velocity surveys in different volumes do not have the off-diagonal cross-correlation terms in Eq.~\ref{cov:eq}.
+The degradation in probative power   $I/I_{max}$, when sample-variance limited,
+is shown as the black dashed curves in the bottom two panels of Figure~\ref{power:fig}.
+The curves lie between $0.1-0.2$, showing
+that accounting for the common dark-matter fluctuations that give rise to galaxy densities and peculiar velocities
+reduces the variance in $f\sigma_8$ by factors of 5 to 10.
 
-\item Intrinsic Magnitude Dispersion $\sigma_M$:
-A decrease in the supernova intrinsic magnitude dispersion leads to a significant improvement in  the STON of $f\sigma_8$,
-as shown in Figure~\ref{notshot:fig} in parallel to our earlier discussion of the dependence of $n$.  We are not sample-variance
-limited so the $\sigma^2_M/n$-term
-in the Fisher matrix is important.
+{\bf Redshift Depth $z_{max}$:}
+Increasing the survey redshift depth increases the $f \sigma_8$ precision, but when resource-limited is the expense of additional depth worth neglecting lower redshift
+SNe? The answer is found in  Table~\ref{tab:howlett}, which shows that after 10 years of LSST the lowest redshifts have the
+strongest probative power and are sensitive more to peculiar velocities rather than galaxy overdensities.  Despite
+the differential volume increase with redshift depth (Eq,~\ref{fisher:eqn}), the degradation in intrinsic peculiar velocity $\propto z/(1+z)$
+and being shot-noise-limited  makes a low-redshift tracer more valuable than one at higher redshift.
+
+{\bf Intrinsic Magnitude Dispersion $\sigma_M$}:
+Even after 10-years, a SN peculiar velocity survey still has significant shot noise.
+Thus, a decrease in the supernova intrinsic magnitude dispersion leads to a significant improvement in  the STON of $f\sigma_8$.
+%as shown in Figure~\ref{notshot:fig} in parallel to our earlier discussion of the dependence of $n$.  We are not sample-variance
+%limited so the $\sigma^2_M/n$-term
+%in the Fisher matrix is important.
 Survey follow-up strategy,
 which determines which data are available per SN~Ia, influences the accuracy to which their distances can be determined. 
 This dependence is non-trivial: the improvement between $\sigma_M=0.08$ and 0.15~mag dispersions is equivalent to a factor of 3.52
  in number density, or equivalently in survey duration. 
- 
-The intrinsic magnitude dispersion depends on the purity of the sample. Conservatively, we consider
-a pure SN~Ia sample obtained through
-spectroscopic classification; the requisite follow-up resources needed for complete $z<0.3$ coverage is conceivable. 
-The feasibility of using photometric classification is an important subject of research
-that can have implications for survey planning, particularly in extending the redshift range.
-\end{itemize}
+
+
+%\subsection{Survey Parameters that Determine Scientific Performance}
+
+
+%The survey parameters that  enter the Fisher matrix are the volume $V$, which
+%in turn can be parameterized by the survey solid angle $\Omega$ and the redshift depth $z_{max}$ ; the number density of sources $n$; and the intrinsic
+%magnitude dispersion $\sigma_M$, where magnitude and velocity dispersions are related at low-redshift by $\sigma_{M} \approx \frac{5}{\ln{10}} \frac{1+z}{z} \sigma$.
+
+%
+%
+%\begin{itemize}
+%\item Solid Angle $\Omega$:
+%The variance in $f\sigma_8$ is inversely proportional to solid angle $\Omega$.  The baseline
+%LSST survey covers 18,000 sq.~deg, at $-75 \lesssim \delta \lesssim15$ avoiding the Galactic plane.  Larger solid-angle coverage for $z<0.3$ SN~Ia searches, beyond
+%the LSST baseline, benefits peculiar-velocity science.  Complementary northern-hemisphere surveys and LSST-expanded or independent
+%coverage of the southern equatorial pole, could significantly increase
+%the sky coverage with a corresponding decrease in the variance of $f\sigma_8$.
+%\item Redshift Depth $z_{max}$:
+%Increasing the survey redshift depth increases the $f \sigma_8$ precision, but when resource-limited is it worth doing so at the expense of neglecting lower redshift
+%SNe? This is answered in  Table~\ref{tab:howlett}, which shows that after 10 years of LSST the lowest redshifts have the
+%stronger probative power and benefit most from peculiar velocities.  Although
+%a differential increase in redshift depth increases the volume in Eq,~\ref{fisher:eqn}, the degradation in  intrinsic peculiar velocity $\propto z/(1+z)$
+%and the fact that shot noise is still important leads to the conclusion that a low-redshift tracer is more valuable than one at higher redshift.
+%
+%%For the number densities generated by LSST and the SN~Ia intrinsic magnitude dispersion, the noise is not sample-variance
+%%limited.  We have run simulations of LSST SN surveys
+%%and calculated the signal-to-noise (STON) of $f\sigma_8$ from the peculiar-velocity correlations. These simulations show, as seen in the left plot
+%%of  Figure~\ref{notshot:fig}, that an increase in the number density of tracers leads to a significant improvement in STON.
+%%It is also worth noting that sample variance is not negligible, as seen by the non-linear dependence of the  STON on $\sigma_M^2/n$. 
+%%
+%%\begin{figure}
+%%\centering
+%%\includegraphics[width=0.48\textwidth]{../outcosmo/notshot.png}
+%%\includegraphics[width=0.48\textwidth]{../outcosmo/perSN.png}
+%%\caption{Left: STON of $f\sigma_8$ from simulated LSST SN peculiar-velocities only (no RSD).  There is a small level of scatter in the plots idue to the random
+%%realizations made in simulating the surveys.
+%%For several limiting redshift depths, the STON is plotted as a
+%%function of $\sigma_M^2/n$, normalized to intrinsic magnitude dispersion $\sigma_M=0.1$~mag and 10-year LSST number densities.
+%%Right: The effective contribution to the STON per supernova, quantified as STON divided by the root of the number of tracers.
+%%\label{notshot:fig}}
+%%\end{figure}
+%%
+%%The effective contribution to the STON per supernova, quantified as STON divided by the root of the number of tracers, is higher for lower
+%%$z_{max}$.  This is shown in the
+%%right plot of   Figure~\ref{notshot:fig}.
+%%
+%
+%
+%\item Intrinsic Magnitude Dispersion $\sigma_M$:
+%Even after 10-years, a SN peculiar velocity survey still has significant shot noise.
+%A decrease in the supernova intrinsic magnitude dispersion leads to a significant improvement in  the STON of $f\sigma_8$.
+%%as shown in Figure~\ref{notshot:fig} in parallel to our earlier discussion of the dependence of $n$.  We are not sample-variance
+%%limited so the $\sigma^2_M/n$-term
+%%in the Fisher matrix is important.
+%Survey follow-up strategy,
+%which determines which data are available per SN~Ia, influences the accuracy to which their distances can be determined. 
+%This dependence is non-trivial: the improvement between $\sigma_M=0.08$ and 0.15~mag dispersions is equivalent to a factor of 3.52
+% in number density, or equivalently in survey duration. 
+%\end{itemize}
 
 \subsection{Designing an SN~Ia Peculiar Velocity Survey}
 There are different options to consider in the design of a SN~Ia peculiar velocity survey, though at this point it is difficult to assess which is optimal
@@ -350,13 +388,24 @@ based upon the above findings, while noting that
 constructing such a model is a parallel
 endeavor that will benefit peculiar-velocity  and other SN~Ia science. 
 
+%Equating LSST discovery with having a meaningful peculiar velocity, the number density $n$ is thus a fixed parameter, which only increases with survey duration.
+%Thus $\Omega$, $z_{max}$, and $\sigma_M$ are left as the relevant parameters.
+
+
+
 \begin{itemize}
 \item Spectroscopic transient classification:  SNe~Ia are defined through the absence of Hydrogen and the presence of the 6150~\AA~Silicon P-Cygni feature.
+The intrinsic magnitude dispersion depends on the purity of the sample. Conservatively, we consider
+a pure SN~Ia sample obtained through
+spectroscopic classification; the requisite follow-up resources needed for complete $z<0.3$ coverage is conceivable. 
+The feasibility of using photometric classification is an important subject of research
+that can have implications for survey planning, particularly in extending the redshift range.
 \item Spectroscopic redshifts:  Peculiar velocities are extracted directly from redshift measurements.  Redshift uncertainties of $>0.5$\% contribute significantly
 to the error budget.  We thus conclude that there is the need for spectroscopic $R>200$ host-galaxy redshifts.  In most cases this redshift will be
 available in the classification spectrum.  Planned bright-galaxy redshift surveys can also observe a significant fraction of nearby SN hosts.
 \item Role of LSST:
-LSST can be taken to be a SN~Ia discovery and distance machine, or a discovery machine only.   The nominal cadence  
+LSST can be taken to be a SN~Ia discovery and distance machine, or a discovery machine only.   LSST is expected to discover all $z<0.3$ SNe~Ia before maximum light in its active Wide Fast Deep (WFD) survey area.
+The nominal cadence  
  produces sparse per-band light curves, which limits the intrinsic magnitude dispersion possible with LSST data alone to $\sigma_M \approx 0.15$~mag.
 The wide-field of LSST is
  well suited for discoveries over a larger area of sky, but does not provide significant multiplex advantage for the low surface-density of active
@@ -396,6 +445,7 @@ are of the highest interest, so that a modest suite of $\sim 5$ 2--4m telescopes
 $f\sigma_8$ at $z\sim 0.1$.
 
 
+\begin{comment}
 
 
 \appendix
@@ -614,7 +664,7 @@ $\phi \sim 0.65$ is an effective number density of discovered supernovae with li
 %$\lambda=(f\sigma_8)^2$.  In the sample-variance limit, $F_{\lambda \lambda} \propto V$ whereas in the shot noise limit $F_{\lambda \lambda} \propto V n^2 \sigma^{-4}$.
 %
 
-
+\end{comment}
 
 \bibliographystyle{aasjournal}
 \bibliography{/Users/akim/Documents/alex}

@@ -51,7 +51,7 @@ colors=['blue','green','red']
 sigv_factor = numpy.log(10)/5*zs/(1+zs)
 sigvs =sigm * sigv_factor *3e5
 
-fig, axs = plt.subplots(3,1,sharex=True,figsize=(5,7))
+fig, axs = plt.subplots(3,1,sharex=True,figsize=(8,5))
 
 for mu,ax in zip(mus,axs[1:]):
     shotless=[]
@@ -110,12 +110,13 @@ for mu,ax in zip(mus,axs[1:]):
 # plt.plot(matter[:,0],shotless,label='Sample Variance Limit')
 # plt.plot(matter[:,0],twoyear,label='Two Year')
 # plt.plot(matter[:,0],tenyear,label='Ten Year')
-    ax.set_xlim((5e-4,.5))
+    ax.set_xlim((6e-4,.2))
     ax.set_ylim((.5e-3,1))
     ax.set_yscale("log", nonposx='clip')
     ax.set_xscale("log", nonposx='clip')
-    ax.set_title(r'$\mu={}$'.format(mu))
-    ax.set_ylabel(r'Tr$\left(C^{-1}C_{,f\sigma_8}C^{-1}C_{,f\sigma_8}\right)$')
+    ax.text(0.2,0.4,r'$\mu={}$'.format(mu),transform=ax.transAxes,fontsize=14)
+    # ax.set_ylabel(r'Tr$\left(C^{-1}C_{,f\sigma_8}C^{-1}C_{,f\sigma_8}\right)$')
+    ax.set_ylabel(r'$I/I_{max}$')
 # plt.legend()
 axs[1].legend(prop={'size': 6})
 axs[2].set_xlabel(r'$k$ [$h$ Mpc$^{-1}$]')
@@ -130,13 +131,14 @@ axs[0].plot([1./(zs[2]*3e3*2),0.1],[numpy.exp(dum*10),numpy.exp(dum*10)],color=c
 axs[0].text(0.1, numpy.exp(dum*10.6),r'$z_{{max}}={}$'.format(zs[0]),color=colors[0])
 axs[0].text(0.1, numpy.exp(dum*10.3),r'$z_{{max}}={}$'.format(zs[1]),color=colors[1])
 axs[0].text(0.1, numpy.exp(dum*10),r'$z_{{max}}={}$'.format(zs[2]),color=colors[2])
-axs[0].set_xlim((5e-4,.5))
+axs[0].set_xlim((6e-4,.2))
 # axs[0].set_ylim((1e6,1e8))
 axs[0].set_ylim((.2e5,.2e7))
 axs[0].set_yscale("log", nonposx='clip')
 axs[0].set_xscale("log", nonposx='clip')
 axs[0].legend()
 plt.tight_layout()
+plt.subplots_adjust(hspace=0.05)
 plt.savefig('power.png')
 wefwe
 plt.clf()
