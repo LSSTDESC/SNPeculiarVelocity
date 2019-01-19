@@ -102,13 +102,26 @@ gravity.  It is only appropriate that in the upcoming decade, with their sheer n
 that will provide an unmatched test of whether dark energy or modified gravity is responsible for the accelerating expansion of the Universe.
 
 In the next decade, SNe~Ia will be used as peculiar-velocity probes to measure the the influence of gravity on structure formation within the Universe.
-Peculiar velocities are sensitive to the growth of structure through the combination $fD$, where $D$ is  the linear growth factor and
-$f \equiv \frac{d\ln{D}}{d\ln{a}}$ is the linear growth rate.  The growth of structure depends on gravity, indeed 
+The peculiar velocity power spectrum is sensitive to the growth of structure as $P_{vv}\propto (fD)^2$, where $D$ is  the linear growth factor and
+$f \equiv \frac{d\ln{D}}{d\ln{a}}$ is the linear growth rate  \citep{2006PhRvD..73l3526H,2011ApJ...741...67D}. 
+The $\Lambda$CDM prediction for the $z=0$ velocity power spectrum is shown in Figure~\ref{power:fig}. The growth of structure depends on gravity, indeed 
 \citet{2007APh....28..481L} find that General Relativity, $f(R)$,  and DGP gravities 
 give
 $f \approx \Omega_M^\gamma$ with $\gamma=0.55, 0.42, 0.68$ respectively.  Adopting this parameterization for gravity, peculiar velocity
 surveys are  sensitive to $fD=\Omega_M^{\gamma} \exp{\left(\int_a^1 \Omega_M^{\gamma} d\ln{a} \right)}$ \citep[see Figure~2 of][to see
 $fD$ plotted as a function of redshift for $\Lambda$CDM]{1475-7516-2013-04-031}. 
+
+
+\begin{figure}
+\centering
+\includegraphics[width=0.5\textwidth]{src/new2.png}
+%\includegraphics[width=0.5\textwidth]{../outcosmo/zmax_.png}
+\caption{Volume-weighted velocity power spectrum $k^3P_{vv}$ at $z=0$ for $\mu=1, 0,5$ as predicted for General Relativity in the linear regime.
+The bottom solid horizontal lines show the approximate range of $k$ expected to be used in surveys with corresponding
+redshift depths $z_{max}$.
+\label{power:fig}}
+\end{figure}
+
 
 Peculiar velocity surveys have already been  used to measure $fD$, though not at a precision to distinguish gravity models.
  \citet{2017MNRAS.471..839A} use 6dFGS peculiar velocities using the Fundamental Plane method and get distances to
@@ -121,12 +134,12 @@ Covering 75\% of the sky to a maximum depth of $z=0.1$, these surveys combined a
 Existing SN~Ia samples
 have been used to test and ultimately find spatial correlations in peculiar velocities that may be attributed to the growth of structure
 \citep{2008MNRAS.389L..47A,2014MNRAS.444.3926J,2015JCAP...12..033H, 2017JCAP...05..015H}.
-For reference, t $z>0.3$ redshifts DESI projects 10\% precision of $fD$ using RSD alone.
+For reference, DESI projects 10\% precision of $fD$ at $z>0.3$ redshifts  using RSD alone.
 %Measurement of the velocity field using LSST-discovered
 %SNe~Ia has been quantified by \citet{2011PhRvD..83d3004B,2017JCAP...01..060O}
 
 
-Two advances in the upcoming decade will make SNe~Ia  important probes of $f\sigma_8$.
+Two advances in the upcoming decade will make SN~Ia peculiar velocities more powerful.
 First, the precision of SN~Ia distances can be improved.  The commonly-used empirical 2-parameter SED model yields $\sigma_M \gtrsim 0.12$~mag absolute magnitude
 dispersion.  However, SNe transmit more information than just the light-curve shape and single color used in current SN models.
 Recent studies indicate that with the right data, SNe absolute
@@ -136,27 +149,118 @@ that is observed using current calibrations.
 One such SN is worth $\gtrsim 25$ galaxies with 0.4~mag absolute magnitude uncertainty.
 Secondly,  in the upcoming decade cadenced wide-field imaging surveys such as ZTF and LSST
   will increase the number of identified  $z<0.3$ Type~Ia supernovae (SNe~Ia)  from the hundreds to the
-hundreds of thousands, over the course of 10-years, LSST will find $\sim150,000$ $z<0.2$,  $\sim520,000$ $z<0.3$ SNe~Ia for which good light curves can be measured. This is a sample size with more galaxies at deeper redshifts than projected by WALLABY and TAIPAN.  
+hundreds of thousands, over the course of 10-years, LSST will find $\sim150,000$ $z<0.2$,  $\sim520,000$ $z<0.3$ SNe~Ia
+with number density  $n \sim 5\times 10^{-4}h^3$\,Mpc$^{-3}$
+ for which good light curves can be measured. This sample has comparable
+ number density and more galaxies at deeper redshifts than projected by WALLABY and TAIPAN. 
+
+For example, over the course of a decade an LSST SN survey can produce interesting $fD$ measurements in several
+redshift bins.   
+\citet{2017ApJ...847..128H} find 4--14\% uncertainties in $fD$ in $0.05$ redshift bins from $z=0$ to 0.3, where at
+$0<z<0.2$ most of the signal comes from peculiar velocities and at higher redshifts $RSD$ is more constraining.
+
+Our scientific interest is in probing gravity, so while most of the literature cast peculiar velocity results in terms of 
+$fD$, the interesting parameter is $\gamma$.  Survey design should be tailored toward minimizing the uncertainty
+in 
+$\sigma_\gamma$ rather than $\sigma_{\ln{fD}}$.  To illustrate the distinction,
+ $\frac{d(\ln{fD})}{d\gamma} = \ln\Omega + \int \Omega^{\gamma} \ln{\Omega} d\ln{a}$, which for $\Lambda$CDM
+ $\approx -1.68, -0.75,-0.37$ at $z=0,0.5,1.0$ respectively; given two surveys with the same percentage precision  in $fD$, the one at lower redshift
+better constrains $\gamma$.  We thus thus relate surveys to $\sigma_\gamma$, where we assume a constant $\gamma$
+over the redshift range of the survey.
 
 
-A 10-year LSST SN survey can produce interesting $fD$ measurements in redshift bins, as shown in Table~1 of 
-\citet{2017ApJ...847..128H}.
-Projected percent uncertainties in $f\sigma_8$ from 
-\citet{2017ApJ...847..128H}. RSD is from clustering, and RSD~+~PV is from joint clustering and peculiar velocities.
-The cumulative column shows the effective uncertainty from combining its and all other shallower redshift bins.
+%
+%The combination $fD$ is sensitive to gravity. The growth rate $f$ describes how fast overdensities increase, which
+%depends on how fast gravity makes mass move.
+%General Relativity predicts
+%$f \approx \Omega_M^\gamma$ with $\gamma=0.55$, whereas other gravity models can be similarly described
+%with different values of
+%$\gamma=0.42, 0.68$ for $f(R)$,  and DGP gravities respectively 
+%\citep{2007APh....28..481L}.
 
-%      $0.00<z<0.05$   & 66.3 & 13.9 & 13.9\\
-%     $0.05<z<0.10$            & 24.6     &  7.3 & 6.5\\
-%     $0.10<z<0.15$      & 14.8  & 5.8 & 4.3\\
-%     $0.15<z<0.20$      & 10.6  & 5.0 & 3.3\\
-%      $0.20<z<0.25$     & 8.3  & 4.4 & 2.6\\
-%     $0.25<z<0.30$  & 6.8  &  4.0 & 2.2\\
 
-The current sample of SNe~Ia has a low number density compared to Fundamental Plane and Tully-Fisher galaxies.
-Nevertheless, their low intrinsic-magnitude uncertainties 
-can provide peculiar velocities (expressed equivalently as peculiar magnitudes)
-of their host galaxies \citep{2006PhRvD..73l3526H,2011ApJ...741...67D}. 
+The uncertainties in $\gamma$ are estimated using a
+Fisher matrix analysis
+similar  to that of \citet{2017ApJ...847..128H, 2017MNRAS.464.2517H}.
+The analysis is performed in Fourier space, 
+where the Fisher information matrix of parameters $\lambda \in \{\gamma,bD\}$ with
+the  tracer density and velocity power spectra used as data is
+\begin{align}
+F_{ij} 
+%& = \frac{V}{2}\int \frac{d^3k}{(2\pi)^3} \text{Tr}\left[ C^{-1} \frac{\partial C}{\partial \lambda_i} C^{-1}
+%\frac{\partial C}{\partial \lambda_j} \right]\\
+& = \frac{\Omega}{8\pi^2} \int_0^{r_{max}}  \int_{k_{min}}^{k_{max}}  \int_{-1}^{1} r^2 k^2 \text{Tr}\left[ C^{-1} \frac{\partial C}{\partial \lambda_i} C^{-1}
+\frac{\partial C}{\partial \lambda_j} \right] d\mu\,dk\,dr
+\label{fisher:eqn}
+\end{align}
+where
+\begin{equation}
+C(k,\mu)  =
+  \begin{bmatrix}
+   P_{\delta \delta}(k,\mu) + \frac{1}{n} &
+   P_{v\delta}(k,\mu)  \\
+   P_{v\delta}(k,\mu)  &
+  P_{vv}(k,\mu) + \frac{\sigma^2}{n}
+   \end{bmatrix}.
+\label{cov:eq}
+\end{equation}
+The parameter dependence comes in through $P_{vv}\propto ((fD)(\gamma)\mu)^2$, the SN~Ia power spectrum $P_{\delta \delta }\propto ((bD) + (fD)(\gamma)\mu^2)^2$, and the galaxy-velocity cross-correlation $P_{vg}
+\propto  ((bD) + (fD)\mu^2)f\sigma_8$, where $b$ is the galaxy bias and $\mu$ is the cosine of the angle between the $k$-mode
+and the line of sight.
 
+The uncertainty in $\gamma$ is $\sqrt{\left(F^{-1}\right)_{\gamma,\gamma}}$.
+Non-GR models may  also predict a change in the scale-dependence of the growth or deviations
+from $f=\Omega_M^{\gamma}$, such observations provide additional leverage in probing gravity
+but are not considered here.
+
+
+The survey parameters that enter the calculation are the solid angle $\Omega$, depth of the survey $r_{max}$ (or $z_{max}$), the intrinsic magnitude dispersion 
+through $\sigma \approx (\frac{5}{\ln{10}} \frac{1+z}{z})^{-1} \sigma_M$, and the survey duration $t$ through $n=\epsilon rt$ where $r$ is the observer SN~Ia rate
+and $\epsilon$ is the sample-selection efficiency.
+An analysis in which the RSD and velocity surveys are treated independently (e.g.\ they do not cover the same volume) is considered by
+setting the off-diagonal elements of $C$ to zero.
+
+
+We consider fiducial peculiar velocity surveys for a range of redshift depths $z_{max}$, with survey durations or $t=2$ and 10~years, and with or without
+cross-correlations accounted for.
+The other survey parameters
+$\Omega=3$, $\epsilon=0.65$, $\sigma_M=0.08$~mag are fixed.
+A TAIPAN-like
+galaxy survey with $b=1.2$ and number density $n_g=10^{-3}h^3$\,Mpc$^{-3}$ is used for the RSD measurement.
+The uncertainties in $\gamma$ are shown in Figure~\ref{var:fig}, which shows a number of interesting features:
+\begin{itemize}
+\item Even shallow, two-year surveys give gammas for 
+\end{itemize}
+
+
+\begin{figure}
+\centering
+\includegraphics[width=0.5\textwidth]{src/var.png}
+%\includegraphics[width=0.5\textwidth]{../outcosmo/zmax_.png}
+\caption{
+\label{var:fig}}
+\end{figure}
+
+
+
+\begin{figure}
+\centering
+\includegraphics[width=0.47\textwidth]{src/dvardz.png}
+\includegraphics[width=0.47\textwidth]{src/dvardlnt.png}
+%\includegraphics[width=0.5\textwidth]{../outcosmo/zmax_.png}
+\caption{
+\label{dvar:fig}}
+\end{figure}
+
+
+
+%
+%
+%The current sample of SNe~Ia has a low number density compared to Fundamental Plane and Tully-Fisher galaxies.
+%Nevertheless, their low intrinsic-magnitude uncertainties 
+%can provide peculiar velocities (expressed equivalently as peculiar magnitudes)
+%of their host galaxies \citep{2006PhRvD..73l3526H,2011ApJ...741...67D}. 
+%
 \section{Peculiar Velocity Surveys are Sensitive to the Growth of Structure $\lowercase{f}D$}
 In a peculiar-velocity survey of SN~Ia host galaxies, each galaxy has an observed redshift  and a SN-Ia-based distance.
 The distance maps onto a cosmological redshift given a model for the background expansion $H_0$-free.
@@ -187,16 +291,6 @@ maximum redshift $z_{max}$ are also indicated, where $k_{min} \approx (2 z_{max}
 $k_{max} \approx 0.1$~$h$\,Mpc$^{-1}$ represents  the smallest
 scale where  theory predictions are reliable.
 Figure~\ref{power:fig} shows  that the bulk of the peculiar velocity signal comes from $0.02 <k< 0.1$~$h$\,Mpc$^{-1}$ modes.
-
-\begin{figure}
-\centering
-\includegraphics[width=0.5\textwidth]{src/new2.png}
-%\includegraphics[width=0.5\textwidth]{../outcosmo/zmax_.png}
-\caption{Volume-weighted velocity power spectrum $k^3P_{vv}$ at $z=0$ for $\mu=1, 0,5$ as predicted for General Relativity in the linear regime.
-The bottom solid horizontal lines show the approximate range of $k$ expected to be used in surveys with corresponding
-redshift depths $z_{max}$.
-\label{power:fig}}
-\end{figure}
 
 The probative power of a specific peculiar-velocity tracer primarily depends on its number density and the precision to which its absolute magnitudes are known.
 The current generation of peculiar velocity studies uses $10^3-10^5$ galaxies with Fundamental Plane and Tully-Fisher distances \citep{2008AJ....135.1738M, 2014MNRAS.445.2677S,
@@ -256,86 +350,6 @@ from RSD of supernovae and peculiar velocities.
 %than their naive sum.
 
 \section{Probing Gravity}
-Our scientific interest is in probing gravity.
-The combination $fD$ is sensitive to gravity. The growth rate $f$ describes how fast overdensities increase, which
-depends on how fast gravity makes mass move.
-General Relativity predicts
-$f \approx \Omega_M^\gamma$ with $\gamma=0.55$, whereas other gravity models can be similarly described
-with different values of
-$\gamma=0.42, 0.68$ for $f(R)$,  and DGP gravities respectively 
-\citep{2007APh....28..481L}.
-
-As a probe of gravity, peculiar velocity surveys are sensitive to $fD=\Omega_M^{\gamma} a \exp{\left(\left(\int_0^a \Omega_M^{\gamma} -1\right)  d\ln(a)\right)}$.
-Note that $\frac{d(\ln{fD})}{d\gamma} = \ln\Omega + \int \Omega^{\gamma} \ln{\Omega} d\ln{a} \approx -1.68, -0.75,-0.37$ at $z=0,0.5,1.0$ in $\Lambda$CDM,
-meaning that surveys at low redshift better measure $\gamma$ given a fixed precent uncertainty in $fD$.
-Non-GR models may  also predict a change in the scale-dependence of the growth, such observations provide additional leverage in probing gravity
-but are not considered here.
-
-
-The uncertainties in $\gamma$ for  RSD and peculiar velocity surveys are estimated using a
-Fisher matrix analysis
-similar to but with lower fidelity to that of \citet{2017ApJ...847..128H, 2017MNRAS.464.2517H}.
-The analysis is performed in Fourier space, 
-where the Fisher information matrix of parameters $\lambda \in \{\gamma,b\}$ from random Gaussian field with mean zero is given by
-\begin{align}
-F_{ij} & = \frac{V}{2}\int \frac{d^3k}{(2\pi)^3} \text{Tr}\left[ C^{-1} \frac{\partial C}{\partial \lambda_i} C^{-1}
-\frac{\partial C}{\partial \lambda_j} \right]\\
-& = \frac{\Omega}{8\pi^2} \int_0^{r_{max}}  \int_{k_{min}}^{k_{max}}  \int_{-1}^{1} r^2 k^2 \text{Tr}\left[ C^{-1} \frac{\partial C}{\partial \lambda_i} C^{-1}
-\frac{\partial C}{\partial \lambda_j} \right] d\mu\,dk\,dr
-\label{fisher:eqn}
-\end{align}
- and covariance
-\begin{equation}
-C(k,\mu)  =
-  \begin{bmatrix}
-   P_{gg}(k,\mu) + \frac{1}{n_g} &
-   P_{vg}(k,\mu)  \\
-   P_{vg}(k,\mu)  &
-  P_{vv}(k,\mu) + \frac{\sigma^2}{n}
-   \end{bmatrix}.
-\label{cov:eq}
-\end{equation}
-The uncertainty in $\gamma$ is $\sqrt{\left(F^{-1}\right)_{\gamma,\gamma}}$.
-
-The survey parameters that enter the calculation are the solid angle $\Omega$, depth of the survey $r_{max}$ (or $z_{max}$), the intrinsic magnitude dispersion 
-through $\sigma \approx (\frac{5}{\ln{10}} \frac{1+z}{z})^{-1} \sigma_M$, and the survey duration $t$ through $n=\epsilon rt$ where $r$ is the observer SN~Ia rate
-and $\epsilon$ is the sample-selection efficiency.
-An analysis in which the RSD and velocity surveys are treated independently (e.g.\ they do not cover the same volume) is considered by
-setting the off-diagonal elements of $C$ to zero.
-
-
-We consider fiducial peculiar velocity surveys for a range of redshift depths $z_{max}$, with survey durations or $t=2$ and 10~years, and with or without
-cross-correlations accounted for.
-The other survey parameters
-$\Omega=3$, $\epsilon=0.65$, $\sigma_M=0.08$~mag are fixed.
-A TAIPAN-like
-galaxy survey with $b=1.2$ and number density $n_g=10^{-3}h^3$\,Mpc$^{-3}$ is used for the RSD measurement.
-The uncertainties in $\gamma$ are shown in Figure~\ref{var:fig}, which shows a number of interesting features:
-\begin{itemize}
-\item Even shallow, two-year surveys give gammas for 
-\end{itemize}
-
-
-\begin{figure}
-\centering
-\includegraphics[width=0.5\textwidth]{src/var.png}
-%\includegraphics[width=0.5\textwidth]{../outcosmo/zmax_.png}
-\caption{
-\label{var:fig}}
-\end{figure}
-
-
-
-\begin{figure}
-\centering
-\includegraphics[width=0.47\textwidth]{src/dvardz.png}
-\includegraphics[width=0.47\textwidth]{src/dvardlnt.png}
-%\includegraphics[width=0.5\textwidth]{../outcosmo/zmax_.png}
-\caption{
-\label{dvar:fig}}
-\end{figure}
-
-
 %The growth of structure depends on the expansion history of the Universe, the nature and density of its contents, and gravity. 
 %It is therefore a powerful probe of cosmology and dark energy.  Growth of structure can be measured from the light-emittting structures
 %in the Universe and from the peculiar velocities of test masses therein.
