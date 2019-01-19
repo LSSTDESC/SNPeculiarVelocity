@@ -86,15 +86,16 @@ def finvp(f00,f11,f01,f00p,f11p,f01p):
 
 def Cmatrices(z,mu,ng,duration,sigm):
     a = 1/(1.+z)
+    OmegaM_a = OmegaM(a)
     n = duration*restrate
     sigv_factor = numpy.log(10)/5*z/(1+z)
     sigv =sigm * sigv_factor *3e5
     lnfgfactor = dlnfs8dg(a)
     fDfactor = D(a)*(OmegaM(a)/OmegaM0)**0.55
 
-    ninv = sigv**2/n
 
-    dsdn = sigv**2/n**2
+    sigv2 = sigv**2
+    ninv = sigv2/n
 
     nginv = 1./ng
 
@@ -113,16 +114,20 @@ def Cmatrices(z,mu,ng,duration,sigm):
     Cinv = []
     dCdl = []
     dCdb = []
-    Cinvs = []
+    # Cinvs = []
+    Cinvn = []
     for pgg, pgv, pvv, pgg_l, pgv_l, pvv_l, pgg_b, pgv_b  in zip(pggs,pgvs,pvvs,pggs_l,pgvs_l,pvvs_l,pggs_b,pgvs_b):
-        C.append(numpy.array([[pgg+nginv,pgv],[pgv,pvv+ninv]]))
+        C.append(numpy.array([[pgg+ninv,pgv],[pgv,pvv+ninv]]))
         Cinv.append(numpy.linalg.inv(C[-1]))
-        dCdl.append(numpy.array([[pgg_l,pgv_l],[pgv_l,pvv_l]])*OmegaM(a)**0.55*lnfgfactor) # second term converts from fsigma8 to gamma
+        dCdl.append(numpy.array([[pgg_l,pgv_l],[pgv_l,pvv_l]])*OmegaM_a**0.55*lnfgfactor) # second term converts from fsigma8 to gamma
         dCdb.append(numpy.array([[pgg_b,pgv_b],[pgv_b,0]]))
-        den = (pgg+nginv)*(pvv+ninv)-pgv**2
-        Cinvs.append(1./den * numpy.array([[1,0],[0,0]]) - (pgg+nginv)/den**2 * numpy.array([[pvv+ninv,-pgv],[-pgv,pgg+nginv]]))
-        Cinvs[-1]=-Cinvs[-1]*sigv**2/restrate/duration**2 #in terms of lnt not s = sigma^2/rate/s
-    return C, Cinv, dCdl,dCdb,Cinvs
+        den = (pgg+ninv)*(pvv+ninv)-pgv**2
+        # Cinvs.append(1./den * numpy.array([[1,0],[0,0]]) - (pgg+nginv)/den**2 * numpy.array([[pvv+ninv,-pgv],[-pgv,pgg+nginv]]))
+        # Cinvs[-1]=-Cinvs[-1]*sigv**2/restrate/duration**2 #in terms of lnt not s = sigma^2/rate/s
+
+        Cinvn.append(-1./den * numpy.array([[sigv2,0],[0,1]]) + (sigv2*(pgg+ninv)+(pvv+ninv))/den**2 * numpy.array([[pvv+ninv,-pgv],[-pgv,pgg+ninv]]))
+        Cinvn[-1]=Cinvn[-1]/n #in terms of lnt  n**-2 * n = 1/n
+    return C, Cinv, dCdl,dCdb,Cinvn
 
 def traces(z,mu,ng,duration,sigm):
 
@@ -140,14 +145,14 @@ def traces(z,mu,ng,duration,sigm):
     lb_ind=[]
     bb_ind=[]
 
-    for C, Cinv, C_l,C_b,Cinvs in zip(cmatrices[0],cmatrices[1],cmatrices[2],cmatrices[3],cmatrices[4]):
+    for C, Cinv, C_l,C_b,Cinvn in zip(cmatrices[0],cmatrices[1],cmatrices[2],cmatrices[3],cmatrices[4]):
         ll.append(numpy.trace(Cinv@C_l@Cinv@C_l))
         bb.append(numpy.trace(Cinv@C_b@Cinv@C_b))
         lb.append(numpy.trace(Cinv@C_l@Cinv@C_b))
 
-        lls.append(numpy.trace(Cinvs@ C_l@Cinv@C_l+Cinv@ C_l@Cinvs@C_l))
-        bbs.append(numpy.trace(Cinvs@ C_b@Cinv@C_b+Cinv@ C_b@Cinvs@C_b))
-        lbs.append(numpy.trace(Cinvs@ C_l@Cinv@C_b+Cinv@ C_l@Cinvs@C_b))
+        lls.append(numpy.trace(Cinvn@ C_l@Cinv@C_l+Cinv@ C_l@Cinvn@C_l))
+        bbs.append(numpy.trace(Cinvn@ C_b@Cinv@C_b+Cinv@ C_b@Cinvn@C_b))
+        lbs.append(numpy.trace(Cinvn@ C_l@Cinv@C_b+Cinv@ C_l@Cinvn@C_b))
 
         ll_ind.append(C[0][0]**(-2)*C_l[0][0]**2+C[1][1]**(-2)*C_l[1][1]**2)
         bb_ind.append(C[0][0]**(-2)*C_b[0][0]**2+C[1][1]**(-2)*C_b[1][1]**2)
@@ -352,8 +357,8 @@ def set2():
     plt.savefig('dvardz.png')
     plt.clf()
 
-# set2()
-# wefwe
+set2()
+
 
 def set1():
     zmaxs = numpy.exp(numpy.arange(numpy.log(0.05),numpy.log(.300001),numpy.log(.3/.05)/8))
