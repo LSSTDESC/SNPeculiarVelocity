@@ -53,32 +53,32 @@ def D(a):
 # print(numpy.log(OmegaM(a)),integrate.quad(integrand, 1e-8, a)[0],numpy.log(OmegaM(a)) + integrate.quad(integrand, 1e-8, a)[0])
 # wefwe
 
-def Pvv(mu):
-    return (f*mu*100)**2*matter[:,1]/matter[:,0]**2
+def Pvv(mu,f,D):
+    return (f*D*mu*100)**2*matter[:,1]/matter[:,0]**2
 
-def Pvv_l(mu):
-    return 2*f*(mu*100)**2*matter[:,1]/matter[:,0]**2
+def Pvv_l(mu,f,D):
+    return 2*f*D*(mu*100)**2*matter[:,1]/matter[:,0]**2
 
 # gg
 b= 1.2
-def Pgg(mu):
-    return (b+f*mu**2)**2*matter[:,1]
+def Pgg(mu,f,D):
+    return (b*D+f*D*mu**2)**2*matter[:,1]
 
-def Pgg_l(mu):
-    return 2*mu**2*(b+f*mu**2)*matter[:,1]
+def Pgg_l(mu,f,D):
+    return 2*mu**2*(b*D+f*D*mu**2)*matter[:,1]
 
-def Pgg_b(mu):
-    return 2*(b+f*mu**2)*matter[:,1]
+def Pgg_b(mu,f,D):
+    return 2*(b*D+f*D*mu**2)*matter[:,1]
 
 # gv
-def Pgv(mu):
-    return (b+f*mu**2)*(f*mu*100)*matter[:,1]/matter[:,0]
+def Pgv(mu,f,D):
+    return (b*D+f*D*mu**2)*(f*D*mu*100)*matter[:,1]/matter[:,0]
 
-def Pgv_l(mu):
-    return (mu**2*(f*mu*100)+(b+f*mu**2)*(mu*100))*matter[:,1]/matter[:,0]
+def Pgv_l(mu,f,D):
+    return (mu**2*(f*D*mu*100)+(b*D+f*D*mu**2)*(mu*100))*matter[:,1]/matter[:,0]
 
-def Pgv_b(mu):
-    return (f*mu*100)*matter[:,1]/matter[:,0]
+def Pgv_b(mu,f,D):
+    return (f*D*mu*100)*matter[:,1]/matter[:,0]
 
 def finvp(f00,f11,f01,f00p,f11p,f01p):
     den = f00*f11 -f01**2
@@ -91,24 +91,24 @@ def Cmatrices(z,mu,ng,duration,sigm):
     sigv_factor = numpy.log(10)/5*z/(1+z)
     sigv =sigm * sigv_factor *3e5
     lnfgfactor = dlnfs8dg(a)
-    fDfactor = D(a)*(OmegaM(a)/OmegaM0)**0.55
-
 
     sigv2 = sigv**2
     ninv = sigv2/n
 
     nginv = 1./ng
 
-    pggs = Pgg(mu)*fDfactor**2
-    pgvs = Pgv(mu)*fDfactor**2
-    pvvs = Pvv(mu)*fDfactor**2
+    f = OmegaM(a)**.55
+    D_ = D(a)
+    pggs = Pgg(mu,f,D_)
+    pgvs = Pgv(mu,f,D_)
+    pvvs = Pvv(mu,f,D_)
 
-    pggs_l = Pgg_l(mu)*fDfactor**2
-    pgvs_l = Pgv_l(mu)*fDfactor**2
-    pvvs_l = Pvv_l(mu)*fDfactor**2
+    pggs_l = Pgg_l(mu,f,D_)
+    pgvs_l = Pgv_l(mu,f,D_)
+    pvvs_l = Pvv_l(mu,f,D_)
 
-    pggs_b = Pgg_b(mu)*fDfactor**2
-    pgvs_b = Pgv_b(mu)*fDfactor**2
+    pggs_b = Pgg_b(mu,f,D_)
+    pgvs_b = Pgv_b(mu,f,D_)
 
     C=[]
     Cinv = []
@@ -386,7 +386,7 @@ def set1():
     plt.plot(zmaxs,numpy.sqrt(var_ind[1]),label='Ten Years, Independent Surveys',color='black',ls=':')   
 
     plt.xlabel(r'$z_{max}$')
-    plt.ylim((0,0.07))
+    # plt.ylim((0,0.07))
     plt.ylabel(r'$\sigma_{\gamma}$')
     plt.legend()
     plt.tight_layout()
@@ -397,7 +397,7 @@ def set1():
     plt.plot(zmaxs,-dvards[1]/2/numpy.sqrt(var[1]),label='Ten Years',color='black')
     plt.legend()
     # plt.yscale("log", nonposy='clip')
-    plt.ylim((0,0.006))
+    plt.ylim((0,plt.ylim()[1]))
     plt.xlabel(r'$z_{max}$')
     plt.ylabel(r'$|\frac{d\sigma_{\gamma}}{d\ln{t}}|$')
     plt.tight_layout()
