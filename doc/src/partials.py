@@ -131,7 +131,7 @@ def Cmatrices(z,mu,ng,duration,sigm):
         Cinvn.append(-1./den * numpy.array([[sigv2,0],[0,1]]) + (sigv2*(pgg+ninv)+(pvv+nvinv))/den**2 * numpy.array([[pvv+nvinv,-pgv],[-pgv,pgg+ninv]]))
         Cinvn[-1]=Cinvn[-1]/n #in terms of lnt  n**-2 * n = 1/n
         Cinvsigmam.append(1./den * numpy.array([[1,0],[0,0]]) + (pgg+ninv)/den**2 * numpy.array([[pvv+nvinv,-pgv],[-pgv,pgg+ninv]]))
-        Cinvsigmam[-1] = Cinvsigmam[-1] * sigv_factor 
+        Cinvsigmam[-1] = Cinvsigmam[-1] * sigv_factor *3e5 * 2 * sigv / n
     return C, Cinv, dCdl,dCdb,Cinvn, Cinvsigmam
 
 def traces(z,mu,ng,duration,sigm):
@@ -436,13 +436,13 @@ def set1():
     plt.savefig('dvardlnt.png')
     plt.clf()
 
-    plt.plot(zmaxs,dvardsigM[0]/2/numpy.sqrt(var[0]),label='Two Years',color='red')
-    plt.plot(zmaxs,dvardsigM[1]/2/numpy.sqrt(var[1]),label='Ten Years',color='black')
+    plt.plot(zmaxs,-dvardsigM[0]/2/numpy.sqrt(var[0]),label='Two Years',color='red')
+    plt.plot(zmaxs,-dvardsigM[1]/2/numpy.sqrt(var[1]),label='Ten Years',color='black')
     plt.legend()
     # plt.yscale("log", nonposy='clip')
     plt.ylim((0,plt.ylim()[1]))
     plt.xlabel(r'$z_{max}$')
-    plt.ylabel(r'$\frac{d\sigma_{\gamma}}{d\sigma_M$')
+    plt.ylabel(r'$|\frac{d\sigma_{\gamma}}{d\sigma_M}|$')
     plt.tight_layout()
     plt.savefig('dvardsigM.png')
     plt.clf()
