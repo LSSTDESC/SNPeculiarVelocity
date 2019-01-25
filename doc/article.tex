@@ -215,6 +215,7 @@ The other survey parameters
 $\Omega=3\pi$, $\epsilon=0.65$, $\sigma_M=0.08$~mag are fixed.
 The $k$-limits are  taken to be $k_{min} = (2 r_{max})^{-1}$  and 
 $k_{max} = 0.1$~$h$\,Mpc$^{-1}$.
+The sample-selection efficiency $\epsilon$ is redshift-independent, i.e.\ the native redshift distribution is not sculpted.
 The input bias of SN~Ia host galaxies is set as $b=1.2$.
 
 All the surveys considered can provide meaning tests of gravity.
@@ -237,79 +238,68 @@ noise suppression engendered by cross-correlations.
 \includegraphics[width=0.47\textwidth]{src/var.png}
 %\includegraphics[width=0.5\textwidth]{../outcosmo/zmax_.png}
 \caption{The projected uncertainty in $\gamma$ achieved by two- (red) and ten-year (black) surveys of varying depth $z_{max}$.
-For each survey uncertainties are based on three types of analyses, one that only uses peculiar velocities (dashed) , one that uses
+For each survey uncertainties are based on three types of analyses, one that only uses peculiar velocities (dashed), one that uses
 both overdensities (RSD) and peculiar velocities independently (dotted), and one  that uses
 both RSD, peculiar velocities, and their cross-correlation (solid).
 \label{var:fig}}
 \end{figure}
 
-Survey performance is examined in more detail by considering how $\sigma_\gamma$ changes with respect to the 
+Survey performance is examined in more detail by considering how $\sigma_\gamma$ (using RSD, peculiar velocities, and their cross-correlations) 
+changes with respect to the 
 survey parameters  $\Omega$, $z_{max}$, $t$, and $\sigma_M$, and also with respect to differential redshift bins
 within a given survey.  
 \begin{description}
 \item[Solid Angle $\Omega$]
-The Fisher Matrix $F$ is  proportional to the survey solid angle $\Omega$.  The baseline
-LSST survey covers 18,000 sq.~deg, at $-75 \lesssim \delta \lesssim15$ avoiding the Galactic plane.  Larger solid-angle coverage beyond
-the LSST baseline benefits peculiar-velocity science.  Complementary northern-hemisphere surveys and LSST-expanded or independent
-coverage of the southern equatorial pole could significantly increase
-the sky coverage with a corresponding decrease in the variance of $\gamma$.
-\item[Differential Redshift Bin $z$] Certain differential redshift bins  constrain $\gamma$ more strongly than others.  
-Figure~\ref{dvar:fig} shows $\partial \sigma_\gamma / \partial z$  for two- and ten-year surveys with limiting $z_{max}=0.2$.
-In both cases the shape of the curve is the same, with the amplitude monotonically decreasing from $z=0.01$ out to $z=0.2$.  If we had
-to sculpt the distribution (say due to limited follow-up resources), the preference would be to sculpt out the highest redshift bins
-resulting in a decreased $z_{max}$.   The optimal redshift distribution is thus the SN-discovery distribution and the sample is unambiguously
-parameterized by $z_{max}$.  Note that this result is based on constraining a constant redshift-independent $\gamma$.
+The Fisher Matrix $F$ is  proportional to the survey solid angle $\Omega$ so $\sigma_\gamma \propto \sqrt{\Omega}$.
+\item[Differential Redshift Bin $z$]  Certain redshifts constrain $\gamma$ more strongly than others.  If at a given moment of a survey we had
+a set of SNe~Ia from which to choose, it turns out the one with the lowest redshift would be preferred.
+This is demonstrated to be the case at the end of both 2- and 10-year surveys and $z_{max}=0.2$.
+Figure~\ref{dvar:fig} shows
+ $|\partial \sigma_\gamma / \partial z|$, which
+for both surveys monotonically decreases from $z=0.01$ out to $z=0.2$.  If we had
+to sculpt the distribution (say due to limited follow-up resources), the preference would be to cut out the highest redshift bins
+resulting in a decreased $z_{max}$.   The optimal redshift distribution is thus the unsculpted SN-discovery distribution truncated by $z_{max}$.
 \begin{figure}
 \centering
-\includegraphics[width=0.5\textwidth]{src/dvardz.png}
+\includegraphics[width=0.47\textwidth]{src/dvardz.png}
 %\includegraphics[width=0.47\textwidth]{src/dvardlnt.png}
 %\includegraphics[width=0.5\textwidth]{../outcosmo/zmax_.png}
-\caption{$\partial \sigma_\gamma / \partial z$  for two- and ten-year surveys with limiting $z_{max}=0.2$. 
+\caption{$|\partial \sigma_\gamma / \partial z|$  after two and ten years for a survy with limiting  depth $z_{max}=0.2$. 
 \label{dvar:fig}}
 \end{figure}
 \item[Redshift Depth $z_{max}$]
-Increasing the survey redshift depth increases the $\gamma$ precision though that precision asymptotes
+Increasing the survey redshift depth increases the $\gamma$ precision.  The differential improvement in $\sigma_\gamma$ plateaus at
 $z_{max} \sim 0.2$ as seen in Figure~\ref{var:fig}.
- \item[Survey duration $t$] There is a significant decrease on $\sigma_\gamma$ when going from a 2- to ten-year survey, as shown
- in  Figure~\ref{var:fig}.   The left panel of Figure~\ref{dvar2:fig} shows $\partial \sigma_\gamma / \partial \ln{t}$ as a function of
- $z_{max}$ for two- and ten-year surveys.  The non-zero amplitudes show that shot-noise affects both two- and ten-year surveys, but
- much less so for the latter more so at low redshifts.  After 10-years, the effect of sample-variance important for shallower surveys.
+ \item[Survey duration $t$; Intrinsic Magnitude Dispersion $\sigma_M$] Increasing the survey duration to increase the number density improves constraints.  The benefit is stronger for
+shallow compared to deep surveys, and the strength of the  benefit drops significantly over the course of 10 years.
+These trends are seen in the left panel of Figure~\ref{dvar2:fig}, which plots $|\partial \sigma_\gamma / \partial \ln{t}|$ as a function of
+ $z_{max}$ for two- and ten-year surveys, and
+reflect those $k$-modes that do not benefit more data because they are sample-variance limited, either because they are at low $k$ for shallow surveys
+or have already been saturated over the course of the survey.
  \begin{figure}
 \centering
 \includegraphics[width=0.47\textwidth]{src/dvardlnt.png}
 \includegraphics[width=0.47\textwidth]{src/dvardsigM.png}
 %\includegraphics[width=0.5\textwidth]{../outcosmo/zmax_.png}
-\caption{Left: $\partial \sigma_\gamma / \partial \ln{t}$  and Right: $\partial \sigma_\gamma / \partial \sigma_M$ as a function of
+\caption{Left: $|\partial \sigma_\gamma / \partial \ln{t}|$  and Right: $\partial \sigma_\gamma / \partial \sigma_M$ as a function of
  $z_{max}$ for two- and ten-year surveys.
 \label{dvar2:fig}}
 \end{figure}
-\item[Intrinsic Magnitude Dispersion $\sigma_M$]
-The relationship between intrinsic magnitude dispersion and precision in $\gamma$ can be seen through the 
-previous result, as $\partial \sigma_\gamma/\partial \sigma_M = \partial \sigma_\gamma / \partial \ln{t}$.
-Even after 10-years, a SN peculiar velocity survey still has significant shot noise.
-Thus, a decrease in the supernova intrinsic magnitude dispersion leads to a significant improvement in  the STON of $f\sigma_8$.
-%as shown in Figure~\ref{notshot:fig} in parallel to our earlier discussion of the dependence of $n$.  We are not sample-variance
-%limited so the $\sigma^2_M/n$-term
-%in the Fisher matrix is important.
-Survey follow-up strategy,
-which determines which data are available per SN~Ia, influences the accuracy to which their distances can be determined. 
-This dependence is non-trivial: the improvement between $\sigma_M=0.08$ and 0.15~mag dispersions is equivalent to a factor of 3.52
+Like survey duration, intrinsic magnitude dispersion is related to survey performance through the shot noise and thus
+has similar relationships with $\sigma_\gamma$.
+This is evident in the plot of $\partial \sigma_\gamma/\partial \sigma_M$ shown in the right panel of Figure~\ref{dvar2:fig}.
+The improvement between $\sigma_M=0.08$ and 0.15~mag dispersions is equivalent to a factor of 3.52
  in number density, or equivalently in survey duration. 
  \end{description}
 
-Shot-noise limit touched upon several times in the preceding discussion.  Go back to Figure.
-
-There are a number of interesting features to note:
-\begin{itemize}
-\item Ten-year survey has lower  $\sigma_\gamma$  relative to  two-year surveys with factors that are redshift-dependent.  For $z_{max}=0.3$
-the uncertainties are reduced by a factor $\sim 0.5$ whereas at  $z_{max}=0.7$ the factor is $\sim 0.7$
-\end{itemize}
-
-
-
- Shot noise
-is important  Figure~\ref{power:fig}.
- (the total rest-frame volumetric SN~Ia rate being $7.84\times 10^{-5} h^3$\,Mpc$^{-3}$\,yr$^{-1}$.)
+From the above calculations, we find empirically that shot noise is important since higher number densities and lower intrinsic magnitude dispersion
+significantly reduce $\gamma$ uncertainty, but that sample variance is also relevant  by the end of a ten-year survey.
+Survey design is aided by understanding the circumstances in which  the surveys become sample variance limited.
+First note that the  rest-frame volumetric SN~Ia rate (full selection efficiency) is $7.84\times 10^{-5} h^3$\,Mpc$^{-3}$\,yr$^{-1}$;
+after a few years the RSD measurement is sample variance limited.  The  contributions of $P_{vv}$ and
+$\sigma^2/n$ at $z=0.1$ for $\sigma_M=0.08, 0.15$~mag with number densities from 2- and 10-year surveys
+sare shown in  Figure~\ref{power:fig}.  For all of these survey scenarios, the transition between sample variance and shot-noise equality 
+occurs at a $k$ squarely within the $k$-range that carries the most signal.
 
 %
 %
@@ -498,7 +488,7 @@ is important  Figure~\ref{power:fig}.
 %Generally, $k<0.01$ modes have $I/I_{max}\sim 1$ and so are sample-noise limited.
 %Individual $k>0.01$ modes have  $I/I_{max}<1$ meaning  that shot noise
 %is significant.  Recall that collectively, $k>0.01$ modes are the important contributors to the peculiar-velocity signal.
-Basically all  supernovae found in  the next decade contribute to improving the statistical measurement of $f\sigma_8$.
+%Basically all  supernovae found in  the next decade contribute to improving the statistical measurement of $f\sigma_8$.
 %The figure also shows how the statistical gain from additional supernovae diminish as the survey duration increases, and when they are at lower-redshift  (by virtue of their lower intrinsic velocity dispersion).
 %\subsection{Survey Parameters that Determine Scientific Performance}
 
@@ -593,6 +583,13 @@ The wide-field of LSST is
 $z<0.3$ SNe~Ia.  LSST is suited for maximizing $\Omega$ while other (cheaper) resources that supplement LSST photometry can improve $\sigma_M$.
 The ultimate WFD observing strategy determines how well $\sigma_8$ can be determined with LSST data alone, and the amount of external resources needed  (if any) to
 reach a targeted $\sigma_M$.
+
+The baseline
+LSST survey covers 18,000 sq.~deg, at $-75 \lesssim \delta \lesssim15$ avoiding the Galactic plane.  Larger solid-angle coverage beyond
+the LSST baseline benefits peculiar-velocity science.  Complementary northern-hemisphere surveys and LSST-expanded or independent
+coverage of the southern equatorial pole could significantly increase
+the sky coverage with a corresponding decrease in the variance of $\gamma$.
+
 \item Follow-up resources to determine per-SN distances:
 Supplemental non-LSST follow-up data in the form of improved temporal light-curve sampling (accurate rise and decline times), 
 expanded (UV, NIR) wavelength coverage, and spectral features
@@ -627,6 +624,7 @@ $f\sigma_8$ at $z\sim 0.1$.
 
 An important survey parameter that is not considered is cost.
 
+Effect of 10-years.
 
 \newpage
 We are interested in

@@ -130,7 +130,7 @@ def Cmatrices(z,mu,ng,duration,sigm):
 
         Cinvn.append(-1./den * numpy.array([[sigv2,0],[0,1]]) + (sigv2*(pgg+ninv)+(pvv+nvinv))/den**2 * numpy.array([[pvv+nvinv,-pgv],[-pgv,pgg+ninv]]))
         Cinvn[-1]=Cinvn[-1]/n #in terms of lnt  n**-2 * n = 1/n
-        Cinvsigmam.append(1./den * numpy.array([[1,0],[0,0]]) + (pgg+ninv)/den**2 * numpy.array([[pvv+nvinv,-pgv],[-pgv,pgg+ninv]]))
+        Cinvsigmam.append(1./den * numpy.array([[1,0],[0,0]]) - (pgg+ninv)/den**2 * numpy.array([[pvv+nvinv,-pgv],[-pgv,pgg+ninv]]))
         Cinvsigmam[-1] = Cinvsigmam[-1] * sigv_factor *3e5 * 2 * sigv / n
     return C, Cinv, dCdl,dCdb,Cinvn, Cinvsigmam
 
@@ -359,7 +359,7 @@ def zintegral(zmax,ng,duration,sigm):
 
 
 def set2():
-
+    fig,(ax) = plt.subplots(1, 1, figsize=(8*.85,6*.85))
     durations = [2,10]
     labels = ['Two Years','Ten Years']
     colors = ['red','black']
@@ -376,12 +376,12 @@ def set2():
 
         for duration,label,color in zip(durations,labels,colors):
             dvardz=[]
-            f00,f11,f10, _,_,_,_,_,_,_,_,_ = zintegral(zmax,ng,duration,sigm)
+            f00,f11,f10, _,_,_,_,_,_,_, _,_,_ = zintegral(zmax,ng,duration,sigm)
             var= numpy.linalg.inv(numpy.array([[f00,f10],[f10,f11]]))[0,0]*2*3.14/.75
             for z,r in zip(zs,rs):
                 a=1./(1+z)
                 drdz = 1/numpy.sqrt(OmegaM0/a**3 + (1-OmegaM0)) # 1/H
-                _,_,_, f00s,f11s,f10s,_,_,_ = kintegral(z,zmax,ng,duration,sigm)
+                _,_,_, f00s,f11s,f10s,_,_,_,_,_,_,_ = kintegral(z,zmax,ng,duration,sigm)
                 dvardz.append(finvp(f00,f11,f10,f00s,f11s,f10s))
                 dvardz[-1] = dvardz[-1]/r**2
                 dvardz[-1] = dvardz[-1]*drdz  # z now has units of 100 km/s
@@ -396,10 +396,11 @@ def set2():
     plt.savefig('dvardz.png')
     plt.clf()
 
-# set2()
+set2()
 
 
 def set1():
+    fig,(ax) = plt.subplots(1, 1, figsize=(8*.85,6*.85))
     zmaxs = numpy.exp(numpy.arange(numpy.log(0.05),numpy.log(.300001),numpy.log(.3/.05)/8))
     durations = [2,10]
     labels = ['Two Years','Ten Years']
@@ -453,13 +454,13 @@ def set1():
     plt.savefig('dvardlnt.png')
     plt.clf()
 
-    plt.plot(zmaxs,-dvardsigM[0]/2/numpy.sqrt(var[0]),label='Two Years',color='red')
-    plt.plot(zmaxs,-dvardsigM[1]/2/numpy.sqrt(var[1]),label='Ten Years',color='black')
+    plt.plot(zmaxs,dvardsigM[0]/2/numpy.sqrt(var[0]),label='Two Years',color='red')
+    plt.plot(zmaxs,dvardsigM[1]/2/numpy.sqrt(var[1]),label='Ten Years',color='black')
     plt.legend()
     # plt.yscale("log", nonposy='clip')
     plt.ylim((0,plt.ylim()[1]))
     plt.xlabel(r'$z_{max}$')
-    plt.ylabel(r'$|\frac{d\sigma_{\gamma}}{d\sigma_M}|$')
+    plt.ylabel(r'$\frac{d\sigma_{\gamma}}{d\sigma_M}$')
     plt.tight_layout()
     plt.savefig('dvardsigM.png')
     plt.clf()
