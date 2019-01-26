@@ -270,11 +270,11 @@ def kintegral(z,zmax,ng,duration,sigm):
     blsigM = numpy.trapz(matter[:,0][w]**2*blsigM[w],matter[:,0][w])
     ll_vonly = numpy.trapz(matter[:,0][w]**2*ll_vonly[w],matter[:,0][w])
 
-    llkmax = numpy.interp(kmax,matter[:,0], matter[:,0]**2*ll)
-    bbkmax = numpy.interp(kmax,matter[:,0], matter[:,0]**2*bb)
-    blkmax = numpy.interp(kmax,matter[:,0], matter[:,0]**2*bl)
+    # llkmax = numpy.interp(kmax,matter[:,0], matter[:,0]**2*ll)
+    # bbkmax = numpy.interp(kmax,matter[:,0], matter[:,0]**2*bb)
+    # blkmax = numpy.interp(kmax,matter[:,0], matter[:,0]**2*bl)
 
-    return ll,bb,bl, lls,bbs,bls,ll_ind,bb_ind,bl_ind, llsigM,bbsigM,blsigM,ll_vonly, llkmax,bbkmax,blkmax
+    return ll,bb,bl, lls,bbs,bls,ll_ind,bb_ind,bl_ind, llsigM,bbsigM,blsigM,ll_vonly
 
 # utility numbers
 zmax_zint = 0.3
@@ -305,12 +305,12 @@ def zintegral(zmax,ng,duration,sigm):
     bbsigM=numpy.zeros(len(rs))
     blsigM=numpy.zeros(len(rs))
     ll_vonly=numpy.zeros(len(rs))
-    llkmax=numpy.zeros(len(rs))
-    bbkmax=numpy.zeros(len(rs))
-    blkmax=numpy.zeros(len(rs))
+    # llkmax=numpy.zeros(len(rs))
+    # bbkmax=numpy.zeros(len(rs))
+    # blkmax=numpy.zeros(len(rs))
 
     for i in range(len(rs)):
-        ll[i],bb[i],bl[i],lls[i],bbs[i],bls[i],ll_ind[i],bb_ind[i],bl_ind[i],llsigM[i],bbsigM[i],blsigM[i],ll_vonly[i],llkmax[i],bbkmax[i],blkmax[i] = kintegral(zs[i],zmax,ng,duration,sigm)
+        ll[i],bb[i],bl[i],lls[i],bbs[i],bls[i],ll_ind[i],bb_ind[i],bl_ind[i],llsigM[i],bbsigM[i],blsigM[i],ll_vonly[i] = kintegral(zs[i],zmax,ng,duration,sigm)
 
     ll = numpy.trapz(rs**2*ll,rs)
     bb = numpy.trapz(rs**2*bb,rs)
@@ -325,9 +325,9 @@ def zintegral(zmax,ng,duration,sigm):
     bbsigM = numpy.trapz(rs**2*bbsigM,rs)
     blsigM = numpy.trapz(rs**2*blsigM,rs)
     ll_vonly = numpy.trapz(rs**2*ll_vonly,rs)
-    llkmax = numpy.trapz(rs**2*llkmax,rs)
-    bbkmax = numpy.trapz(rs**2*bbkmax,rs)
-    blkmax = numpy.trapz(rs**2*blkmax,rs)
+    # llkmax = numpy.trapz(rs**2*llkmax,rs)
+    # bbkmax = numpy.trapz(rs**2*bbkmax,rs)
+    # blkmax = numpy.trapz(rs**2*blkmax,rs)
 
     # a,b,c,d,e,f,g,h,i = kintegral(rs[0],zmax,ng,duration,sigm)
     # deltars = rs[1]-rs[0]
@@ -365,7 +365,7 @@ def zintegral(zmax,ng,duration,sigm):
     # ll_ind=ll_ind+0.5*g*rs[-1]**2*deltars
     # bb_ind=bb_ind+0.5*h*rs[-1]**2*deltars
     # bl_ind=bl_ind+0.5*i*rs[-1]**2*deltars
-    return ll, bb, bl, lls,bbs,bls,ll_ind, bb_ind, bl_ind, llsigM,bbsigM,blsigM,ll_vonly, llkmax,bbkmax,blkmax
+    return ll, bb, bl, lls,bbs,bls,ll_ind, bb_ind, bl_ind, llsigM,bbsigM,blsigM,ll_vonly
 
 
 def set2():
@@ -400,7 +400,7 @@ def set2():
             plt.plot(zs,-dvardz/2/numpy.sqrt(var),label=r'{} $z_{{max}}={}$'.format(label,zmax),color=color,ls=ls)
     plt.xlabel('z')
     plt.yscale("log", nonposy='clip')
-    plt.ylabel(r'$|\frac{d\sigma_{\gamma}}{dz}|$')
+    plt.ylabel(r'$\sigma_{\gamma}^{-1}|\frac{d\sigma_{\gamma}}{dz}|$')
     plt.legend()
     plt.tight_layout()
     plt.savefig('dvardz.png')
@@ -428,19 +428,21 @@ def set1():
         dvsigM_=[]
         dvdkmax_=[]
         for zmax in zmaxs:
-            f00,f11,f10, f00s,f11s,f10s,f00_ind,f11_ind,f10_ind, f00sigM,f11sigM,f10sigM,f00_vonly, f00kmax,f11kmax,f10kmax = zintegral(zmax,ng,duration,sigm)
+            f00,f11,f10, f00s,f11s,f10s,f00_ind,f11_ind,f10_ind, f00sigM,f11sigM,f10sigM,f00_vonly = zintegral(zmax,ng,duration,sigm)
             dv_.append(finvp(f00,f11,f10,f00s,f11s,f10s))
             v_.append(numpy.linalg.inv(numpy.array([[f00,f10],[f10,f11]]))[0,0])
             vind_.append(numpy.linalg.inv(numpy.array([[f00_ind,f10_ind],[f10_ind,f11_ind]]))[0,0])
             vvonly_.append(1./f00_vonly)
             dvsigM_.append(finvp(f00,f11,f10,f00sigM,f11sigM,f10sigM))
-            dvdkmax_.append(finvp(f00,f11,f10,f00kmax,f11kmax,f10kmax))
+            # dvdkmax_.append(finvp(f00,f11,f10,f00kmax,f11kmax,f10kmax))
+
+
         var.append(numpy.array(v_)*2*3.14/.75) #3/4
         dvards.append(numpy.array(dv_)*2*3.14/.75)
         var_ind.append(numpy.array(vind_)*2*3.14/.75) #3/4
         dvardsigM.append(numpy.array(dvsigM_)*2*3.14/.75)
         var_vonly.append(numpy.array(vvonly_)*2*3.14/.75) #3/4   
-        dvardkmax.append(numpy.array(dvdkmax_)*2*3.14/.75)
+        # dvardkmax.append(numpy.array(dvdkmax_)*2*3.14/.75)
  
     plt.plot(zmaxs,numpy.sqrt(var[0]),label='Two Years',color='red')
     plt.plot(zmaxs,numpy.sqrt(var_ind[0]),label='Two Years, Independent Surveys',color='red',ls=':')  
@@ -457,36 +459,38 @@ def set1():
     plt.savefig('var.png')
 
     plt.clf()
-    plt.plot(zmaxs,-dvards[0]/2/numpy.sqrt(var[0]),label='Two Years',color='red')
-    plt.plot(zmaxs,-dvards[1]/2/numpy.sqrt(var[1]),label='Ten Years',color='black')
+    plt.plot(zmaxs,-dvards[0]/2/var[0],label='Two Years',color='red')
+    plt.plot(zmaxs,-dvards[1]/2/var[1],label='Ten Years',color='black')
     plt.legend()
     # plt.yscale("log", nonposy='clip')
     plt.ylim((0,plt.ylim()[1]))
     plt.xlabel(r'$z_{max}$')
-    plt.ylabel(r'$|\frac{d\sigma_{\gamma}}{d\ln{t}}|$')
+    plt.ylabel(r'$\sigma_{\gamma}^{-1}|\frac{d\sigma_{\gamma}}{d\ln{t}}|$')
     plt.tight_layout()
     plt.savefig('dvardlnt.png')
     plt.clf()
 
-    plt.plot(zmaxs,dvardsigM[0]/2/numpy.sqrt(var[0]),label='Two Years',color='red')
-    plt.plot(zmaxs,dvardsigM[1]/2/numpy.sqrt(var[1]),label='Ten Years',color='black')
+    plt.plot(zmaxs,dvardsigM[0]/2/var[0],label='Two Years',color='red')
+    plt.plot(zmaxs,dvardsigM[1]/2/var[1],label='Ten Years',color='black')
     plt.legend()
     # plt.yscale("log", nonposy='clip')
     plt.ylim((0,plt.ylim()[1]))
     plt.xlabel(r'$z_{max}$')
-    plt.ylabel(r'$\frac{d\sigma_{\gamma}}{d\sigma_M}$')
+    plt.ylabel(r'$\sigma_{\gamma}^{-1}\frac{d\sigma_{\gamma}}{d\sigma_M}$')
     plt.tight_layout()
     plt.savefig('dvardsigM.png')
     plt.clf()
 
-    plt.plot(zmaxs,-dvardkmax[0]/2/numpy.sqrt(var[0]),label='Two Years',color='red')
-    plt.plot(zmaxs,-dvardkmax[1]/2/numpy.sqrt(var[1]),label='Ten Years',color='black')
-    plt.legend()
-    # plt.yscale("log", nonposy='clip')
-    plt.ylim((0,plt.ylim()[1]))
-    plt.xlabel(r'$z_{max}$')
-    plt.ylabel(r'$|\frac{d\sigma_{\gamma}}{dk_{max}}|$')
-    plt.tight_layout()
-    plt.savefig('dvardkmax.png')
-    plt.clf()
+    # plt.plot(zmaxs,-dvardkmax[0]/2/var[0],label='Two Years',color='red')
+    # plt.plot(zmaxs,-dvardkmax[1]/2/var[1],label='Ten Years',color='black')
+    # print ((-dvardkmax[0]/2/var[0]).min(), (-dvardkmax[0]/2/var[0]).max(),(-dvardkmax[1]/2/var[1]).min(), (-dvardkmax[1]/2/var[1]).max())
+    # plt.legend()
+    # # plt.yscale("log", nonposy='clip')
+    # # plt.ylim((0,plt.ylim()[1]))
+    # print (plt.ylim())
+    # plt.xlabel(r'$z_{max}$')
+    # plt.ylabel(r'$\sigma_{\gamma}^{-1}|\frac{d\sigma_{\gamma}}{dk_{max}}|$')
+    # plt.tight_layout()
+    # plt.savefig('dvardkmax.png')
+    # plt.clf()
 set1()
