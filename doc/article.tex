@@ -93,7 +93,7 @@ SNe~Ia in the local $z<0.3$ Universe will provide a measure of $\gamma$
 down to $0.01$ precision that can definitively distinguish  between General Relativity and leading models of alternative gravity.
 \end{abstract}
 
-\section{}
+\section{Introduction}
 
 In the late 1990's, Type~Ia supernovae (SNe~Ia) were used as distance probes to measure the homogeneous expansion history of the Universe.  The remarkable discovery
 that the expansion is accelerating  has called into question our basic understanding of the gravitational forces within the Universe.  Either it
@@ -165,6 +165,8 @@ Given these two advances, over the course of a decade an LSST SN survey can prod
 redshift bins.   
 \citet{2017ApJ...847..128H} find 4--14\% uncertainties in $fD$ in $0.05$ redshift bins from $z=0$ to 0.3, where at
 $0<z<0.2$ most of the signal comes from peculiar velocities and at higher redshifts $RSD$ is more constraining.
+
+\section{Testing Gravity with Peculiar Velocity Surveys}
 
 Our scientific interest is in probing gravity so we here focus  on $\gamma$ rather than on $fD$.
 To illustrate the distinction,
@@ -287,8 +289,8 @@ Like survey duration, intrinsic magnitude dispersion is related to survey perfor
 has a similar relationship with $\sigma_\gamma$.
 This is evident in the plot of $\sigma_\gamma^{-1}\partial \sigma_\gamma/\partial \sigma_M$ shown in the bottom-right panel of Figure~\ref{dvar:fig}.
  \item[Minimum length scale, maximum wavenumber $k_{max}$]  There is a minimum length scale at which density and velocity distributions are reliably predicted from theory and
- are Gaussian-distributed.  Changes in this scale engender changes in the $\gamma$ precision, as    $\sigma_\gamma^{-1}\partial \sigma_\gamma/\partial k_{max} = 0.0050$ at $k_{max}=0.1h$\,Mpc$^{-1}$
-and is survey-independent.
+ are Gaussian-distributed.  Changes in this scale engender changes in the $\gamma$ precision as the survey-independent
+  $\sigma_\gamma^{-1}\partial \sigma_\gamma/\partial k_{max} = 0.0050$ at $k_{max}=0.1h$\,Mpc$^{-1}$.
  \end{description}
 
 From the above calculations, we find empirically that shot noise is important
@@ -305,47 +307,40 @@ occurs at a $k$  within the range that carries the most signal; both sample vari
 If $k_{max}$ were to decrease moderately some of the surveys could become sample variance limited, whereas increases in $k_{max}$ introduce additional
  shot-limited modes.
 
-
-There are different options to consider in the design of a SN~Ia peculiar velocity survey, though at this point it is difficult to assess which is optimal
-or most cost effective.  While there are a variety
-of recently identified indicators of SN~Ia diversity that improve upon the 2-parameter model (SALT2) currently used to determine distances, 
-there is not yet an umbrella model that simultaneously captures all indicators, their correlations, and characterizes the model residuals.
-Here we  make several general conclusions
-based upon the above findings, while noting that 
-constructing such a model is a parallel
-endeavor that will benefit peculiar-velocity  and other SN~Ia science. 
-
-%Equating LSST discovery with having a meaningful peculiar velocity, the number density $n$ is thus a fixed parameter, which only increases with survey duration.
-%Thus $\Omega$, $z_{max}$, and $\sigma_M$ are left as the relevant parameters.
-
-
-
+\section{Components and Considerations of a Peculiar Velocity Survey}
+In the above we have established how survey performance depends on the parameters $\Omega$, $z_{max}$, $t$, and $\sigma_M$.
+We now touch on how survey choices affect $\Omega$, $z_{max}$, and $\sigma_M$. 
 \begin{itemize}
-\item Spectroscopic transient classification:  SNe~Ia are defined through the absence of Hydrogen and the presence of the 6150~\AA~Silicon P-Cygni feature.
-The intrinsic magnitude dispersion depends on the purity of the sample. Conservatively, we consider
-a pure SN~Ia sample obtained through
-spectroscopic classification; the requisite follow-up resources needed for complete $z<0.3$ coverage is conceivable. 
-The feasibility of using photometric classification is an important subject of research
-that can have implications for survey planning, particularly in extending the redshift range.
+\item Spectroscopic transient classification:  SNe~Ia are defined based on spectroscopic features,
+through the absence of Hydrogen and the presence of the 6150~\AA~Silicon P-Cygni feature.
+Maintaining a low sample intrinsic magnitude dispersion $\sigma_M$ relies on a the survey having spectroscopic classification to provide a pure sample
+(e.g.\ SNIFS, SED Machine; the surface density of active transients is low making MOS unnecessary).
+Photometric classification is an alternative survey choice, and the amount of sample dispersion that can be achieved photometrically is
+an active subject of  research.  Note that photometric classification benefits from having spectroscopic redshifts.
 \item Spectroscopic redshifts:  Peculiar velocities are extracted directly from redshift measurements.  Redshift uncertainties of $>0.5$\% contribute significantly
-to the error budget.  We thus conclude that there is the need for spectroscopic $R>200$ host-galaxy redshifts.  In most cases this redshift will be
-available in the classification spectrum.  Planned bright-galaxy redshift surveys can also observe a significant fraction of nearby SN hosts.
-\item Role of the rolling search (e.g.\ LSST):
-LSST can be taken to be a SN~Ia discovery and distance machine, or a discovery machine only.   LSST is expected to discover all $z<0.3$ SNe~Ia before maximum light in its active Wide Fast Deep (WFD) survey area.
+to the error budget.  We thus conclude that there is the need for spectroscopic $R>200$ host-galaxy redshifts.  These redshifts could come as a
+natural byproduct of the spectroscopic transient classification if the spectrograph has sufficient resolution.  Alternatively, 
+bright-galaxy moderate-resolution redshift surveys (e.g.\ DESI, 4MOST) can also provide multiplexed observations of 
+a significant fraction of nearby SN hosts before or well after SN discovery.
+\item Rolling imaging surveys: SNe~Ia must be discovered and their distances determined.  Wide-field cadenced imaging surveys (e.g.\ ZTF, LSST) can deliver
+both, though there is a question whether the survey light curves are sufficient to derive precision distances.  For example, 
+LSST is expected to discover all $z<0.3$ SNe~Ia before maximum light in its active Wide Fast Deep (WFD) survey area.
 The nominal cadence  
- produces sparse per-band light curves, which limits the intrinsic magnitude dispersion possible with LSST data alone to $\sigma_M \approx 0.15$~mag.
-The wide-field of LSST is
- well suited for discoveries over a larger area of sky, but does not provide significant multiplex advantage for the low surface-density of active
-$z<0.3$ SNe~Ia.  LSST is suited for maximizing $\Omega$ while other (cheaper) resources that supplement LSST photometry can improve $\sigma_M$.
-The ultimate WFD observing strategy determines how well $\sigma_8$ can be determined with LSST data alone, and the amount of external resources needed  (if any) to
-reach a targeted $\sigma_M$.
-
-The baseline
-LSST survey covers 18,000 sq.~deg, at $-75 \lesssim \delta \lesssim15$ avoiding the Galactic plane.  Larger solid-angle coverage beyond
-the LSST baseline benefits peculiar-velocity science.  Complementary northern-hemisphere surveys and LSST-expanded or independent
-coverage of the southern equatorial pole could significantly increase
-the sky coverage with a corresponding decrease in the variance of $\gamma$.
-
+ produces sparse per-band light curves with limited ability to constrain distances.
+The imaging survey has a trade between  the solid angle ($\Omega$) it monitors and  the light-light quality ($\sigma_M$) it generates, whether it should serve
+as a SN~Ia discovery and distance machine, or a discovery machine only and relying on a complementary suite of instruments to get distances.
+% , which limits the intrinsic magnitude dispersion possible with LSST data alone to $\sigma_M \approx 0.15$~mag.
+%The wide-field of LSST is
+% well suited for discoveries over a larger area of sky, but does not provide significant multiplex advantage for the low surface-density of active
+%$z<0.3$ SNe~Ia.  LSST is suited for maximizing $\Omega$ while other (cheaper) resources that supplement LSST photometry can improve $\sigma_M$.
+%The ultimate WFD observing strategy determines how well $\sigma_8$ can be determined with LSST data alone, and the amount of external resources needed  (if any) to
+%reach a targeted $\sigma_M$.
+%
+%The baseline
+%LSST survey covers 18,000 sq.~deg, at $-75 \lesssim \delta \lesssim15$ avoiding the Galactic plane.  Larger solid-angle coverage beyond
+%the LSST baseline benefits peculiar-velocity science.  Complementary northern-hemisphere surveys and LSST-expanded or independent
+%coverage of the southern equatorial pole could significantly increase
+%the sky coverage with a corresponding decrease in the variance of $\gamma$.
 \item Follow-up resources to determine per-SN distances:
 Supplemental non-LSST follow-up data in the form of improved temporal light-curve sampling (accurate rise and decline times), 
 expanded (UV, NIR) wavelength coverage, and spectral features
@@ -353,37 +348,44 @@ can access high-fidelity SN~Ia models with lower intrinsic magnitude dispersion 
 For example, infrared data \citep{2012MNRAS.425.1007B} or spectrophotometry at peak brightness
  \citep{2015ApJ...815...58F} are projected to give $\sigma_M \lesssim 0.08$~mag.  The improvement between $\sigma_M=0.08$ and 0.15~mag dispersions is equivalent to a factor of 3.52
  in number density, or equivalently in survey duration. 
+ \item Telescope aperture--Exposure Time:  Light-collection capabilities depend on the fluxes of the targets.
+ Closer and hence brighter objects require more modest telescope apertures and/or exposure times.  For our science case,
+ low-redshift sources are most valuable.  $z_{max}$ occurs when complete target follow-up saturates resources.
+ \end{itemize}
 
-Scientific leverage dictates that low-redshift sources are most valuable.
-This aligns with observational considerations, for which closer and hence brighter objects require more modest follow-up resources.
-Therefore, $z_{max}$ depends on the follow-up program as the redshift where complete follow-up saturates resources.
-
-A follow-up survey with $z_{max}=0.2$ would have $\sim 150,000$ targets over 10 years.  These sources will be observed when
-brighter than $r \sim 20.5$~mag and so will be accessible to 2--4m-class telescopes.  
-\end{itemize}
-
-A low-redshift supernova survey is insensitive to two important uncertainties
+We note that a low-redshift supernova survey is insensitive to two important uncertainties
 associated with the SN~Ia Hubble diagram. The measurement is relatively insensitive to absolute color calibration, due to the limited
 range of {\it observer} wavelengths used to standardize restframe distance moduli.
 Depending on which cameras are used to derive distances, instrumental (rather than absolute)
 calibration may be sufficient.  Progenitor population  is not expected to evolve significantly in the $0.01<z<0.2$ Universe.
 
+To give an idea of scale, a follow-up survey with $z_{max}=0.2$ would have $\sim 150,000$ targets over 10 years.  These sources will be observed when
+brighter than $r \sim 20.5$~mag.  
 
+%While there are a variety
+%of recently identified indicators of SN~Ia diversity that improve upon the 2-parameter model (SALT2) currently used to determine distances, 
+%there is not yet an umbrella model that simultaneously captures all indicators, their correlations, and characterizes the model residuals.
+%Constructing such a model is a parallel
+%endeavor that will benefit peculiar-velocity  and other SN~Ia science.
+
+\section{Conclusions}
 
 SNe~Ia are already powerful probes of the homogeneous cosmological expansion of the Universe.  In the next decade.
 high-cadence, wide-field imaging surveys, together with improved precision in their distance determinations, will make SNe~Ia powerful probes
-of the gravity induced-motion caused by the inhomogeneous Universe.  SNe~Ia peculiar velocities at $z<0.3$ will measure $f \sigma_8$ significantly better
-than galaxy surveys, at lower redshifts that provide better leverage to test gravity models.
+of the gravity induced-motion caused by the inhomogeneous Universe.  SNe~Ia peculiar velocities at $z<0.3$ will measure $\gamma$ significantly better
+than galaxy surveys.
 While imaging surveys will provide a steady stream of SNe~Ia, a coordinated plan of follow-up is required to take advantage of
-their probative power.  The resources necessary to follow hundreds of thousands of SNe depend on specific follow-up choices, and 
+their probative power.  
+
+
+The resources necessary to follow hundreds of thousands of SNe depend on specific follow-up choices, and 
 access to those resources will define the redshift limits of the survey.  Fortunately, the lowest-redshift, and hence brightest, supernovae
-are of the highest interest, so that a modest suite of $\sim 5$ 2--4m telescopes should be capable of providing leading measurements of
-$f\sigma_8$ at $z\sim 0.1$.
+are of the highest interest, 
 
-An important survey parameter that is not considered is cost.
+%so that a modest suite of $\sim 5$ 2--4m telescopes should be capable of providing leading measurements of
+%$f\sigma_8$ at $z\sim 0.1$.
 
-Effect of 10-years.
-
+\begin{comment}
 \newpage
 We are interested in
 $$F^{-1}_{00,\alpha} = \frac{F_{11,\alpha}}{F_{00}F_{11}-F_{01}^2} - \frac{F_{11}}{(F_{00}F_{11}-F_{01}^2)^2}\left(F_{00,\alpha}F_{11}+
@@ -453,6 +455,7 @@ C^{-1}_{,\sigma_M}  =   & \frac{\ln{10}}{5} \frac{z}{1+z} \frac{2\sigma}{n}
   P_{gg}(k,\mu) + \frac{1}{n} 
    \end{bmatrix})\\
  \end{align}
+ \end{comment}
 %
 %
 %\begin{align}
