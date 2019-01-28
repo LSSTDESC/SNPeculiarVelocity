@@ -251,7 +251,7 @@ def muintegral(z,ng,duration,sigm):
 
 
 def kintegral(z,zmax,ng,duration,sigm):
-    kmin = 1./(zmax*3e3*2)
+    kmin = numpy.pi/(zmax*3e3)
     kmax = 0.1
     w = numpy.logical_and(matter[:,0] >= kmin, matter[:,0]< kmax)
 
@@ -391,7 +391,7 @@ def set2():
             for z,r in zip(zs,rs):
                 a=1./(1+z)
                 drdz = 1/numpy.sqrt(OmegaM0/a**3 + (1-OmegaM0)) # 1/H
-                _,_,_, f00s,f11s,f10s,_,_,_,_,_,_,_,_,_,_ = kintegral(z,zmax,ng,duration,sigm)
+                _,_,_, f00s,f11s,f10s,_,_,_,_,_,_,_ = kintegral(z,zmax,ng,duration,sigm)
                 dvardz.append(finvp(f00,f11,f10,f00s,f11s,f10s))
                 dvardz[-1] = dvardz[-1]/r**2
                 dvardz[-1] = dvardz[-1]*drdz  # z now has units of 100 km/s
@@ -406,7 +406,7 @@ def set2():
     plt.savefig('dvardz.png')
     plt.clf()
 
-# set2()
+set2()
 
 
 def set1():

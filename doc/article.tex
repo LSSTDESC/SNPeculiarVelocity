@@ -177,7 +177,7 @@ hundreds of thousands; over the course of 10-years, LSST will find $\sim150,000$
 Given these two advances, supernovae discovered by wide-field searches in the next decade will measure the growth of structure.
 For example, 
 over the course of a decade an LSST SN survey can produce find 4--14\% uncertainties in $fD$ in $0.05$ redshift bins from $z=0$ to 0.3, cumulatively giving
-2.2\% uncertainty assuming redshift-independent $fD$, where at
+2.2\% uncertainty on fD  within this interval , where at
 $0<z<0.2$ most of the probative power comes from peculiar velocities and at higher redshifts from $RSD$  \citep{2017ApJ...847..128H}.
 
 
@@ -222,7 +222,7 @@ Non-GR models may  also predict a change in the scale-dependence of the growth o
 but are not considered.
 
 The uncertainty  $\sigma_\gamma$ of a survey depends on its solid angle $\Omega$, depth $r_{max}= \chi(z_{max})$, duration
-$t$ through $n=\epsilon rt$ where $r$ is the observer-frame SN~Ia rate
+$t$ through $n=\epsilon \phi t$ where $\phi$ is the observer-frame SN~Ia rate
 and $\epsilon$ is the sample-selection efficiency, and
 the intrinsic SN~Ia magnitude dispersion 
 through $\sigma \approx (\frac{5}{\ln{10}} \frac{1+z}{z})^{-1} \sigma_M$.
@@ -232,7 +232,7 @@ sets the off-diagonal elements of $C$ to zero.
 We consider peculiar velocity surveys for a range of redshift depths $z_{max}$ for survey durations of $t=2$ and 10~years.
 The other survey parameters
 $\Omega=3\pi$, $\epsilon=0.65$, $\sigma_M=0.08$~mag are fixed.
-The $k$-limits are  taken to be $k_{min} = (2 r_{max})^{-1}$  and 
+The $k$-limits are  taken to be $k_{min} = \pi/r_{max}$  and 
 $k_{max} = 0.1$~$h$\,Mpc$^{-1}$.
 The sample-selection efficiency $\epsilon$ is redshift-independent, i.e.\ the native redshift distribution is not sculpted.
 The input bias of SN~Ia host galaxies is set as $b=1.2$.
@@ -315,7 +315,7 @@ but that sample variance is non-negligible toward the end of longer surveys or w
 Fine tuning
 survey design is aided by understanding when surveys become sample variance limited.
 After a few years the RSD measurement is sample variance limited,
-the  rest-frame volumetric SN~Ia rate is $7.84\times 10^{-5} h^3$\,Mpc$^{-3}$\,yr$^{-1}$.
+the  rest-frame volumetric SN~Ia rate is $\phi=7.84\times 10^{-5} h^3$\,Mpc$^{-3}$\,yr$^{-1}$.
 For peculiar velocities,
 the  contributions of $P_{vv}$ and
 $\sigma^2/n$ at $z=0.1$ for $\sigma_M=0.08, 0.15$~mag with number densities from 2- and 10-year surveys
@@ -402,7 +402,7 @@ disruptive temporal gaps) follow-up survey with $z_{max}=0.2$ would have $\sim 1
 %so that a modest suite of $\sim 5$ 2--4m telescopes should be capable of providing leading measurements of
 %$f\sigma_8$ at $z\sim 0.1$.
 
-\begin{comment}
+
 \newpage
 We are interested in
 $$F^{-1}_{00,\alpha} = \frac{F_{11,\alpha}}{F_{00}F_{11}-F_{01}^2} - \frac{F_{11}}{(F_{00}F_{11}-F_{01}^2)^2}\left(F_{00,\alpha}F_{11}+
@@ -472,7 +472,7 @@ C^{-1}_{,\sigma_M}  =   & \frac{\ln{10}}{5} \frac{z}{1+z} \frac{2\sigma}{n}
   P_{gg}(k,\mu) + \frac{1}{n} 
    \end{bmatrix})\\
  \end{align}
- \end{comment}
+
 %
 %
 %\begin{align}

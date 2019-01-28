@@ -144,52 +144,52 @@ def zintegral(zmax,sigm, n,ng,independent=False):
     return numpy.trapz(zs**2*arr0,zs),numpy.trapz(zs**2*arr1,zs),numpy.trapz(zs**2*arr2,zs),numpy.trapz(zs**2*arr3,zs)
 
 
-zmaxs = numpy.arange(0.05,0.301,0.025)
-# zmaxs = numpy.log(numpy.arange(1,10.01,2))*0.25/numpy.log(10)+0.05
-noiseless = []
-twoyear = []
-tenyear = []
-twoyearind = []
-tenyearind = []
-independent = []
-for zmax in zmaxs:
-    zi = zintegral(zmax,0, tenyeardensity,ng)
-    F = numpy.array([[zi[0],zi[1]],[zi[2],zi[3]]])
-    noiseless.append(numpy.linalg.inv(F)[0,0])
-    # zi = zintegral(zmax,0, tenyeardensity, pgg,pvg,pvv,pgg_l,pvg_l,pvv_l,pgg_b,pvg_b,ng,independent=True)
-    # F = numpy.array([[zi[0],zi[1]],[zi[2],zi[3]]])
-    # independent.append(numpy.linalg.inv(F)[0,0])        
-    zi = zintegral(zmax,sigm, twoyeardensity,ng)
-    F = numpy.array([[zi[0],zi[1]],[zi[2],zi[3]]])
-    twoyear.append(numpy.linalg.inv(F)[0,0])
-    zi = zintegral(zmax,sigm, tenyeardensity,ng)
-    F = numpy.array([[zi[0],zi[1]],[zi[2],zi[3]]])
-    tenyear.append(numpy.linalg.inv(F)[0,0])
-    zi = zintegral(zmax,sigm, twoyeardensity,ng,independent=True)
-    F = numpy.array([[zi[0],zi[1]],[zi[2],zi[3]]])
-    twoyearind.append(numpy.linalg.inv(F)[0,0])
-    zi = zintegral(zmax,sigm, tenyeardensity,ng,independent=True)
-    F = numpy.array([[zi[0],zi[1]],[zi[2],zi[3]]])
-    tenyearind.append(numpy.linalg.inv(F)[0,0])
+# zmaxs = numpy.arange(0.05,0.301,0.025)
+# # zmaxs = numpy.log(numpy.arange(1,10.01,2))*0.25/numpy.log(10)+0.05
+# noiseless = []
+# twoyear = []
+# tenyear = []
+# twoyearind = []
+# tenyearind = []
+# independent = []
+# for zmax in zmaxs:
+#     zi = zintegral(zmax,0, tenyeardensity,ng)
+#     F = numpy.array([[zi[0],zi[1]],[zi[2],zi[3]]])
+#     noiseless.append(numpy.linalg.inv(F)[0,0])
+#     # zi = zintegral(zmax,0, tenyeardensity, pgg,pvg,pvv,pgg_l,pvg_l,pvv_l,pgg_b,pvg_b,ng,independent=True)
+#     # F = numpy.array([[zi[0],zi[1]],[zi[2],zi[3]]])
+#     # independent.append(numpy.linalg.inv(F)[0,0])        
+#     zi = zintegral(zmax,sigm, twoyeardensity,ng)
+#     F = numpy.array([[zi[0],zi[1]],[zi[2],zi[3]]])
+#     twoyear.append(numpy.linalg.inv(F)[0,0])
+#     zi = zintegral(zmax,sigm, tenyeardensity,ng)
+#     F = numpy.array([[zi[0],zi[1]],[zi[2],zi[3]]])
+#     tenyear.append(numpy.linalg.inv(F)[0,0])
+#     zi = zintegral(zmax,sigm, twoyeardensity,ng,independent=True)
+#     F = numpy.array([[zi[0],zi[1]],[zi[2],zi[3]]])
+#     twoyearind.append(numpy.linalg.inv(F)[0,0])
+#     zi = zintegral(zmax,sigm, tenyeardensity,ng,independent=True)
+#     F = numpy.array([[zi[0],zi[1]],[zi[2],zi[3]]])
+#     tenyearind.append(numpy.linalg.inv(F)[0,0])
 
-noiseless=numpy.array(noiseless)
-twoyear=numpy.array(twoyear)
-tenyear= numpy.array(tenyear)
-twpyearind= numpy.array(twoyearind)
-tenyearind= numpy.array(tenyearind)
-independent = numpy.array(independent)
-plt.plot(zmaxs,numpy.sqrt(twoyear/noiseless),label='Two Year',color='red')
-plt.plot(zmaxs,numpy.sqrt(tenyear/noiseless),label='Ten Year',color='blue')
-# plt.plot(zmaxs,numpy.sqrt(independent/noiseless),label='Independent',color='black',ls=':')
-plt.plot(zmaxs,numpy.sqrt(twoyearind/noiseless),label='Two Year Independent',color='red',ls=':')  
-plt.plot(zmaxs,numpy.sqrt(tenyearind/noiseless),label='Ten Year Independent',color='blue',ls=':')    
-plt.ylabel(r'$\sigma_{f\sigma_8}/\sigma_{f\sigma_8,min}$')
-plt.ylim((1,7))
-plt.yscale("log", nonposx='clip')
-plt.legend()
-plt.xlabel(r'$z_{max}$')
-plt.tight_layout()
-plt.savefig('new.png')
+# noiseless=numpy.array(noiseless)
+# twoyear=numpy.array(twoyear)
+# tenyear= numpy.array(tenyear)
+# twpyearind= numpy.array(twoyearind)
+# tenyearind= numpy.array(tenyearind)
+# independent = numpy.array(independent)
+# plt.plot(zmaxs,numpy.sqrt(twoyear/noiseless),label='Two Year',color='red')
+# plt.plot(zmaxs,numpy.sqrt(tenyear/noiseless),label='Ten Year',color='blue')
+# # plt.plot(zmaxs,numpy.sqrt(independent/noiseless),label='Independent',color='black',ls=':')
+# plt.plot(zmaxs,numpy.sqrt(twoyearind/noiseless),label='Two Year Independent',color='red',ls=':')  
+# plt.plot(zmaxs,numpy.sqrt(tenyearind/noiseless),label='Ten Year Independent',color='blue',ls=':')    
+# plt.ylabel(r'$\sigma_{f\sigma_8}/\sigma_{f\sigma_8,min}$')
+# plt.ylim((1,7))
+# plt.yscale("log", nonposx='clip')
+# plt.legend()
+# plt.xlabel(r'$z_{max}$')
+# plt.tight_layout()
+# plt.savefig('new.png')
 #     plt.show()
 
 #     wefe
@@ -260,23 +260,60 @@ fig, axs = plt.subplots(1,1,sharex=True,figsize=(8,5))
 
 colors=['blue','green','red']
 zs = numpy.array([0.05,0.1,.2])
-axs.plot(matter[:,0],matter[:,0]**3*Pvv(1),label=r'$\mu=1$')
-axs.plot(matter[:,0],matter[:,0]**3*Pvv(0.5),label=r'$\mu=0.5$')
-axs.set_ylabel(r'$k^3P_{vv}$[km$^2$s$^{-2}$]')
+axs.plot(matter[:,0],Pvv(1),label=r'$\mu=1$')
+axs.plot(matter[:,0],Pvv(0.5),label=r'$\mu=0.5$')
+axs.set_ylabel(r'$P_{vv}$[km$^2$s$^{-2}$Mpc/h^3 ]')
 # axs.ticklabel_format(style='sci', axis='y',scilimits=(0,0))
-dum=1
-axs.plot([1./(zs[0]*3e3*2),0.1],[numpy.exp(dum*10.6),numpy.exp(dum*10.6)],color=colors[0])
-axs.plot([1./(zs[1]*3e3*2),0.1],[numpy.exp(dum*10.3),numpy.exp(dum*10.3)],color=colors[1])
-axs.plot([1./(zs[2]*3e3*2),0.1],[numpy.exp(dum*10),numpy.exp(dum*10)],color=colors[2])
-axs.text(0.1, numpy.exp(dum*10.6),r'$z_{{max}}={}$'.format(zs[0]),color=colors[0])
-axs.text(0.1, numpy.exp(dum*10.3),r'$z_{{max}}={}$'.format(zs[1]),color=colors[1])
-axs.text(0.1, numpy.exp(dum*10),r'$z_{{max}}={}$'.format(zs[2]),color=colors[2])
+# dum=1
+# axs.plot([1./(zs[0]*3e3*2),0.1],[numpy.exp(dum*10.6),numpy.exp(dum*10.6)],color=colors[0])
+# axs.plot([1./(zs[1]*3e3*2),0.1],[numpy.exp(dum*10.3),numpy.exp(dum*10.3)],color=colors[1])
+# axs.plot([1./(zs[2]*3e3*2),0.1],[numpy.exp(dum*10),numpy.exp(dum*10)],color=colors[2])
+# axs.text(0.1, numpy.exp(dum*10.6),r'$z_{{max}}={}$'.format(zs[0]),color=colors[0])
+# axs.text(0.1, numpy.exp(dum*10.3),r'$z_{{max}}={}$'.format(zs[1]),color=colors[1])
+# axs.text(0.1, numpy.exp(dum*10),r'$z_{{max}}={}$'.format(zs[2]),color=colors[2])
 axs.set_xlim((6e-4,.2))
-# axs.set_ylim((1e6,1e8))
-axs.set_ylim((.2e5,.2e7))
+axs.set_ylim((1e8,1e14))
 axs.set_yscale("log", nonposx='clip')
 axs.set_xscale("log", nonposx='clip')
 axs.legend()
+plt.tight_layout()
+plt.subplots_adjust(hspace=0.05)
+plt.savefig('pvv.png')
+
+plt.clf()
+fig, axs = plt.subplots(1,1,sharex=True,figsize=(8,5))
+z=0.1
+restrate = 0.65*  2.69e-5*(1/0.70)**3 # h^3/Mpc^3 yr^{-1}
+# sigm = 0.08
+sigv_factor = numpy.log(10)/5*z/(1+z)
+# sigv =sigm * sigv_factor *3e5
+
+
+colors=['blue','green','red']
+zs = numpy.array([0.05,0.1,.2])
+axs.plot(matter[:,0],matter[:,0]**3*Pvv(1),label=r'$k^3P_{vv}(\mu=1)$',color='black')
+axs.plot(matter[:,0],matter[:,0]**3*Pvv(0.5),label=r'$k^3P_{vv}(\mu=0.5)$',color='cyan')
+axs.plot(matter[:,0],matter[:,0]**3*(0.08 * sigv_factor *3e5)**2 / (2*restrate/(1+z)), label=r'$k^3\sigma^2/n$ $\sigma_M=0.08$ 2 years $z=0.1$',ls='--',color='red')
+axs.plot(matter[:,0],matter[:,0]**3*(0.15 * sigv_factor *3e5)**2 / (2*restrate/(1+z)), label=r'$k^3\sigma^2/n$ $\sigma_M=0.15$ 2 years $z=0.1$',ls=':',color='red')
+axs.plot(matter[:,0],matter[:,0]**3*(0.08 * sigv_factor *3e5)**2 / (10*restrate/(1+z)), label=r'$k^3\sigma^2/n$ $\sigma_M=0.08$ 10 years $z=0.1$',ls='--',color='black')
+axs.plot(matter[:,0],matter[:,0]**3*(0.15 * sigv_factor *3e5)**2 / (10*restrate/(1+z)), label=r'$k^3\sigma^2/n$ $\sigma_M=0.15$ 10 years $z=0.1$',ls=':',color='black')
+axs.set_ylabel(r'[km$^2$s$^{-2}$]')
+# axs.ticklabel_format(style='sci', axis='y',scilimits=(0,0))
+dum=1.07
+axs.plot([numpy.pi/(zs[0]*3e3),0.1],[numpy.exp(dum*10.4),numpy.exp(dum*10.4)],color=colors[0])
+axs.plot([numpy.pi/(zs[1]*3e3),0.1],[numpy.exp(dum*10.2),numpy.exp(dum*10.2)],color=colors[1])
+axs.plot([numpy.pi/(zs[2]*3e3),0.1],[numpy.exp(dum*10),numpy.exp(dum*10)],color=colors[2])
+axs.text(0.1, numpy.exp(dum*10.4),r'$z_{{max}}={}$'.format(zs[0]),color=colors[0])
+axs.text(0.1, numpy.exp(dum*10.2),r'$z_{{max}}={}$'.format(zs[1]),color=colors[1])
+axs.text(0.1, numpy.exp(dum*10),r'$z_{{max}}={}$'.format(zs[2]),color=colors[2])
+axs.set_xlim((4e-3,.25))
+# axs.set_ylim((1e6,1e8))
+axs.set_ylim((.4e5,.2e7))
+axs.set_yscale("log", nonposx='clip')
+axs.set_xscale("log", nonposx='clip')
+axs.set_xlabel(r'$k$ [$h$ Mpc$^{-1}$]')
+
+axs.legend(loc=2)
 plt.tight_layout()
 plt.subplots_adjust(hspace=0.05)
 plt.savefig('new2.png')
@@ -357,9 +394,9 @@ axs[0].plot(matter[:,0],matter[:,0]**3*Pvv(0.5),label=r'$\mu=0.5$')
 axs[0].set_ylabel(r'$k^3P_{vv}$[km$^2$s$^{-2}$]')
 # axs[0].ticklabel_format(style='sci', axis='y',scilimits=(0,0))
 dum=1
-axs[0].plot([1./(zs[0]*3e3*2),0.1],[numpy.exp(dum*10.6),numpy.exp(dum*10.6)],color=colors[0])
-axs[0].plot([1./(zs[1]*3e3*2),0.1],[numpy.exp(dum*10.3),numpy.exp(dum*10.3)],color=colors[1])
-axs[0].plot([1./(zs[2]*3e3*2),0.1],[numpy.exp(dum*10),numpy.exp(dum*10)],color=colors[2])
+axs[0].plot([numpy.pi/(zs[0]*3e3),0.1],[numpy.exp(dum*10.6),numpy.exp(dum*10.6)],color=colors[0])
+axs[0].plot([numpy.pi/(zs[1]*3e3),0.1],[numpy.exp(dum*10.3),numpy.exp(dum*10.3)],color=colors[1])
+axs[0].plot([numpy.pi/(zs[2]*3e3),0.1],[numpy.exp(dum*10),numpy.exp(dum*10)],color=colors[2])
 axs[0].text(0.1, numpy.exp(dum*10.6),r'$z_{{max}}={}$'.format(zs[0]),color=colors[0])
 axs[0].text(0.1, numpy.exp(dum*10.3),r'$z_{{max}}={}$'.format(zs[1]),color=colors[1])
 axs[0].text(0.1, numpy.exp(dum*10),r'$z_{{max}}={}$'.format(zs[2]),color=colors[2])
