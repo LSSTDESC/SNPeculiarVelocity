@@ -42,6 +42,10 @@
 \affiliation{Laboratoire de Physique Nucl\'eaire et de Hautes Energies, Sorbonne Universit\'e, CNRS-IN2P3, 4 Place Jussieu, 75005 Paris, France}    
 \author{S.~BenZvi}
 \affiliation{Department of Physics and Astronomy, University of Rochester, Rochester, NY 14627, USA}
+\author{H.~Courtois}
+\affiliation{Universit\'e de Lyon, F-69622, Lyon, France; Universit\'e de Lyon
+1, Villeurbanne; CNRS/IN2P3, Institut de Physique Nucléaire de
+Lyon, France} 
 \author{S.~Gontcho A Gontcho}
 \affiliation{Department of Physics and Astronomy, University of Rochester, Rochester, NY 14627, USA}
 \author{R.~Graziani}
@@ -145,7 +149,7 @@ TAIPAN survey will obtain Fundamental Plane galaxies with densities of $n_g \sim
 and the WALLABY+WNSHS surveys will obtain Tully-Fisher galaxies at densities $n_g \sim 2\times 10^{-2} - 10^{-4} h^3$\,Mpc$^{-3}$ from
 $z=0-0.1$ covering 75\% of the sky.
 These surveys combined are projected to have 3\% $fD$ uncertainties \citep{2017MNRAS.464.2517H}.
-(For reference, DESI projects 10\% precision of $fD$ at $z>0.3$ redshifts  using Redshift Space Distortions (RSD) alone.)
+(For reference, DESI projects 10\% precision of $fD$ at $z \approx 0.3$  using Redshift Space Distortions (RSD) alone.)
 Existing SN~Ia samples
 have been used to test and ultimately find spatial correlations in peculiar velocities that may be attributed to the growth of structure
 \citep{PhysRevLett.99.081301,2008MNRAS.389L..47A,2014MNRAS.444.3926J,2015JCAP...12..033H, 2017JCAP...05..015H}.
@@ -170,16 +174,18 @@ hundreds of thousands; over the course of 10-years, LSST will find $\sim150,000$
 
 Given these two advances, supernovae discovered by wide-field searches in the next decade will measure the growth of structure.
 For example, 
-over the course of a decade an LSST SN survey can produce find 4--14\% uncertainties in $fD$ in $0.05$ redshift bins from $z=0$ to 0.3, where at
+over the course of a decade an LSST SN survey can produce find 4--14\% uncertainties in $fD$ in $0.05$ redshift bins from $z=0$ to 0.3, cumulatively giving
+2.2\% uncertainty assuming redshift-independent $fD$, where at
 $0<z<0.2$ most of the probative power comes from peculiar velocities and at higher redshifts from $RSD$  \citep{2017ApJ...847..128H}.
+
 
  
 
 \section{Testing Gravity with Peculiar Velocity Surveys}
-
-Our scientific interest is in probing gravity so we here focus  on $\gamma$ rather than on $fD$.
+While the growth rate $fD$ can be used to test several aspects of physics beyond the standard cosmological model (e.g.\ dark matter clustering, dark energy evolution), our scientific interest here is in probing gravity
+so we here focus  on $\gamma$.
 To illustrate the distinction,
- $\frac{d(\ln{fD})}{d\gamma} = \ln\Omega + \int \Omega^{\gamma} \ln{\Omega}\, d\ln{a} \approx -1.68, -0.75,-0.37$ at $z=0,0.5,1.0$ respectively
+ $\frac{d(\ln{fD})}{d\gamma} = \ln\Omega_M + \int \Omega_M^{\gamma} \ln{\Omega_M}\, d\ln{a} \approx -1.68, -0.75,-0.37$ at $z=0,0.5,1.0$ respectively
  in $\Lambda$CDM;  two surveys with the same fractional precision  in $fD$ will have different precision in $\gamma$,
  with the one at lower redshift providing the tighter constraint. 
 We project uncertainties in $\gamma$, $\sigma_\gamma$ for a suite of idealized surveys
@@ -213,7 +219,7 @@ The uncertainty in $\gamma$ is $\sigma_\gamma = \sqrt{\left(F^{-1}\right)_{\gamm
 Non-GR models may  also predict a change in the scale-dependence of the growth or non-constant $\gamma$, such observations provide additional leverage in probing gravity
 but are not considered.
 
-The uncertainty  $\sigma_\gamma$ of a survey depends on its solid angle $\Omega$, depth $r_{max}$ (or $z_{max}$), duration
+The uncertainty  $\sigma_\gamma$ of a survey depends on its solid angle $\Omega$, depth $r_{max}= \chi(z_{max})$, duration
 $t$ through $n=\epsilon rt$ where $r$ is the observer-frame SN~Ia rate
 and $\epsilon$ is the sample-selection efficiency, and
 the intrinsic SN~Ia magnitude dispersion 
@@ -233,7 +239,7 @@ All the surveys considered  provide meaningful tests of gravity.
 The projected uncertainty in $\gamma$ achieved by the suite of surveys are shown in Figure~\ref{var:fig}.
 The primary analysis of interest uses overdensities (RSD), peculiar velocities, and their cross-correlations.
 The short and shallow,  2-year, $z_{max}=0.1$ survey has $\sigma_\gamma \sim 0.038$,
-which can distinguish  between  General Relativity, $f(R)$,  and DGP gravities at the $2\sigma$ level.
+which can distinguish  between  General Relativity, $f(R)$,  and DGP gravities at the $>3\sigma$ level.
 The 10-year survey performance asymptotes at $z_{max} \sim0.2$ at a precision of  $\sigma_\gamma \sim 0.01$.
 Figure~\ref{var:fig} also shows uncertainties based on two other analyses, one that only uses peculiar velocities, and
 one that uses both RSD and peculiar velocities independently.
@@ -261,7 +267,7 @@ survey parameters  $\Omega$, $z_{max}$, $t$, and $\sigma_M$, and also with respe
 within a given survey.  Though not directly a survey parameter, we also examine changes with respect to $k_{max}$.
 \begin{description}
 \item[Solid Angle $\Omega$]
-The Fisher Matrix $F$ is  proportional to the survey solid angle $\Omega$ so $\sigma_\gamma \propto \sqrt{\Omega}$.
+The Fisher Matrix $F$ is  proportional to the survey solid angle $\Omega$ so $\sigma_\gamma \propto \Omega^{-1/2}$.
 \item[Differential Redshift Bin $z$]  Certain redshifts constrain $\gamma$ more strongly than others.  If at a given moment of a survey we had
 a set of SNe~Ia from which to choose, it turns out the one with the lowest redshift would be preferred.
 This is demonstrated to be the case at the end of both 2- and 10-year surveys with $z_{max}=0.2$.
@@ -337,7 +343,7 @@ For example,
 LSST is expected to discover all $z<0.3$ SNe~Ia before maximum light in its active Wide Fast Deep (WFD) survey area.
 The nominal cadence  
  produces sparse per-band light curves with limited ability to constrain distances.
-The observing strategy of the imaging survey thus has a trade between  the solid angle ($\Omega$) monitored and  the light-light quality ($\sigma_M$) generated.
+The observing strategy of the imaging survey thus has a trade between  the solid angle ($\Omega$) monitored and  the light-curve quality ($\sigma_M$) generated.
 The wide-field imager may better serve as a discovery machine leaving the distance determinations to other single-object follow-up instruments.
 % , which limits the intrinsic magnitude dispersion possible with LSST data alone to $\sigma_M \approx 0.15$~mag.
 %The wide-field of LSST is
@@ -360,7 +366,7 @@ For example, infrared data \citep{2012MNRAS.425.1007B} or spectrophotometry at p
  in number density, or equivalently in survey duration. 
  \item Telescope Aperture $\times$ Exposure Time:  Light-collection capabilities depend on the fluxes of the targets.
  Closer and hence brighter objects require more modest telescope apertures and/or exposure times.  For our science case,
- low-redshift sources are most valuable and  a finite amount of follow-up should be spent on saturating redshifts lower than $z_{max}$.
+ low-redshift sources are most valuable and the finite amount of follow-up should be spent on saturating redshifts lower than $z_{max}$.
  \end{itemize}
 
 Focusing on low-redshift supernovae  mitigates  two important uncertainties
