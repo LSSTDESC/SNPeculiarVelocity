@@ -5,6 +5,8 @@ import matplotlib.pyplot as plt
 import matplotlib
 import scipy.integrate as integrate
 from astropy.cosmology import FlatLambdaCDM
+matplotlib.rcParams['font.size'] = 14
+matplotlib.rcParams['lines.linewidth'] = 2.0
 
 # cosmology
 OmegaM0 = 0.28
@@ -180,7 +182,7 @@ def traces(z,mu,ng,duration,sigm):
         numpy.array(ll_vonly)
 
 def muintegral(z,ng,duration,sigm):
-    mus=numpy.arange(-1,1.001,0.1)
+    mus=numpy.arange(0,1.001,0.05)
 
     ll=numpy.zeros((len(mus),len(matter[:,0])))
     bb=numpy.zeros((len(mus),len(matter[:,0])))
@@ -247,7 +249,7 @@ def muintegral(z,ng,duration,sigm):
     # bb_ind=bb_ind+h/2
     # bl_ind=bl_ind+i/2
     
-    return ll,bb,bl, lls,bbs,bls,ll_ind,bb_ind,bl_ind, llsigM,bbsigM,blsigM,ll_vonly
+    return 2*ll,2*bb,2*bl, 2*lls,2*bbs,2*bls,2*ll_ind,2*bb_ind,2*bl_ind, 2*llsigM,2*bbsigM,2*blsigM,2*ll_vonly
 
 
 def kintegral(z,zmax,ng,duration,sigm):
@@ -369,7 +371,7 @@ def zintegral(zmax,ng,duration,sigm):
 
 
 def set2():
-    fig,(ax) = plt.subplots(1, 1, figsize=(8*.8,6*.8))
+    fig,(ax) = plt.subplots(1, 1)
     durations = [2,10]
     labels = ['Two Years','Ten Years']
     colors = ['red','black']
@@ -406,11 +408,11 @@ def set2():
     plt.savefig('dvardz.png')
     plt.clf()
 
-set2()
+# set2()
 
 
 def set1():
-    fig,(ax) = plt.subplots(1, 1, figsize=(8*.8,6*.8))
+    fig,(ax) = plt.subplots(1, 1)
     zmaxs = numpy.exp(numpy.arange(numpy.log(0.05),numpy.log(.300001),numpy.log(.3/.05)/8))
     durations = [2,10]
     labels = ['Two Years','Ten Years']
@@ -459,27 +461,49 @@ def set1():
     plt.savefig('var.png')
 
     plt.clf()
-    plt.plot(zmaxs,-dvards[0]/2/var[0],label='Two Years',color='red')
-    plt.plot(zmaxs,-dvards[1]/2/var[1],label='Ten Years',color='black')
+    fig, ax1 = plt.subplots()
+    ax1.plot(zmaxs,-dvards[0]/2/var[0],label='Two Years',color='red',ls='--')
+    ax1.plot(zmaxs,-dvards[1]/2/var[1],label='Ten Years',color='red')
+    # ax1.yscale("log", nonposy='clip')
+    ax1.set_ylim((0,ax1.get_ylim()[1]))
+    ax1.set_xlabel(r'$z_{max}$')
+    ax1.set_ylabel(r'$\sigma_{\gamma}^{-1}|\frac{d\sigma_{\gamma}}{d\ln{t}}|$',color='red')
+    ax1.tick_params(axis='y', labelcolor='red')
+
+    ax2 = ax1.twinx()  # instantiate a second axes that shares the same x-axis
+
+    ax2.plot(zmaxs,dvardsigM[0]/2/var[0],label='Two Years',color='black',ls='--')
+    ax2.plot(zmaxs,dvardsigM[1]/2/var[1],label='Ten Years',color='black')
+
+    # ax2.yscale("log", nonposy='clip')
+    ax2.set_ylim((0,ax2.get_ylim()[1]))
+    ax2.set_ylabel(r'$\sigma_{\gamma}^{-1}\frac{d\sigma_{\gamma}}{d\sigma_M}$')
+    fig.tight_layout()
     plt.legend()
-    # plt.yscale("log", nonposy='clip')
-    plt.ylim((0,plt.ylim()[1]))
-    plt.xlabel(r'$z_{max}$')
-    plt.ylabel(r'$\sigma_{\gamma}^{-1}|\frac{d\sigma_{\gamma}}{d\ln{t}}|$')
-    plt.tight_layout()
-    plt.savefig('dvardlnt.png')
+    plt.savefig('dvardxxx.png')
     plt.clf()
 
-    plt.plot(zmaxs,dvardsigM[0]/2/var[0],label='Two Years',color='red')
-    plt.plot(zmaxs,dvardsigM[1]/2/var[1],label='Ten Years',color='black')
-    plt.legend()
-    # plt.yscale("log", nonposy='clip')
-    plt.ylim((0,plt.ylim()[1]))
-    plt.xlabel(r'$z_{max}$')
-    plt.ylabel(r'$\sigma_{\gamma}^{-1}\frac{d\sigma_{\gamma}}{d\sigma_M}$')
-    plt.tight_layout()
-    plt.savefig('dvardsigM.png')
-    plt.clf()
+    # plt.plot(zmaxs,-dvards[0]/2/var[0],label='Two Years',color='red')
+    # plt.plot(zmaxs,-dvards[1]/2/var[1],label='Ten Years',color='black')
+    # plt.legend()
+    # # plt.yscale("log", nonposy='clip')
+    # plt.ylim((0,plt.ylim()[1]))
+    # plt.xlabel(r'$z_{max}$')
+    # plt.ylabel(r'$\sigma_{\gamma}^{-1}|\frac{d\sigma_{\gamma}}{d\ln{t}}|$')
+    # plt.tight_layout()
+    # plt.savefig('dvardlnt.png')
+    # plt.clf()
+
+    # plt.plot(zmaxs,dvardsigM[0]/2/var[0],label='Two Years',color='red')
+    # plt.plot(zmaxs,dvardsigM[1]/2/var[1],label='Ten Years',color='black')
+    # plt.legend()
+    # # plt.yscale("log", nonposy='clip')
+    # plt.ylim((0,plt.ylim()[1]))
+    # plt.xlabel(r'$z_{max}$')
+    # plt.ylabel(r'$\sigma_{\gamma}^{-1}\frac{d\sigma_{\gamma}}{d\sigma_M}$')
+    # plt.tight_layout()
+    # plt.savefig('dvardsigM.png')
+    # plt.clf()
 
     # plt.plot(zmaxs,-dvardkmax[0]/2/var[0],label='Two Years',color='red')
     # plt.plot(zmaxs,-dvardkmax[1]/2/var[1],label='Ten Years',color='black')
