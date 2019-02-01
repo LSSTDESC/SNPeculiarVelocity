@@ -226,7 +226,7 @@ The Fisher information matrix is
 F_{ij} 
 %& = \frac{V}{2}\int \frac{d^3k}{(2\pi)^3} \text{Tr}\left[ C^{-1} \frac{\partial C}{\partial \lambda_i} C^{-1}
 %\frac{\partial C}{\partial \lambda_j} \right]\\
-& = \frac{\Omega}{8\pi^2} \int_0^{r_{max}}  \int_{k_{min}}^{k_{max}}  \int_{-1}^{1} r^2 k^2 \text{Tr}\left[ C^{-1} \frac{\partial C}{\partial \lambda_i} C^{-1}
+& = \frac{\Omega}{8\pi^2} \int_{r_{min}}^{r_{max}}  \int_{k_{min}}^{k_{max}}  \int_{-1}^{1} r^2 k^2 \text{Tr}\left[ C^{-1} \frac{\partial C}{\partial \lambda_i} C^{-1}
 \frac{\partial C}{\partial \lambda_j} \right] d\mu\,dk\,dr
 \label{fisher:eqn}
 \end{align}
@@ -264,6 +264,9 @@ The other survey parameters
 $\Omega=3\pi$, $\epsilon=0.65$, $\sigma_M=0.08$~mag are fixed.
 The $k$-limits are  taken to be $k_{min} = \pi/r_{max}$  and 
 $k_{max} = 0.1$~$h$\,Mpc$^{-1}$.
+A minimum distance $r_{min}=r(z=0.01)$ is imposed as the physics derivation is taken at the limit
+where peculiar velocities are significantly  smaller than
+the cosmological redshift.
 The sample-selection efficiency $\epsilon$ is redshift-independent, i.e.\ the native redshift distribution is not sculpted.
 The input bias of SN~Ia host galaxies is set as $b=1.2$.
 
