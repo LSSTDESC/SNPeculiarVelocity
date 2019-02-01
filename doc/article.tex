@@ -17,7 +17,7 @@
 \begin{raggedright}
 \huge
 Astro2020 Science White Paper \linebreak
-
+proj
 Testing Gravity Using Type Ia Supernovae Discovered by Next-Generation Wide-Field Imaging Surveys \linebreak
 \normalsize
 
@@ -186,8 +186,8 @@ have been used to test and ultimately find spatial correlations in peculiar velo
 
 
 Two advances in the upcoming decade will make SN~Ia peculiar velocities more powerful.
-First, the precision of SN~Ia distances can be improved.  The commonly-used empirical 2-parameter SED model yields $\sigma_M \gtrsim 0.12$~mag absolute magnitude
-dispersion.  However, SNe transmit more information than just the light-curve shape and single color used in current SN models.
+First, the precision of SN~Ia distances can be improved.  The commonly-used empirical 2-parameter SED model yields  absolute magnitude
+dispersion $\sigma_M \gtrsim 0.12$~mag.  However, SNe transmit more information than just the light-curve shape and single color used in current SN models.
 Recent studies indicate that with the right data, SN absolute
 magnitudes can be calibrated to $\sigma_M \lesssim 0.08$ mag \citep[see e.g.][]{2012MNRAS.425.1007B, 2015ApJ...815...58F}.  Though not yet
 established, it is anticipated that such a reduction in intrinsic dispersion comes with a reduction in the magnitude bias correlated with host-galaxy properties
@@ -200,7 +200,8 @@ hundreds of thousands; over the course of 10-years, LSST will find $\sim150,000$
   This sample has comparable
  number density and more galaxies at deeper redshifts than projected by WALLABY and TAIPAN. 
 
-Given these two advances, supernovae discovered by wide-field searches in the next decade will measure the growth of structure.
+Given these two advances, supernovae discovered by wide-field searches in the next decade will 
+ be able to stringently constrain the growth of structure in the low-redshift Universe.
 For example, 
 over the course of a decade a SN survey relying on LSST discoveries 
 plus spectroscopic redshifts can produce find 4--14\% uncertainties in $fD$ in $0.05$ redshift bins from $z=0$ to 0.3, cumulatively giving
@@ -209,7 +210,7 @@ $0<z<0.2$ most of the probative power comes from peculiar velocities and at high
 
 \section{Testing Gravity with Peculiar Velocity Surveys}
 While the growth rate $fD$ can be used to test several aspects of physics beyond the standard cosmological model (e.g.\ dark matter clustering, dark energy evolution), our scientific interest here is in probing gravity
-so we here focus  on $\gamma$.
+so we here focus  on the growth index $\gamma$.
 To illustrate the distinction,
  $\frac{d(\ln{fD})}{d\gamma} = \ln\Omega_M + \int \Omega_M^{\gamma} \ln{\Omega_M}\, d\ln{a} \approx -1.68, -0.75,-0.37$ at $z=0,0.5,1.0$ respectively
  in $\Lambda$CDM;  two surveys with the same fractional precision  in $fD$ will have different precision in $\gamma$,
@@ -218,8 +219,9 @@ To illustrate the distinction,
  on survey parameter choices.
  
  
-We project uncertainties in $\gamma$, $\sigma_\gamma$ for a suite of idealized surveys
-using a Fisher matrix analysis similar to that of \citet{2017ApJ...847..128H, 2017MNRAS.464.2517H}.
+We project uncertainties  on the growth index, $\sigma_\gamma$ for a suite of idealized surveys
+using a Fisher matrix analysis similar to that of \citet{2017ApJ...847..128H, 2017MNRAS.464.2517H}
+\citep[there is an alternative approach using an estimator for the mean pairwise velocity][]{2011PhRvD..83d3004B}.
 The Fisher information matrix is
 \begin{align}
 F_{ij} 
@@ -249,7 +251,8 @@ The uncertainty in $\gamma$ is $\sigma_\gamma = \sqrt{\left(F^{-1}\right)_{\gamm
 Non-GR models may  also predict a change in the scale-dependence of the growth or non-constant $\gamma$, such observations provide additional leverage in probing gravity
 but are not considered.
 
-The uncertainty  $\sigma_\gamma$ of a survey depends on its solid angle $\Omega$, depth $r_{max}= \chi(z_{max})$, duration
+The uncertainty  $\sigma_\gamma$ of a survey depends on its solid angle $\Omega$, depth
+given by the comoving distance out to the maximum redshift $r_{max}=r(z_{max})$, duration
 $t$ through $n=\epsilon \phi t$ where $\phi$ is the observer-frame SN~Ia rate
 and $\epsilon$ is the sample-selection efficiency, and
 the intrinsic SN~Ia magnitude dispersion 
@@ -294,6 +297,8 @@ Survey performance is examined in more detail by considering how $\sigma_\gamma$
 changes with respect to the 
 survey parameters  $\Omega$, $z_{max}$, $t$, and $\sigma_M$, and also with respect to differential redshift bins
 within a given survey.  Though not directly a survey parameter, we also examine changes with respect to $k_{max}$.
+
+The dependence on the uncertainty in the growth index on the survey parameters is as follows:
 
 {\bf Solid Angle $\Omega$:}
 The Fisher Matrix $F$ is  proportional to the survey solid angle $\Omega$ so $\sigma_\gamma \propto \Omega^{-1/2}$.
@@ -374,14 +379,15 @@ from galaxy signal in  the spectroscopic transient classification if the spectro
 moderate-resolution (bright-)galaxy  redshift surveys (e.g.\ DESI, 4MOST) can  provide multiplexed observations of 
 a significant fraction of nearby SN hosts before  discovery or after transient light has faded away.
 
-{\bf SNe~Ia Need Precise Distances:} Cosmological redshifts are inferred from SN~Ia distances. Distances are calculated from multi-band light curves, redshifts (when available),
+{\bf SNe~Ia Need Precise Distances:} SN~Ia distances, along with their measured redshifts, are required to infer the peculiar velocities of their hosts.
+Distances are calculated from multi-band light curves, redshifts (when available),
 SN spectroscopic features, and
 host-galaxy properties.
-Distance uncertainties here have been characterized by $\sigma_M$,
+Distance uncertainties here have been characterized by magnitude dispersion $\sigma_M$,
 which includes both measurement uncertainty and intrinsic magnitude dispersion.  The latter depends on the data-quality and methodology used to calculate distances.
 For the same supernovae, the intrinsic distance dispersion derived from a dataset with sparse light curves, a small number of bands, limited wavelength coverage, and
 lacking spectral-feature measurements is larger compared to the dispersion derived from a broader dataset  with dense light curves, a large number of bands, 
-broad wavelength coverage, and with spectral-feature measurements.  Historically surveys with 2 or 3 well-sampled optical light curves obtained $\sigma_M \approx 0.15$~mag,
+broad wavelength coverage, and with spectral-feature measurements.  Historically surveys with two or three well-sampled optical light curves obtained $\sigma_M \approx 0.15$~mag,
 with dense, $griz$-band optical light curves DES \citep{2018arXiv181102377B} gets $\sigma_M\approx 0.10$~mag, 
 standardization studies show that supplemental
 infrared data \citep{2012MNRAS.425.1007B} or spectrophotometry at peak brightness
@@ -390,7 +396,7 @@ infrared data \citep{2012MNRAS.425.1007B} or spectrophotometry at peak brightnes
 
 
 As a point of reference, a practically complete (accounting for temporal observing gaps) discovery up to $z_{max}=0.2$ would have $\sim 150,000$, $r \lesssim 20.5$~mag targets over 10 years.  
-Focusing on low-redshift supernovae  mitigates  two important uncertainties
+Focusing on low-redshift supernovae  mitigates  several important uncertainties
 associated with the high-$z$ SN~Ia cosmology. The measurement is relatively insensitive to absolute color calibration, due to the limited
 range of {\it observer} wavelengths used to standardize restframe distance moduli.
 Depending on which cameras are used to derive distances, instrumental, as opposed to absolute,
@@ -403,7 +409,9 @@ In the next decade,
 the high number of SN discoveries together with improved precision in their distance precisions will make $z<0.2$ SNe~Ia, more so than
 galaxies,  powerful probes of gravity through their effect  on the growth of structure. 
 A peculiar velocity survey must discover, classify, and get distances of SNe~Ia, as well as obtain redshifts of their host galaxies.
-Choices in survey design impact the precision obtained on $\gamma$.  SN~Ia peculiar velocity surveys are of the highest scientific
+Choices in survey design impact the precision obtained on the growth index $\gamma$.  
+No other probe of growth of structure or tracer of peculiar velocity can provide comparable precision on  $\gamma$ in the next decade.
+SN~Ia peculiar velocity surveys are of the highest scientific
 interest and we encourage
 the community to develop aggressive surveys in the pursuit of testing  General Relativity and probing gravity. 
 
@@ -536,7 +544,7 @@ from most ground-based observatories.
 
 
 Each supernova is assigned a magnitude based on the distance modulus of its cosmological
-redshift plus a random term drawn from a Normal distribution $\sigma_M$, which for simplicity is the same for all supernovae and captures both
+redshift plus a random term drawn from a Normal distribution with standard deviation $\sigma_M$, which for simplicity is the same for all supernovae and captures both
 intrinsic magnitude dispersion and measurement uncertainty.  No other corrections are applied to the observed magnitude.  Dipole effects of the heliocentric
 motion with respect to the CMB and of the galaxies with respect to the CMB  are ignored: referring to
 \citet{2011ApJ...741...67D}, the effects in Eq.~18 are not included.  Including these effects are straightforward but is computationally expensive
