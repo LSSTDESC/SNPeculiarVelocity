@@ -164,7 +164,13 @@ if __name__ == "__main__":
         else:
             indnm = i+args.antecedent+1
 
-        pickle.dump(chain, open('{}/debug/pvlist.{}.{}.{}.{}.{}pkl.{}'.format(args.path,args.sigma_mu,args.seed,args.frac,args.zmax,fstr,chain.shape[1]), "wb" ) )
+        if chainloc == args.nchain: #done don't bother with indexing output
+            chainloc = ''
+        else:                       #not done index output
+            chainloc = chain.shape[1]
+
+        pickle.dump(chain, open('{}/debug/pvlist.{}.{}.{}.{}.{}pkl.{}'.format(args.path,args.sigma_mu,args.seed,args.frac,args.zmax,fstr,chainloc), "wb" ) )
+
 
 #srun -n 1 -c 64 --cpu-bind=sockets python fit.py --path ../out/ --frac 0.5  --nchain 2
 #python fit.py --path ../out/ --nchain 1 frac 0.19
