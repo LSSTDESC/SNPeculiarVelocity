@@ -554,14 +554,14 @@ def set1():
             f00,f11,f10, f00s,f11s,f10s,f00_ind,f11_ind,f10_ind, f00sigM,f11sigM,f10sigM,f00_vonly,f02,f12,f22, \
                 f02s,f12s,f22s,f02_ind,f12_ind,f22_ind, f02sigM,f12sigM,f22sigM, f01_vonly, f11_vonly = zintegral(zmax,ng,duration,sigm_Ia,restrate_Ia)
             # dv_.append(finvp(f00,f11,f10,f00s,f11s,f10s))
-            print(finvp(f00,f11,f10,f00s,f11s,f10s))
             dv_.append(finvp3d(f00,f10,f02,f11,f12,f22+sigOM0sqinv, f00s,f10s,f02s,f11s,f12s,f22s))
-            print (finvp3d(f00,f10,f02,f11,f12,f22+sigOM0sqinv, f00s,f10s,f02s,f11s,f12s,f22s))
-            wefwe
             v_.append(numpy.linalg.inv(numpy.array([[f00,f10,f02],[f10,f11,f12],[f02,f12,f22+sigOM0sqinv]]))[0,0])
             vind_.append(numpy.linalg.inv(numpy.array([[f00_ind,f10_ind,f02_ind],[f10_ind,f11_ind,f12_ind],[f02_ind,f12_ind,f22_ind+sigOM0sqinv]]))[0,0])
             vvonly_.append(numpy.linalg.inv(numpy.array([[f00_vonly,f01_vonly],[f01_vonly,f11_vonly+sigOM0sqinv]]))[0,0])
             dvsigM_.append(finvp3d(f00,f10,f02,f11,f12,f22+sigOM0sqinv,f00sigM,f10sigM,f02sigM,f11sigM,f12sigM,f22sigM))
+            print(v_[-1],dv_[-1],dvsigM_[-1])
+
+            wefe
             # dvdkmax_.append(finvp(f00,f11,f10,f00kmax,f11kmax,f10kmax))
 
 
