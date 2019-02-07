@@ -95,11 +95,7 @@ for name,nsn,zma,fra,snsi in zip(names,nsne,zmax,frac,snsig):
     chain=  pickle.load(open('/Users/akim/project/PeculiarVelocity/outcosmo/'+name,'rb'))
     cutchain = chain[:,500:,:]
     # plotter(cutchain)
-    # c = ChainConsumer()
-    # dum = numpy.reshape(cutchain,(cutchain.shape[0]*cutchain.shape[1],cutchain.shape[2]))
-    # dum[:,3] = dum[:,3]*3e5
-    # c.add_chain(dum, parameters=["$A$", "$\mathcal{M}$","$\sigma_M$","$\sigma_{v}$"])
-    # c.plotter.plot(filename="/Users/akim/project/PeculiarVelocity/outcosmo/"+name+".png", figsize="column",truth=[None,0,0.08,None])
+
     fsigma8 = numpy.sqrt(cutchain[:,:,0])
     effston.append(fsigma8.mean()/fsigma8.std()*numpy.sqrt(18000./760))
     # print("{:4.2f} & {:4.2f} & {:4.2f} & {} & {:6.2f} & {:6.2f} & {:6.3f} & {:6.2f} \\\\".format( \
@@ -111,6 +107,7 @@ for name,nsn,zma,fra,snsi in zip(names,nsne,zmax,frac,snsig):
         effston[-1]/numpy.sqrt(18000./760*nsn)\
         ))
 
+plt.clf()
 effston = numpy.array(effston)
 mkrs=['o','s','*','D']
 for z_,m in zip(zmax_,mkrs):
@@ -131,7 +128,6 @@ plt.legend(fontsize=14)
 plt.tight_layout()
 plt.savefig('notshot.png')
 plt.clf()
-
 
 for z_,m in zip(zmax_,mkrs):
     fs = []
