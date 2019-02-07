@@ -12,6 +12,10 @@ matplotlib.rcParams['lines.linewidth'] = 2.0
 OmegaM0 = 0.28
 cosmo = FlatLambdaCDM(H0=100, Om0=OmegaM0)
 
+gamma=0.55
+
+sigOM0sqinv=1/0.005**2
+
 # power spectrum from CAMB
 matter = numpy.loadtxt("../../pv/dragan/matterpower.dat")
 
@@ -19,47 +23,61 @@ matter = numpy.loadtxt("../../pv/dragan/matterpower.dat")
 f=OmegaM0**0.55
 
 # SN properties
-restrate = 0.65*  2.69e-5*(1/0.70)**3 # h^3/Mpc^3 yr^{-1}
-sigm = 0.08
+restrate_Ia = 0.65*  2.69e-5*(1/0.70)**3 # h^3/Mpc^3 yr^{-1}
+sigm_Ia = 0.08
 
 # galaxy density (TAIPAN Howlett et al.)
 ng = 1e-3
 
+def Cinverse(m00,m11,m01):
+    return numpy.array([[m11,m01**2],[m01**2,m00]])/(m00*m11 - m01**2)
 
+def Cinverse_partial(m00,m11,m01,dm00,dm11,dm01):
+    den = (m00*m11 - m01**2)
+    return numpy.array([[dm11,2*m01*dm01],[2*m01*dm01,dm00]])/den \
+        - numpy.array([[m11,m01**2],[m01**2,m00]])/den**2 * (dm00*m11 + m00*dm11 - 2*m01*dm01)
 
-def OmegaM(a):
-    return OmegaM0/(OmegaM0 + 0.72*a**3)
+def OmegaM(a,OmegaM0=OmegaM0):
+    return OmegaM0/(OmegaM0 + (1-OmegaM0)*a**3)
 
-def integrand_dlnfs(a):
-    return numpy.log(OmegaM(a))* OmegaM(a)**0.55 / a
+def integrand_dlnfs(a,*args):
+    return numpy.log(OmegaM(a,*args))* OmegaM(a,*args)**0.55 / a
 
-def dlnfs8dg(a):
-    return numpy.log(OmegaM(a)) + integrate.quad(integrand_dlnfs, 1e-8, a)[0]
+def dlnfs8dg(a,*args):
+    return numpy.log(OmegaM(a,*args)) + integrate.quad(integrand_dlnfs, 1e-8, a)[0]
 
-def integrand_D(a):
-    return  OmegaM(a)**0.55 / a
+def integrand_D(a,*args):
+    return  OmegaM(a,*args)**0.55 / a
 
 # normalized to a=1
-def D(a):
-    return numpy.exp(-integrate.quad(integrand_D, a,1)[0])
+def D(a,*args):
+    return numpy.exp(-integrate.quad(integrand_D, a,1,args=args)[0])
 
-# a=1
-# print(numpy.log(OmegaM(a)),integrate.quad(integrand, 1e-8, a)[0],numpy.log(OmegaM(a)) + integrate.quad(integrand, 1e-8, a)[0])
-# a=1/(1+0.1)
-# print(numpy.log(OmegaM(a)),integrate.quad(integrand, 1e-8, a)[0],numpy.log(OmegaM(a)) + integrate.quad(integrand, 1e-8, a)[0])
-# a=0.5
-# print(numpy.log(OmegaM(a)),integrate.quad(integrand, 1e-8, a)[0],numpy.log(OmegaM(a)) + integrate.quad(integrand, 1e-8, a)[0])
-# a=1/(1+0.5)
-# print(numpy.log(OmegaM(a)),integrate.quad(integrand, 1e-8, a)[0],numpy.log(OmegaM(a)) + integrate.quad(integrand, 1e-8, a)[0])
-# a=0.5
-# print(numpy.log(OmegaM(a)),integrate.quad(integrand, 1e-8, a)[0],numpy.log(OmegaM(a)) + integrate.quad(integrand, 1e-8, a)[0])
-# wefwe
+def dOmdOm0(a,OmegaM0=OmegaM0):
+    den= (OmegaM0 + (1-OmegaM0)*a**3) 
+    return (1./den - (1-a**3)/den**2)
+
+def integrand_dDdOmOverD(a,*args):
+    return  gamma*OmegaM(a,*args)**(gamma-1) / a
+
+def dDdOmOverD(a, *args):
+    return integrate.quad(integrand_dDdOmOverD, a,1,args=args)[0]
+
+
+def dfdOm(a):
+    return gamma * OmegaM(a)**(gamma-1)
+
+
 
 def Pvv(mu,f,D):
     return (f*D*mu*100)**2*matter[:,1]/matter[:,0]**2
 
 def Pvv_l(mu,f,D):
     return 2*f*D*(mu*100)**2*matter[:,1]/matter[:,0]**2
+
+def Pvv_Om(mu,f,D, dfdOm, dDdOmOverD):
+    return 2*f*D*(mu*100)**2*matter[:,1]/matter[:,0]**2 * (f*dDdOmOverD*D + dfdOm * D )
+
 
 # gg
 b= 1.2
@@ -72,6 +90,10 @@ def Pgg_l(mu,f,D):
 def Pgg_b(mu,f,D):
     return 2*(b*D+f*D*mu**2)*matter[:,1]
 
+def Pgg_Om(mu,f,D, dfdOm, dDdOmOverD):
+    return 2*(b*D+f*D*mu**2)*matter[:,1] * (b*dDdOmOverD*D + f* dDdOmOverD*D*mu**2 + dfdOm * D*mu**2 )
+
+
 # gv
 def Pgv(mu,f,D):
     return (b*D+f*D*mu**2)*(f*D*mu*100)*matter[:,1]/matter[:,0]
@@ -82,11 +104,52 @@ def Pgv_l(mu,f,D):
 def Pgv_b(mu,f,D):
     return (f*D*mu*100)*matter[:,1]/matter[:,0]
 
+def Pgv_Om(mu,f,D, dfdOm, dDdOmOverD):
+    return ((b*dDdOmOverD*D + f*dDdOmOverD*D*mu**2 + dfdOm*D*mu**2) * (f*D*mu*100) +(b*D+f*D*mu**2) *mu*100*(f*dDdOmOverD*D + dfdOm*D) )*matter[:,1]/matter[:,0]
+
+
 def finvp(f00,f11,f01,f00p,f11p,f01p):
     den = f00*f11 -f01**2
     return f11p /den - f11*(f00p*f11 + f00*f11p - 2*f01*f01p)/den**2
 
-def Cmatrices(z,mu,ng,duration,sigm):
+def finvp3d(f00,f01,f02,f11,f12,f22,f00p,f01p,f02p,f11p,f12p,f22p):
+    den = f00*f11*f22 - f00*f12**2-f11*f02**2-f22*f01**2 + 2*f01*f02*f12
+    denp = f00p*f11*f22 + f00*f11p*f22+f00*f11*f22p  \
+        - f00p*f12**2 - 2*f00*f12*f12p \
+        - f11p*f02**2 - 2*f11*f02*f02p \
+        - f22p*f01**2 - 2* f22*f01*f01p \
+        + 2*(f01p*f02*f12 + f01*f02p*f12 + f01*f-2*f12p)
+
+    # full matrix
+    # mat = numpy.array([ \
+    #     [f11*f22-f12**2, f02*f12-f01*f22, f01*f12-f00*f12], \
+    #     [0, f00*f22-f02**2, f02*f01-f02*f11], \
+    #     [0, 0, f00*f11-f01**2] \
+    #     ])
+    #00 element
+    mat = f11*f22-f12**2
+
+    # mat[1,0]= mat[0,1]
+    # mat[2,0] = mat[0,2]
+    # mat[2,1] = mat[1,2]
+
+    #full matrix
+    #00 element
+    # matp = numpy.array([ \
+    #     [f11*f22p+f11p*f22-2*f12*f12p, f02p*f12+f02*f12p-f01p*f22-f01*f22p, f01p*f12+f01*f12p-f00p*f12-f00*f12p], \
+    #     [0, f00p*f22+f00*f22p-2*f02*f02p, f02p*f01+f02*f01p-f02p*f11-f02*f11p], \
+    #     [0, 0, f00p*f11+f00*f11p-2*f01*f01p] \
+    #     ])
+    matp =f11*f22p+f11p*f22-2*f12*f12p
+
+    # matp[1,0]= matp[0,1]
+    # matp[2,0] = matp[0,2]
+    # matp[2,1] = matp[1,2]
+
+    return matp/den -denp/den**2*mat
+
+
+def Cmatrices(z,mu,ng,duration,sigm,restrate):
     a = 1/(1.+z)
     OmegaM_a = OmegaM(a)
     n = duration*restrate/(1+z)
@@ -102,6 +165,8 @@ def Cmatrices(z,mu,ng,duration,sigm):
 
     f = OmegaM(a)**.55
     D_ = D(a)
+    dfdOm_ = dfdOm(a)
+    dDdOmOverD_ = dDdOmOverD(a)
 
     pggs = Pgg(mu,f,D_)
     pgvs = Pgv(mu,f,D_)
@@ -114,176 +179,238 @@ def Cmatrices(z,mu,ng,duration,sigm):
     pggs_b = Pgg_b(mu,f,D_)
     pgvs_b = Pgv_b(mu,f,D_)
 
+    dOmdOm0_ = dOmdOm0(a,OmegaM0=OmegaM0)
+    pggs_Om = Pgg_Om(mu,f,D_,dfdOm_,dDdOmOverD_)*dOmdOm0_
+    pgvs_Om = Pgv_Om(mu,f,D_,dfdOm_,dDdOmOverD_)*dOmdOm0_
+    pvvs_Om = Pvv_Om(mu,f,D_,dfdOm_,dDdOmOverD_)*dOmdOm0_
+
     C=[]
     Cinv = []
     dCdl = []
     dCdb = []
+    dCdOm = []
     # Cinvs = []
     Cinvn = []
     Cinvsigmam = []
-    for pgg, pgv, pvv, pgg_l, pgv_l, pvv_l, pgg_b, pgv_b  in zip(pggs,pgvs,pvvs,pggs_l,pgvs_l,pvvs_l,pggs_b,pgvs_b):
+    for pgg, pgv, pvv, pgg_l, pgv_l, pvv_l, pgg_b, pgv_b, pgg_Om, pgv_Om, pvv_Om  in zip(pggs,pgvs,pvvs,pggs_l,pgvs_l,pvvs_l,pggs_b,pgvs_b,pggs_Om,pgvs_Om,pvvs_Om):
         C.append(numpy.array([[pgg+ninv,pgv],[pgv,pvv+nvinv]]))
         Cinv.append(numpy.linalg.inv(C[-1]))
         dCdl.append(numpy.array([[pgg_l,pgv_l],[pgv_l,pvv_l]])*OmegaM_a**0.55*lnfgfactor) # second term converts from fsigma8 to gamma
         dCdb.append(numpy.array([[pgg_b,pgv_b],[pgv_b,0]]))
+        dCdOm.append(numpy.array([[pgg_Om,pgv_Om],[pgv_Om,pvv_Om]]))
+
         den = (pgg+ninv)*(pvv+nvinv)-pgv**2
         # Cinvs.append(1./den * numpy.array([[1,0],[0,0]]) - (pgg+nginv)/den**2 * numpy.array([[pvv+nvinv,-pgv],[-pgv,pgg+nginv]]))
         # Cinvs[-1]=-Cinvs[-1]*sigv**2/restrate/duration**2 #in terms of lnt not s = sigma^2/rate/s
 
-        Cinvn.append(-1./den * numpy.array([[sigv2,0],[0,1]]) + (sigv2*(pgg+ninv)+(pvv+nvinv))/den**2 * numpy.array([[pvv+nvinv,-pgv],[-pgv,pgg+ninv]]))
-        Cinvn[-1]=Cinvn[-1]/n #in terms of lnt  n**-2 * n = 1/n
-        Cinvsigmam.append(1./den * numpy.array([[1,0],[0,0]]) - (pgg+ninv)/den**2 * numpy.array([[pvv+nvinv,-pgv],[-pgv,pgg+ninv]]))
-        Cinvsigmam[-1] = Cinvsigmam[-1] * sigv_factor *3e5 * 2 * sigv / n
-    return C, Cinv, dCdl,dCdb,Cinvn, Cinvsigmam
+        # Cinvn.append(-1./den * numpy.array([[sigv2,0],[0,1]]) + (sigv2*(pgg+ninv)+(pvv+nvinv))/den**2 * numpy.array([[pvv+nvinv,-pgv],[-pgv,pgg+ninv]]))
+        # Cinvn.append(Cinverse_partial(pgg+ninv, pvv+nvinv,pgv, 1, sigv2,0)) # partial with respect to 1/n
 
-def traces(z,mu,ng,duration,sigm):
+        # Cinvn[-1]=Cinvn[-1]/n #in terms of lnt  n**-2 * n = 1/n
 
-    cmatrices = Cmatrices(z,mu,ng,duration,sigm)
+        Cinvn.append(Cinverse_partial(pgg+ninv, pvv+nvinv,pgv, -ninv, -sigv2*ninv,0)) # partial wrt lnt
+        # Cinvsigmam.append(1./den * numpy.array([[1,0],[0,0]]) - (pgg+ninv)/den**2 * numpy.array([[pvv+nvinv,-pgv],[-pgv,pgg+ninv]]))
+
+        # print (Cinverse_partial(pgg+ninv, pvv+nvinv,pgv, 0, 2*sigv*ninv*sigv_factor *3e5 ,0))
+        # Cinvsigmam[-1] = Cinvsigmam[-1] * sigv_factor *3e5 * 2 * sigv / n
+        Cinvsigmam.append(Cinverse_partial(pgg+ninv, pvv+nvinv,pgv, 0, 2*sigv*ninv*sigv_factor *3e5 ,0)) # partial wrt sigmaM
+
+       
+    return C, Cinv, dCdl,dCdb,Cinvn, Cinvsigmam,dCdOm
+
+def traces(z,mu,ng,duration,sigm,restrate):
+
+    cmatrices = Cmatrices(z,mu,ng,duration,sigm,restrate)
 
     ll=[]
     lb=[]
     bb=[]
+    lO=[]
+    bO=[]
+    OO=[]
 
     lls=[]
     lbs=[]
     bbs=[]
+    lOs=[]
+    bOs=[]
+    OOs=[]
+
 
     ll_ind=[]
     lb_ind=[]
     bb_ind=[]
+    lO_ind=[]
+    bO_ind=[]
+    OO_ind=[]
 
     llsigM=[]
     lbsigM=[]
     bbsigM=[]
+    lOsigM=[]
+    bOsigM=[]
+    OOsigM=[]
+
 
     ll_vonly=[]
+    lO_vonly=[]
+    OO_vonly=[]
 
-    for C, Cinv, C_l,C_b,Cinvn,CinvsigM in zip(cmatrices[0],cmatrices[1],cmatrices[2],cmatrices[3],cmatrices[4],cmatrices[5]):
+    for C, Cinv, C_l,C_b,Cinvn,CinvsigM, C_Om in zip(cmatrices[0],cmatrices[1],cmatrices[2],cmatrices[3],cmatrices[4],cmatrices[5],cmatrices[6]):
         ll.append(numpy.trace(Cinv@C_l@Cinv@C_l))
         bb.append(numpy.trace(Cinv@C_b@Cinv@C_b))
         lb.append(numpy.trace(Cinv@C_l@Cinv@C_b))
+        lO.append(numpy.trace(Cinv@C_l@Cinv@C_Om))
+        bO.append(numpy.trace(Cinv@C_b@Cinv@C_Om))
+        OO.append(numpy.trace(Cinv@C_Om@Cinv@C_Om))
 
         lls.append(numpy.trace(Cinvn@ C_l@Cinv@C_l+Cinv@ C_l@Cinvn@C_l))
         bbs.append(numpy.trace(Cinvn@ C_b@Cinv@C_b+Cinv@ C_b@Cinvn@C_b))
         lbs.append(numpy.trace(Cinvn@ C_l@Cinv@C_b+Cinv@ C_l@Cinvn@C_b))
+        lOs.append(numpy.trace(Cinvn@ C_l@Cinv@C_Om+Cinv@ C_l@Cinvn@C_Om))
+        bOs.append(numpy.trace(Cinvn@ C_b@Cinv@C_Om+Cinv@ C_b@Cinvn@C_Om))
+        OOs.append(numpy.trace(Cinvn@ C_Om@Cinv@C_Om+Cinv@ C_Om@Cinvn@C_Om))
 
         llsigM.append(numpy.trace(CinvsigM@ C_l@Cinv@C_l+Cinv@ C_l@CinvsigM@C_l))
         bbsigM.append(numpy.trace(CinvsigM@ C_b@Cinv@C_b+Cinv@ C_b@CinvsigM@C_b))
         lbsigM.append(numpy.trace(CinvsigM@ C_l@Cinv@C_b+Cinv@ C_l@CinvsigM@C_b))
+        lOsigM.append(numpy.trace(CinvsigM@ C_l@Cinv@C_Om+Cinv@ C_l@CinvsigM@C_Om))
+        bOsigM.append(numpy.trace(CinvsigM@ C_b@Cinv@C_Om+Cinv@ C_b@CinvsigM@C_Om))
+        OOsigM.append(numpy.trace(CinvsigM@ C_Om@Cinv@C_Om+Cinv@ C_Om@CinvsigM@C_Om))
 
         ll_ind.append(C[0][0]**(-2)*C_l[0][0]**2+C[1][1]**(-2)*C_l[1][1]**2)
         bb_ind.append(C[0][0]**(-2)*C_b[0][0]**2+C[1][1]**(-2)*C_b[1][1]**2)
         lb_ind.append(C[0][0]**(-2)*C_l[0][0]*C_b[0][0]+C[1][1]**(-2)*C_l[1][1]*C_b[1][1])
+        lO_ind.append(C[0][0]**(-2)*C_l[0][0]*C_Om[0][0]+C[1][1]**(-2)*C_l[1][1]*C_Om[1][1])
+        bO_ind.append(C[0][0]**(-2)*C_b[0][0]*C_Om[0][0]+C[1][1]**(-2)*C_b[1][1]*C_Om[1][1])
+        OO_ind.append(C[0][0]**(-2)*C_Om[0][0]**2+C[1][1]**(-2)*C_Om[1][1]**2)
 
         ll_vonly.append(C[1][1]**(-2)*C_l[1][1]**2)
+        lO_vonly.append(C[1][1]**(-2)*C_l[1][1]*C_Om[1][1])
+        OO_vonly.append(C[1][1]**(-2)*C_Om[1][1]**2)
 
     return numpy.array(ll),numpy.array(bb),numpy.array(lb),numpy.array(lls),numpy.array(bbs),numpy.array(lbs), \
         numpy.array(ll_ind),numpy.array(bb_ind),numpy.array(lb_ind),numpy.array(llsigM),numpy.array(bbsigM),numpy.array(lbsigM), \
-        numpy.array(ll_vonly)
+        numpy.array(ll_vonly),numpy.array(lO),numpy.array(bO),numpy.array(OO),numpy.array(lOs),numpy.array(bOs),numpy.array(OOs), \
+        numpy.array(lO_ind),numpy.array(bO_ind),numpy.array(OO_ind),numpy.array(lOsigM),numpy.array(bOsigM),numpy.array(OOsigM), \
+        numpy.array(lO_vonly), numpy.array(OO_vonly)
 
-def muintegral(z,ng,duration,sigm):
+def muintegral(z,ng,duration,sigm,restrate):
     mus=numpy.arange(0,1.001,0.05)
 
     ll=numpy.zeros((len(mus),len(matter[:,0])))
     bb=numpy.zeros((len(mus),len(matter[:,0])))
     bl=numpy.zeros((len(mus),len(matter[:,0])))
+    lO=numpy.zeros((len(mus),len(matter[:,0])))
+    bO=numpy.zeros((len(mus),len(matter[:,0])))
+    OO=numpy.zeros((len(mus),len(matter[:,0])))
     lls=numpy.zeros((len(mus),len(matter[:,0])))
     bbs=numpy.zeros((len(mus),len(matter[:,0])))
     bls=numpy.zeros((len(mus),len(matter[:,0])))
+    lOs=numpy.zeros((len(mus),len(matter[:,0])))
+    bOs=numpy.zeros((len(mus),len(matter[:,0])))
+    OOs=numpy.zeros((len(mus),len(matter[:,0])))
     ll_ind=numpy.zeros((len(mus),len(matter[:,0])))
     bb_ind=numpy.zeros((len(mus),len(matter[:,0])))
     bl_ind=numpy.zeros((len(mus),len(matter[:,0])))
+    lO_ind=numpy.zeros((len(mus),len(matter[:,0])))
+    bO_ind=numpy.zeros((len(mus),len(matter[:,0])))
+    OO_ind=numpy.zeros((len(mus),len(matter[:,0])))    
     llsigM=numpy.zeros((len(mus),len(matter[:,0])))
     bbsigM=numpy.zeros((len(mus),len(matter[:,0])))
     blsigM=numpy.zeros((len(mus),len(matter[:,0])))
+    lOsigM=numpy.zeros((len(mus),len(matter[:,0])))
+    bOsigM=numpy.zeros((len(mus),len(matter[:,0])))
+    OOsigM=numpy.zeros((len(mus),len(matter[:,0])))
     ll_vonly=numpy.zeros((len(mus),len(matter[:,0])))  
+    lO_vonly=numpy.zeros((len(mus),len(matter[:,0])))  
+    OO_vonly=numpy.zeros((len(mus),len(matter[:,0])))  
+
 
     for i in range(len(mus)):
-        dum = traces(z,mus[i],ng,duration,sigm)
-        ll[i],bb[i],bl[i],lls[i],bbs[i],bls[i],ll_ind[i],bb_ind[i],bl_ind[i],llsigM[i],bbsigM[i],blsigM[i],ll_vonly[i] = traces(z,mus[i],ng,duration,sigm)
+        dum = traces(z,mus[i],ng,duration,sigm,restrate)
+        ll[i],bb[i],bl[i],lls[i],bbs[i],bls[i],ll_ind[i],bb_ind[i],bl_ind[i],llsigM[i],bbsigM[i],blsigM[i],ll_vonly[i],lO[i],bO[i],OO[i], \
+            lOs[i],bOs[i],OOs[i],lO_ind[i],bO_ind[i],OO_ind[i],lOsigM[i],bOsigM[i],OOsigM[i],lO_vonly[i],OO_vonly[i] = traces(z,mus[i],ng,duration,sigm,restrate)
 
     ll = numpy.trapz(ll,mus,axis=0)
     bb = numpy.trapz(bb,mus,axis=0)
     bl = numpy.trapz(bl,mus,axis=0)
+    lO = numpy.trapz(lO,mus,axis=0)
+    bO = numpy.trapz(bO,mus,axis=0)
+    OO = numpy.trapz(OO,mus,axis=0)
+
     lls = numpy.trapz(lls,mus,axis=0)
     bbs = numpy.trapz(bbs,mus,axis=0)
     bls = numpy.trapz(bls,mus,axis=0)
+    lOs = numpy.trapz(lOs,mus,axis=0)
+    bOs = numpy.trapz(bOs,mus,axis=0)
+    OOs = numpy.trapz(OOs,mus,axis=0)
     ll_ind = numpy.trapz(ll_ind,mus,axis=0)
     bb_ind = numpy.trapz(bb_ind,mus,axis=0)
     bl_ind = numpy.trapz(bl_ind,mus,axis=0)
+    lO_ind = numpy.trapz(lO_ind,mus,axis=0)
+    bO_ind = numpy.trapz(bO_ind,mus,axis=0)
+    OO_ind = numpy.trapz(OO_ind,mus,axis=0)
     llsigM = numpy.trapz(llsigM,mus,axis=0)
     bbsigM = numpy.trapz(bbsigM,mus,axis=0)
     blsigM = numpy.trapz(blsigM,mus,axis=0)
+    lOsigM = numpy.trapz(lOsigM,mus,axis=0)
+    bOsigM = numpy.trapz(bOsigM,mus,axis=0)
+    OOsigM = numpy.trapz(OOsigM,mus,axis=0)
     ll_vonly = numpy.trapz(ll_vonly,mus,axis=0)
-       
-    # ll,bb,bl, lls,bbs,bls, ll_ind,bb_ind,bl_ind = traces(z,mus[0],ng,duration,sigm)
-    # ll = ll/2
-    # bl = bl/2
-    # bb = bb/2
-    # lls =lls/2
-    # bls = bls/2
-    # bbs = bbs/2
-    # ll_ind = ll_ind/2
-    # bl_ind = bl_ind/2
-    # bb_ind = bb_ind/2
-    # for mu in mus[1:-1]:
-    #     a,b,c,d,e,f,g,h,i = traces(z,mu,ng,duration,sigm)
-    #     ll=ll+a
-    #     bb=bb+b
-    #     bl=bl+c
-    #     lls=lls+d
-    #     bbs=bbs+e
-    #     bls=bls+f
-    #     ll_ind=ll_ind+g
-    #     bb_ind=bb_ind+h
-    #     bl_ind=bl_ind+i
-        
-    # a,b,c,d,e,f,g,h,i = traces(z,mus[-1],ng,duration,sigm)
-    # ll=ll+a/2
-    # bb=bb+b/2
-    # bl=bl+c/2
-    # lls=lls+d/2
-    # bbs=bbs+e/2
-    # bls=bls+f/2
-    # ll_ind=ll_ind+g/2
-    # bb_ind=bb_ind+h/2
-    # bl_ind=bl_ind+i/2
-    
-    return 2*ll,2*bb,2*bl, 2*lls,2*bbs,2*bls,2*ll_ind,2*bb_ind,2*bl_ind, 2*llsigM,2*bbsigM,2*blsigM,2*ll_vonly
+    lO_vonly = numpy.trapz(lO_vonly,mus,axis=0)
+    OO_vonly = numpy.trapz(OO_vonly,mus,axis=0)
+    return 2*ll,2*bb,2*bl, 2*lls,2*bbs,2*bls,2*ll_ind,2*bb_ind,2*bl_ind, 2*llsigM,2*bbsigM,2*blsigM,2*ll_vonly, 2*lO, 2*bO, 2*OO, \
+        2*lOs,2*bOs,2*OOs,2*lO_ind,2*bO_ind,2*OO_ind, 2*lOsigM,2*bOsigM,2*OOsigM, 2*lO_vonly,2*OO_vonly
 
 
-def kintegral(z,zmax,ng,duration,sigm):
+def kintegral(z,zmax,ng,duration,sigm,restrate):
     kmin = numpy.pi/(zmax*3e3)
     kmax = 0.1
     w = numpy.logical_and(matter[:,0] >= kmin, matter[:,0]< kmax)
 
-    ll,bb,bl, lls,bbs,bls,ll_ind,bb_ind,bl_ind, llsigM,bbsigM,blsigM,ll_vonly= muintegral(z,ng,duration,sigm)
+    ll,bb,bl, lls,bbs,bls,ll_ind,bb_ind,bl_ind, llsigM,bbsigM,blsigM,ll_vonly,lO,bO,OO,\
+        lOs,bOs,OOs,lO_ind,bO_ind,OO_ind, lOsigM,bOsigM,OOsigM,lO_vonly,OO_vonly= muintegral(z,ng,duration,sigm,restrate)
     ll = numpy.trapz(matter[:,0][w]**2*ll[w],matter[:,0][w])
     bb = numpy.trapz(matter[:,0][w]**2*bb[w],matter[:,0][w])
     bl = numpy.trapz(matter[:,0][w]**2*bl[w],matter[:,0][w])
+    lO = numpy.trapz(matter[:,0][w]**2*lO[w],matter[:,0][w])
+    bO = numpy.trapz(matter[:,0][w]**2*bO[w],matter[:,0][w])
+    OO = numpy.trapz(matter[:,0][w]**2*OO[w],matter[:,0][w])
     lls = numpy.trapz(matter[:,0][w]**2*lls[w],matter[:,0][w])
     bbs = numpy.trapz(matter[:,0][w]**2*bbs[w],matter[:,0][w])
     bls = numpy.trapz(matter[:,0][w]**2*bls[w],matter[:,0][w])
+    lOs = numpy.trapz(matter[:,0][w]**2*lOs[w],matter[:,0][w])
+    bOs = numpy.trapz(matter[:,0][w]**2*bOs[w],matter[:,0][w])
+    OOs = numpy.trapz(matter[:,0][w]**2*OOs[w],matter[:,0][w])
     ll_ind = numpy.trapz(matter[:,0][w]**2*ll_ind[w],matter[:,0][w])
     bb_ind = numpy.trapz(matter[:,0][w]**2*bb_ind[w],matter[:,0][w])
     bl_ind = numpy.trapz(matter[:,0][w]**2*bl_ind[w],matter[:,0][w])
+    lO_ind = numpy.trapz(matter[:,0][w]**2*lO_ind[w],matter[:,0][w])
+    bO_ind = numpy.trapz(matter[:,0][w]**2*bO_ind[w],matter[:,0][w])
+    OO_ind = numpy.trapz(matter[:,0][w]**2*OO_ind[w],matter[:,0][w])    
     llsigM = numpy.trapz(matter[:,0][w]**2*llsigM[w],matter[:,0][w])
     bbsigM = numpy.trapz(matter[:,0][w]**2*bbsigM[w],matter[:,0][w])
     blsigM = numpy.trapz(matter[:,0][w]**2*blsigM[w],matter[:,0][w])
+    lOsigM = numpy.trapz(matter[:,0][w]**2*lOsigM[w],matter[:,0][w])
+    bOsigM = numpy.trapz(matter[:,0][w]**2*bOsigM[w],matter[:,0][w])
+    OOsigM = numpy.trapz(matter[:,0][w]**2*OOsigM[w],matter[:,0][w])
     ll_vonly = numpy.trapz(matter[:,0][w]**2*ll_vonly[w],matter[:,0][w])
-
+    lO_vonly = numpy.trapz(matter[:,0][w]**2*lO_vonly[w],matter[:,0][w])
+    OO_vonly = numpy.trapz(matter[:,0][w]**2*OO_vonly[w],matter[:,0][w])
     # llkmax = numpy.interp(kmax,matter[:,0], matter[:,0]**2*ll)
     # bbkmax = numpy.interp(kmax,matter[:,0], matter[:,0]**2*bb)
     # blkmax = numpy.interp(kmax,matter[:,0], matter[:,0]**2*bl)
 
-    return ll,bb,bl, lls,bbs,bls,ll_ind,bb_ind,bl_ind, llsigM,bbsigM,blsigM,ll_vonly
+    return ll,bb,bl, lls,bbs,bls,ll_ind,bb_ind,bl_ind, llsigM,bbsigM,blsigM,ll_vonly,lO,bO,OO, \
+        lOs,bOs,OOs,lO_ind,bO_ind,OO_ind, lOsigM,bOsigM,OOsigM,lO_vonly, OO_vonly
 
 # utility numbers
 zmax_zint = 0.3
 zs_zint = numpy.arange(0.01,0.3+0.00001,0.01) # in redshift space
 rs_zint = cosmo.comoving_distance(zs_zint).value
 
-def zintegral(zmax,ng,duration,sigm):
+def zintegral(zmax,ng,duration,sigm,restrate):
     # zs = numpy.arange(0.01,zmax+0.00001,0.01) # in redshift space
 
 
@@ -297,77 +424,71 @@ def zintegral(zmax,ng,duration,sigm):
     ll=numpy.zeros(len(rs))
     bb=numpy.zeros(len(rs))
     bl=numpy.zeros(len(rs))
+    lO=numpy.zeros(len(rs))
+    bO=numpy.zeros(len(rs))
+    OO=numpy.zeros(len(rs))
     lls=numpy.zeros(len(rs))
     bbs=numpy.zeros(len(rs))
     bls=numpy.zeros(len(rs))
+    lOs=numpy.zeros(len(rs))
+    bOs=numpy.zeros(len(rs))
+    OOs=numpy.zeros(len(rs))
     ll_ind=numpy.zeros(len(rs))
     bb_ind=numpy.zeros(len(rs))
     bl_ind=numpy.zeros(len(rs))
+    lO_ind=numpy.zeros(len(rs))
+    bO_ind=numpy.zeros(len(rs))
+    OO_ind=numpy.zeros(len(rs))
     llsigM=numpy.zeros(len(rs))
     bbsigM=numpy.zeros(len(rs))
     blsigM=numpy.zeros(len(rs))
+    lOsigM=numpy.zeros(len(rs))
+    bOsigM=numpy.zeros(len(rs))
+    OOsigM=numpy.zeros(len(rs))
     ll_vonly=numpy.zeros(len(rs))
-    # llkmax=numpy.zeros(len(rs))
+    lO_vonly=numpy.zeros(len(rs))
+    OO_vonly=numpy.zeros(len(rs))
+        # llkmax=numpy.zeros(len(rs))
     # bbkmax=numpy.zeros(len(rs))
     # blkmax=numpy.zeros(len(rs))
 
     for i in range(len(rs)):
-        ll[i],bb[i],bl[i],lls[i],bbs[i],bls[i],ll_ind[i],bb_ind[i],bl_ind[i],llsigM[i],bbsigM[i],blsigM[i],ll_vonly[i] = kintegral(zs[i],zmax,ng,duration,sigm)
+        ll[i],bb[i],bl[i],lls[i],bbs[i],bls[i],ll_ind[i],bb_ind[i],bl_ind[i],llsigM[i],bbsigM[i],blsigM[i],ll_vonly[i],lO[i],bO[i],OO[i], \
+            lOs[i],bOs[i],OOs[i],lO_ind[i],bO_ind[i],OO_ind[i],lOsigM[i],bOsigM[i],OOsigM[i],lO_vonly[i],OO_vonly[i]  = kintegral(zs[i],zmax,ng,duration,sigm,restrate)
 
     ll = numpy.trapz(rs**2*ll,rs)
     bb = numpy.trapz(rs**2*bb,rs)
     bl = numpy.trapz(rs**2*bl,rs)
+    lO = numpy.trapz(rs**2*lO,rs)
+    bO = numpy.trapz(rs**2*bO,rs)
+    OO = numpy.trapz(rs**2*OO,rs)
     lls = numpy.trapz(rs**2*lls,rs)
     bbs = numpy.trapz(rs**2*bbs,rs)
     bls = numpy.trapz(rs**2*bls,rs)
+    lOs = numpy.trapz(rs**2*lOs,rs)
+    bOs = numpy.trapz(rs**2*bOs,rs)
+    OOs = numpy.trapz(rs**2*OOs,rs)    
     ll_ind = numpy.trapz(rs**2*ll_ind,rs)
     bb_ind = numpy.trapz(rs**2*bb_ind,rs)
     bl_ind = numpy.trapz(rs**2*bl_ind,rs)
+    lO_ind = numpy.trapz(rs**2*lO_ind,rs)
+    bO_ind = numpy.trapz(rs**2*bO_ind,rs)
+    OO_ind = numpy.trapz(rs**2*OO_ind,rs)
     llsigM = numpy.trapz(rs**2*llsigM,rs)
     bbsigM = numpy.trapz(rs**2*bbsigM,rs)
     blsigM = numpy.trapz(rs**2*blsigM,rs)
+    lOsigM = numpy.trapz(rs**2*lOsigM,rs)
+    bOsigM = numpy.trapz(rs**2*bOsigM,rs)
+    OOsigM = numpy.trapz(rs**2*OOsigM,rs)
     ll_vonly = numpy.trapz(rs**2*ll_vonly,rs)
-    # llkmax = numpy.trapz(rs**2*llkmax,rs)
+    lO_vonly = numpy.trapz(rs**2*lO_vonly,rs)
+    OO_vonly = numpy.trapz(rs**2*OO_vonly,rs)
+            # llkmax = numpy.trapz(rs**2*llkmax,rs)
     # bbkmax = numpy.trapz(rs**2*bbkmax,rs)
     # blkmax = numpy.trapz(rs**2*blkmax,rs)
 
-    # a,b,c,d,e,f,g,h,i = kintegral(rs[0],zmax,ng,duration,sigm)
-    # deltars = rs[1]-rs[0]
-    # ll=0.5*a*rs[0]**2*deltars
-    # bb=0.5*b*rs[0]**2*deltars
-    # bl=0.5*c*rs[0]**2*deltars
-    # lls=0.5*d*rs[0]**2*deltars
-    # bbs=0.5*e*rs[0]**2*deltars
-    # bls=0.5*f*rs[0]**2*deltars
-    # ll_ind=0.5*g*rs[0]**2*deltars
-    # bb_ind=0.5*h*rs[0]**2*deltars
-    # bl_ind=0.5*i*rs[0]**2*deltars
-
-    # for r,rp in zip(rs[1:-1],rs[2:]):
-    #     deltars = rp-r
-    #     a,b,c,d,e,f,g,h,i = kintegral(r,zmax,ng,duration,sigm)        
-    #     ll=ll+a*r**2*deltars
-    #     bb=bb+b*r**2*deltars
-    #     bl=bl+c*r**2*deltars
-    #     lls=lls+d*r**2*deltars
-    #     bbs=bbs+e*r**2*deltars
-    #     bls=bls+ f*r**2*deltars
-    #     ll_ind=ll_ind+g*r**2*deltars
-    #     bb_ind=bb_ind+h*r**2*deltars
-    #     bl_ind=bl_ind+i*r**2*deltars
-
-    # a,b,c,d,e,f,g,h,i = kintegral(rs[-1],zmax,ng,duration,sigm)
-    # deltars = rs[-1]-rs[0]
-    # ll=ll+0.5*a*rs[-1]**2*deltars
-    # bb=bb+0.5*b*rs[-1]**2*deltars
-    # bl=bl+0.5*c*rs[-1]**2*deltars
-    # lls=lls+0.5*d*rs[-1]**2*deltars
-    # bbs=bbs+0.5*e*rs[-1]**2*deltars
-    # bls=bls+ 0.5*f*rs[-1]**2*deltars
-    # ll_ind=ll_ind+0.5*g*rs[-1]**2*deltars
-    # bb_ind=bb_ind+0.5*h*rs[-1]**2*deltars
-    # bl_ind=bl_ind+0.5*i*rs[-1]**2*deltars
-    return ll, bb, bl, lls,bbs,bls,ll_ind, bb_ind, bl_ind, llsigM,bbsigM,blsigM,ll_vonly
+    return ll, bb, bl, lls,bbs,bls,ll_ind, bb_ind, bl_ind, llsigM,bbsigM,blsigM,ll_vonly,lO,bO,OO, \
+        lOs,bOs,OOs,lO_ind, bO_ind, OO_ind, lOsigM,bOsigM,OOsigM,lO_vonly,OO_vonly
 
 
 def set2():
@@ -388,12 +509,12 @@ def set2():
 
         for duration,label,color in zip(durations,labels,colors):
             dvardz=[]
-            f00,f11,f10, _,_,_,_,_,_,_, _,_,_ = zintegral(zmax,ng,duration,sigm)
-            var= numpy.linalg.inv(numpy.array([[f00,f10],[f10,f11]]))[0,0]*2*3.14/.75
+            f00,f11,f10, _,_,_,_,_,_,_, _,_,_,f02,f12,f22 = zintegral(zmax,ng,duration,sigm_Ia,restrate_Ia)
+            var= numpy.linalg.inv(numpy.array([[f00,f10,f02],[f10,f11,f12],[f02,f12,f22+sigOM0sqinv]]))[0,0]*2*3.14/.75
             for z,r in zip(zs,rs):
                 a=1./(1+z)
                 drdz = 1/numpy.sqrt(OmegaM0/a**3 + (1-OmegaM0)) # 1/H
-                _,_,_, f00s,f11s,f10s,_,_,_,_,_,_,_ = kintegral(z,zmax,ng,duration,sigm)
+                _,_,_, f00s,f11s,f10s,_,_,_,_,_,_,_,_,_,_ = kintegral(z,zmax,ng,duration,sigm_Ia,restrate_Ia)
                 dvardz.append(finvp(f00,f11,f10,f00s,f11s,f10s))
                 dvardz[-1] = dvardz[-1]/r**2
                 dvardz[-1] = dvardz[-1]*drdz  # z now has units of 100 km/s
@@ -430,12 +551,17 @@ def set1():
         dvsigM_=[]
         dvdkmax_=[]
         for zmax in zmaxs:
-            f00,f11,f10, f00s,f11s,f10s,f00_ind,f11_ind,f10_ind, f00sigM,f11sigM,f10sigM,f00_vonly = zintegral(zmax,ng,duration,sigm)
-            dv_.append(finvp(f00,f11,f10,f00s,f11s,f10s))
-            v_.append(numpy.linalg.inv(numpy.array([[f00,f10],[f10,f11]]))[0,0])
-            vind_.append(numpy.linalg.inv(numpy.array([[f00_ind,f10_ind],[f10_ind,f11_ind]]))[0,0])
-            vvonly_.append(1./f00_vonly)
-            dvsigM_.append(finvp(f00,f11,f10,f00sigM,f11sigM,f10sigM))
+            f00,f11,f10, f00s,f11s,f10s,f00_ind,f11_ind,f10_ind, f00sigM,f11sigM,f10sigM,f00_vonly,f02,f12,f22, \
+                f02s,f12s,f22s,f02_ind,f12_ind,f22_ind, f02sigM,f12sigM,f22sigM, f01_vonly, f11_vonly = zintegral(zmax,ng,duration,sigm_Ia,restrate_Ia)
+            # dv_.append(finvp(f00,f11,f10,f00s,f11s,f10s))
+            print(finvp(f00,f11,f10,f00s,f11s,f10s))
+            dv_.append(finvp3d(f00,f10,f02,f11,f12,f22+sigOM0sqinv, f00s,f10s,f02s,f11s,f12s,f22s))
+            print (finvp3d(f00,f10,f02,f11,f12,f22+sigOM0sqinv, f00s,f10s,f02s,f11s,f12s,f22s))
+            wefwe
+            v_.append(numpy.linalg.inv(numpy.array([[f00,f10,f02],[f10,f11,f12],[f02,f12,f22+sigOM0sqinv]]))[0,0])
+            vind_.append(numpy.linalg.inv(numpy.array([[f00_ind,f10_ind,f02_ind],[f10_ind,f11_ind,f12_ind],[f02_ind,f12_ind,f22_ind+sigOM0sqinv]]))[0,0])
+            vvonly_.append(numpy.linalg.inv(numpy.array([[f00_vonly,f01_vonly],[f01_vonly,f11_vonly+sigOM0sqinv]]))[0,0])
+            dvsigM_.append(finvp3d(f00,f10,f02,f11,f12,f22+sigOM0sqinv,f00sigM,f10sigM,f02sigM,f11sigM,f12sigM,f22sigM))
             # dvdkmax_.append(finvp(f00,f11,f10,f00kmax,f11kmax,f10kmax))
 
 
@@ -458,7 +584,7 @@ def set1():
     plt.ylabel(r'$\sigma_{\gamma}$')
     plt.legend()
     plt.tight_layout()
-    plt.savefig('var.png')
+    plt.savefig('/tmp/var.png')
 
     plt.clf()
     fig, ax1 = plt.subplots()
@@ -480,41 +606,70 @@ def set1():
     ax2.set_ylabel(r'$\sigma_{\gamma}^{-1}\frac{d\sigma_{\gamma}}{d\sigma_M}$')
     fig.tight_layout()
     plt.legend()
-    plt.savefig('dvardxxx.png')
+    plt.savefig('/tmp/dvardxxx.png')
     plt.clf()
 
-    # plt.plot(zmaxs,-dvards[0]/2/var[0],label='Two Years',color='red')
-    # plt.plot(zmaxs,-dvards[1]/2/var[1],label='Ten Years',color='black')
-    # plt.legend()
-    # # plt.yscale("log", nonposy='clip')
-    # plt.ylim((0,plt.ylim()[1]))
-    # plt.xlabel(r'$z_{max}$')
-    # plt.ylabel(r'$\sigma_{\gamma}^{-1}|\frac{d\sigma_{\gamma}}{d\ln{t}}|$')
-    # plt.tight_layout()
-    # plt.savefig('dvardlnt.png')
-    # plt.clf()
-
-    # plt.plot(zmaxs,dvardsigM[0]/2/var[0],label='Two Years',color='red')
-    # plt.plot(zmaxs,dvardsigM[1]/2/var[1],label='Ten Years',color='black')
-    # plt.legend()
-    # # plt.yscale("log", nonposy='clip')
-    # plt.ylim((0,plt.ylim()[1]))
-    # plt.xlabel(r'$z_{max}$')
-    # plt.ylabel(r'$\sigma_{\gamma}^{-1}\frac{d\sigma_{\gamma}}{d\sigma_M}$')
-    # plt.tight_layout()
-    # plt.savefig('dvardsigM.png')
-    # plt.clf()
-
-    # plt.plot(zmaxs,-dvardkmax[0]/2/var[0],label='Two Years',color='red')
-    # plt.plot(zmaxs,-dvardkmax[1]/2/var[1],label='Ten Years',color='black')
-    # print ((-dvardkmax[0]/2/var[0]).min(), (-dvardkmax[0]/2/var[0]).max(),(-dvardkmax[1]/2/var[1]).min(), (-dvardkmax[1]/2/var[1]).max())
-    # plt.legend()
-    # # plt.yscale("log", nonposy='clip')
-    # # plt.ylim((0,plt.ylim()[1]))
-    # print (plt.ylim())
-    # plt.xlabel(r'$z_{max}$')
-    # plt.ylabel(r'$\sigma_{\gamma}^{-1}|\frac{d\sigma_{\gamma}}{dk_{max}}|$')
-    # plt.tight_layout()
-    # plt.savefig('dvardkmax.png')
-    # plt.clf()
 set1()
+
+
+def snIIp():
+    fig,(ax) = plt.subplots(1, 1)
+    zmax = 0.05
+    sigs=[0.1,0.2]
+    restrate=4.5*restrate_Ia
+    durations = [2,10]
+    labels = ['Two Years','Ten Years']
+    var =[]
+    dvards = []
+    var_ind=[]
+    dvardsigM = []
+    var_vonly=[]
+    dvardkmax = []
+    for duration,label in zip(durations,labels):
+        v_=[]
+        vind_=[]
+        vvonly_=[]
+        dv_=[]
+        dvsigM_=[]
+        dvdkmax_=[]
+        for sigm in sigs:
+            f00,f11,f10, f00s,f11s,f10s,f00_ind,f11_ind,f10_ind, f00sigM,f11sigM,f10sigM,f00_vonly,_,_,_ = zintegral(zmax,ng,duration,sigm,restrate)
+            dv_.append(finvp(f00,f11,f10,f00s,f11s,f10s))
+            v_.append(numpy.linalg.inv(numpy.array([[f00,f10],[f10,f11]]))[0,0])
+            vind_.append(numpy.linalg.inv(numpy.array([[f00_ind,f10_ind],[f10_ind,f11_ind]]))[0,0])
+            vvonly_.append(1./f00_vonly)
+            dvsigM_.append(finvp(f00,f11,f10,f00sigM,f11sigM,f10sigM))
+            # dvdkmax_.append(finvp(f00,f11,f10,f00kmax,f11kmax,f10kmax))
+
+
+        var.append(numpy.array(v_)*2*3.14/.75) #3/4
+        dvards.append(numpy.array(dv_)*2*3.14/.75)
+        var_ind.append(numpy.array(vind_)*2*3.14/.75) #3/4
+        dvardsigM.append(numpy.array(dvsigM_)*2*3.14/.75)
+        var_vonly.append(numpy.array(vvonly_)*2*3.14/.75) #3/4   
+        # dvardkmax.append(numpy.array(dvdkmax_)*2*3.14/.75)
+
+    print (numpy.sqrt(var[0]))
+    print (numpy.sqrt(var[1]))
+
+
+#  snIIp()
+
+def fD_OmegaM():
+    gamma=0.55
+    oms = [0.28-0.013, 0.28, 0.28+0.013]
+    zs = numpy.arange(0,1,0.1)
+    as_ = 1/(1+zs)
+    for om in oms:
+        ans=[]
+        for a in as_:
+            ans.append(OmegaM(a,om)**0.55*D(a,om))
+        plt.plot(zs,ans,label=r'$\Omega_M={}$'.format(om))
+    plt.legend()
+    plt.xlabel(r'$z$')
+    plt.ylabel(r'$fD$')
+    plt.tight_layout()
+    plt.show()
+    plt.clf()
+
+# fD_OmegaM()
