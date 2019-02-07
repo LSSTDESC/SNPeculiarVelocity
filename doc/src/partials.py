@@ -34,10 +34,6 @@ def Cinverse(m00,m11,m01):
 
 def Cinverse_partial(m00,m11,m01,dm00,dm11,dm01):
     den = (m00*m11 - m01**2)
-    print (numpy.array([[dm11,2*m01*dm01],[2*m01*dm01,dm00]])/den,  \
-        - numpy.array([[m11,-m01],[-m01,m00]])/den**2 * (dm00*m11 + m00*dm11 - 2*m01*dm01) )
-
-    fwfe
     return numpy.array([[dm11,2*m01*dm01],[2*m01*dm01,dm00]])/den \
         - numpy.array([[m11,-m01],[-m01,m00]])/den**2 * (dm00*m11 + m00*dm11 - 2*m01*dm01)
 
@@ -122,7 +118,7 @@ def finvp3d(f00,f01,f02,f11,f12,f22,f00p,f01p,f02p,f11p,f12p,f22p):
         - f00p*f12**2 - 2*f00*f12*f12p \
         - f11p*f02**2 - 2*f11*f02*f02p \
         - f22p*f01**2 - 2* f22*f01*f01p \
-        + 2*(f01p*f02*f12 + f01*f02p*f12 + f01*f-2*f12p)
+        + 2*(f01p*f02*f12 + f01*f02p*f12 + f01*f02*f12p)
 
     # full matrix
     # mat = numpy.array([ \
@@ -154,9 +150,6 @@ def finvp3d(f00,f01,f02,f11,f12,f22,f00p,f01p,f02p,f11p,f12p,f22p):
 
 
 def Cmatrices(z,mu,ng,duration,sigm,restrate):
-    duration = 10
-    mu=0.5
-
     a = 1/(1.+z)
     OmegaM_a = OmegaM(a)
     n = duration*restrate/(1+z)
@@ -516,13 +509,15 @@ def set2():
 
         for duration,label,color in zip(durations,labels,colors):
             dvardz=[]
-            f00,f11,f10, _,_,_,_,_,_,_, _,_,_,f02,f12,f22 = zintegral(zmax,ng,duration,sigm_Ia,restrate_Ia)
+            f00,f11,f10, f00s,f11s,f10s,f00_ind,f11_ind,f10_ind, f00sigM,f11sigM,f10sigM,f00_vonly,f02,f12,f22, \
+                f02s,f12s,f22s,f02_ind,f12_ind,f22_ind, f02sigM,f12sigM,f22sigM, f01_vonly, f11_vonly = zintegral(zmax,ng,duration,sigm_Ia,restrate_Ia)
             var= numpy.linalg.inv(numpy.array([[f00,f10,f02],[f10,f11,f12],[f02,f12,f22+sigOM0sqinv]]))[0,0]*2*3.14/.75
             for z,r in zip(zs,rs):
                 a=1./(1+z)
                 drdz = 1/numpy.sqrt(OmegaM0/a**3 + (1-OmegaM0)) # 1/H
-                _,_,_, f00s,f11s,f10s,_,_,_,_,_,_,_,_,_,_ = kintegral(z,zmax,ng,duration,sigm_Ia,restrate_Ia)
-                dvardz.append(finvp(f00,f11,f10,f00s,f11s,f10s))
+                f00,f11,f10, f00s,f11s,f10s,f00_ind,f11_ind,f10_ind, f00sigM,f11sigM,f10sigM,f00_vonly,f02,f12,f22, \
+                    f02s,f12s,f22s,f02_ind,f12_ind,f22_ind, f02sigM,f12sigM,f22sigM, f01_vonly, f11_vonly= kintegral(z,zmax,ng,duration,sigm_Ia,restrate_Ia)
+                dvardz.append(finvp3d(f00,f10,f02,f11,f12,f22+sigOM0sqinv, f00s,f10s,f02s,f11s,f12s,f22s))
                 dvardz[-1] = dvardz[-1]/r**2
                 dvardz[-1] = dvardz[-1]*drdz  # z now has units of 100 km/s
                 dvardz[-1] = dvardz[-1]* 3e3
@@ -533,16 +528,16 @@ def set2():
     plt.ylabel(r'$\sigma_{\gamma}^{-1}|\frac{d\sigma_{\gamma}}{dz}|$')
     plt.legend()
     plt.tight_layout()
-    plt.savefig('dvardz.png')
+    plt.savefig('/tmp/dvardz.png')
     plt.clf()
 
-# set2()
-
+set2()
+wefwe
 
 def set1():
     fig,(ax) = plt.subplots(1, 1)
     zmaxs = numpy.exp(numpy.arange(numpy.log(0.05),numpy.log(.300001),numpy.log(.3/.05)/8))
-    durations = [2,10]
+    durations = [2.,10.]
     labels = ['Two Years','Ten Years']
     var =[]
     dvards = []
