@@ -436,6 +436,10 @@ def set1():
             vind_.append(numpy.linalg.inv(numpy.array([[f00_ind,f10_ind],[f10_ind,f11_ind]]))[0,0])
             vvonly_.append(1./f00_vonly)
             dvsigM_.append(finvp(f00,f11,f10,f00sigM,f11sigM,f10sigM))
+            print(f00,f11,f10,f00s,f11s,f10s)
+            print(v_[-1],dv_[-1],dvsigM_[-1])
+
+            wefew
             # dvdkmax_.append(finvp(f00,f11,f10,f00kmax,f11kmax,f10kmax))
 
 
