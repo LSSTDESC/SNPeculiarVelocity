@@ -30,12 +30,12 @@ sigm_Ia = 0.08
 ng = 1e-3
 
 def Cinverse(m00,m11,m01):
-    return numpy.array([[m11,m01**2],[m01**2,m00]])/(m00*m11 - m01**2)
+    return numpy.array([[m11,-m01],[-m01,m00]])/(m00*m11 - m01**2)
 
 def Cinverse_partial(m00,m11,m01,dm00,dm11,dm01):
     den = (m00*m11 - m01**2)
     return numpy.array([[dm11,2*m01*dm01],[2*m01*dm01,dm00]])/den \
-        - numpy.array([[m11,m01**2],[m01**2,m00]])/den**2 * (dm00*m11 + m00*dm11 - 2*m01*dm01)
+        - numpy.array([[m11,-m01],[-m01,m00]])/den**2 * (dm00*m11 + m00*dm11 - 2*m01*dm01)
 
 def OmegaM(a,OmegaM0=OmegaM0):
     return OmegaM0/(OmegaM0 + (1-OmegaM0)*a**3)
