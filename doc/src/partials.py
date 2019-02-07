@@ -377,6 +377,8 @@ def kintegral(z,zmax,ng,duration,sigm,restrate):
     lO = numpy.trapz(matter[:,0][w]**2*lO[w],matter[:,0][w])
     bO = numpy.trapz(matter[:,0][w]**2*bO[w],matter[:,0][w])
     OO = numpy.trapz(matter[:,0][w]**2*OO[w],matter[:,0][w])
+    print(lls[w])
+    wefwe
     lls = numpy.trapz(matter[:,0][w]**2*lls[w],matter[:,0][w])
     bbs = numpy.trapz(matter[:,0][w]**2*bbs[w],matter[:,0][w])
     bls = numpy.trapz(matter[:,0][w]**2*bls[w],matter[:,0][w])
@@ -559,6 +561,7 @@ def set1():
             vind_.append(numpy.linalg.inv(numpy.array([[f00_ind,f10_ind,f02_ind],[f10_ind,f11_ind,f12_ind],[f02_ind,f12_ind,f22_ind+sigOM0sqinv]]))[0,0])
             vvonly_.append(numpy.linalg.inv(numpy.array([[f00_vonly,f01_vonly],[f01_vonly,f11_vonly+sigOM0sqinv]]))[0,0])
             dvsigM_.append(finvp3d(f00,f10,f02,f11,f12,f22+sigOM0sqinv,f00sigM,f10sigM,f02sigM,f11sigM,f12sigM,f22sigM))
+
             print(v_[-1],dv_[-1],dvsigM_[-1])
 
             wefe
