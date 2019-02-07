@@ -34,6 +34,10 @@ def Cinverse(m00,m11,m01):
 
 def Cinverse_partial(m00,m11,m01,dm00,dm11,dm01):
     den = (m00*m11 - m01**2)
+    print (numpy.array([[dm11,2*m01*dm01],[2*m01*dm01,dm00]])/den,  \
+        - numpy.array([[m11,-m01],[-m01,m00]])/den**2 * (dm00*m11 + m00*dm11 - 2*m01*dm01) )
+
+    fwfe
     return numpy.array([[dm11,2*m01*dm01],[2*m01*dm01,dm00]])/den \
         - numpy.array([[m11,-m01],[-m01,m00]])/den**2 * (dm00*m11 + m00*dm11 - 2*m01*dm01)
 
@@ -150,6 +154,9 @@ def finvp3d(f00,f01,f02,f11,f12,f22,f00p,f01p,f02p,f11p,f12p,f22p):
 
 
 def Cmatrices(z,mu,ng,duration,sigm,restrate):
+    duration = 10
+    mu=0.5
+
     a = 1/(1.+z)
     OmegaM_a = OmegaM(a)
     n = duration*restrate/(1+z)
@@ -377,8 +384,6 @@ def kintegral(z,zmax,ng,duration,sigm,restrate):
     lO = numpy.trapz(matter[:,0][w]**2*lO[w],matter[:,0][w])
     bO = numpy.trapz(matter[:,0][w]**2*bO[w],matter[:,0][w])
     OO = numpy.trapz(matter[:,0][w]**2*OO[w],matter[:,0][w])
-    print(lls[w])
-    wefwe
     lls = numpy.trapz(matter[:,0][w]**2*lls[w],matter[:,0][w])
     bbs = numpy.trapz(matter[:,0][w]**2*bbs[w],matter[:,0][w])
     bls = numpy.trapz(matter[:,0][w]**2*bls[w],matter[:,0][w])
@@ -495,7 +500,7 @@ def zintegral(zmax,ng,duration,sigm,restrate):
 
 def set2():
     fig,(ax) = plt.subplots(1, 1)
-    durations = [2,10]
+    durations = [2.,10.]
     labels = ['Two Years','Ten Years']
     colors = ['red','black']
 
@@ -561,10 +566,6 @@ def set1():
             vind_.append(numpy.linalg.inv(numpy.array([[f00_ind,f10_ind,f02_ind],[f10_ind,f11_ind,f12_ind],[f02_ind,f12_ind,f22_ind+sigOM0sqinv]]))[0,0])
             vvonly_.append(numpy.linalg.inv(numpy.array([[f00_vonly,f01_vonly],[f01_vonly,f11_vonly+sigOM0sqinv]]))[0,0])
             dvsigM_.append(finvp3d(f00,f10,f02,f11,f12,f22+sigOM0sqinv,f00sigM,f10sigM,f02sigM,f11sigM,f12sigM,f22sigM))
-
-            print(v_[-1],dv_[-1],dvsigM_[-1])
-
-            wefe
             # dvdkmax_.append(finvp(f00,f11,f10,f00kmax,f11kmax,f10kmax))
 
 
