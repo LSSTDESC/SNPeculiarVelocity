@@ -515,7 +515,7 @@ def set2():
             for z,r in zip(zs,rs):
                 a=1./(1+z)
                 drdz = 1/numpy.sqrt(OmegaM0/a**3 + (1-OmegaM0)) # 1/H
-                f00,f11,f10, f00s,f11s,f10s,f00_ind,f11_ind,f10_ind, f00sigM,f11sigM,f10sigM,f00_vonly,f02,f12,f22, \
+                _,_,_, f00s,f11s,f10s,f00_ind,f11_ind,f10_ind, f00sigM,f11sigM,f10sigM,f00_vonly,f02,f12,f22, \
                     f02s,f12s,f22s,f02_ind,f12_ind,f22_ind, f02sigM,f12sigM,f22sigM, f01_vonly, f11_vonly= kintegral(z,zmax,ng,duration,sigm_Ia,restrate_Ia)
                 dvardz.append(finvp3d(f00,f10,f02,f11,f12,f22+sigOM0sqinv, f00s,f10s,f02s,f11s,f12s,f22s))
                 dvardz[-1] = dvardz[-1]/r**2
@@ -528,7 +528,7 @@ def set2():
     plt.ylabel(r'$\sigma_{\gamma}^{-1}|\frac{d\sigma_{\gamma}}{dz}|$')
     plt.legend()
     plt.tight_layout()
-    plt.savefig('/tmp/dvardz.png')
+    plt.savefig('dvardz.png')
     plt.clf()
 
 set2()
@@ -583,7 +583,7 @@ def set1():
     plt.ylabel(r'$\sigma_{\gamma}$')
     plt.legend()
     plt.tight_layout()
-    plt.savefig('/tmp/var.png')
+    plt.savefig('var.png')
 
     plt.clf()
     fig, ax1 = plt.subplots()
@@ -605,7 +605,7 @@ def set1():
     ax2.set_ylabel(r'$\sigma_{\gamma}^{-1}\frac{d\sigma_{\gamma}}{d\sigma_M}$')
     fig.tight_layout()
     plt.legend()
-    plt.savefig('/tmp/dvardxxx.png')
+    plt.savefig('dvardxxx.png')
     plt.clf()
 
 set1()
