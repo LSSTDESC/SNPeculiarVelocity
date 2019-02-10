@@ -169,11 +169,14 @@ redshift depths $z_{max}$.
 
 
 Peculiar velocity surveys have already been  used to measure $fD$, though not to a level where  gravity models can be precisely distinguished.
- \citet{2017MNRAS.471..839A} use 6dFGS peculiar velocities using the Fundamental Plane method to
+ \citet{2017MNRAS.471..839A} use 6dFGS peculiar velocities using the Fundamental Plane distances of spiral galaxies, using absolute magnitudes
+ with
+ $\sim 0.43$~mag  precision calibrated by emission line velocity dispersions, to
 get a 15\% uncertainty in $fD$ at $z\approx 0$ using combined density and velocity information.
 The upcoming 
 TAIPAN survey will obtain Fundamental Plane galaxies with densities of $n_g \sim 10^{-3}h^3$\,Mpc$^{-3}$,
-and the WALLABY+WNSHS surveys will obtain Tully-Fisher galaxies at densities $n_g \sim 2\times 10^{-2} - 10^{-4} h^3$\,Mpc$^{-3}$ from
+and the WALLABY+WNSHS surveys will obtain Tully-Fisher distances (based on the $\sim 0.48$~mag calibration of absolute magnitude based on the  HI 21cm line width)
+of galaxies with densities $n_g \sim 2\times 10^{-2} - 10^{-4} h^3$\,Mpc$^{-3}$ from
 $z=0-0.1$ covering 75\% of the sky.
 These surveys combined are projected to have 3\% $fD$ uncertainties \citep{2017MNRAS.464.2517H}.
 (For reference, DESI projects 10\% precision of $fD$ at $z \approx 0.3$  using Redshift Space Distortions (RSD) alone.)
@@ -188,16 +191,20 @@ Two advances in the upcoming decade will make SN~Ia peculiar velocities more pow
 First, the precision of SN~Ia distances can be improved.  The commonly-used empirical 2-parameter SED model yields  absolute magnitude
 dispersion $\sigma_M \gtrsim 0.12$~mag.  However, SNe transmit more information than just the light-curve shape and single color used in current SN models.
 Recent studies indicate that with the right data, SN absolute
-magnitudes can be calibrated to $\sigma_M \lesssim 0.08$ mag \citep[see e.g.][]{2012MNRAS.425.1007B, 2015ApJ...815...58F}.  Though not yet
+magnitudes can be calibrated to $\sigma_M \lesssim 0.08$ mag \citep[see e.g.][]{2012MNRAS.425.1007B, 2015ApJ...815...58F}. 
+Though not yet
 established, it is anticipated that such a reduction in intrinsic dispersion comes with a reduction in the magnitude bias correlated with host-galaxy properties
-that is observed using current calibrations.
-One such SN is worth $\gtrsim 25$ galaxies with 0.4~mag absolute magnitude uncertainty.
+that is observed using current calibrations.  
+At this precision the intrinsic velocity dispersion  at $z=0.028$ is  of $300$~km\,s$^{-1}$, i.e.\ a single SN~Ia  is of such quality as to
+provide $S/N \sim 1$.
 Secondly,  in the upcoming decade cadenced wide-field imaging surveys such as ZTF and LSST
   will increase the number of identified  $z<0.3$ Type~Ia supernovae (SNe~Ia)  from the hundreds to the
 hundreds of thousands; over the course of 10-years, LSST will find $\sim150,000$ $z<0.2$,  $\sim520,000$ $z<0.3$ SNe~Ia
  for which good light curves can be measured, corresponding to a  number density of $n \sim 5\times 10^{-4}h^3$\,Mpc$^{-3}$.
   This sample has comparable
- number density and more galaxies at deeper redshifts than projected by WALLABY and TAIPAN. 
+ number density and more galaxies at deeper redshifts than projected by WALLABY and TAIPAN.  With similar densities,
+ the 10-year SN~Ia survey will have
+ a 29$\times$ reduction in shot-noise ($\sigma^2_M/n$) relative to the Fundamental Plane survey of TAIPAN.
 
 Given these two advances, supernovae discovered by wide-field searches in the next decade will 
  be able to stringently constrain the growth of structure in the low-redshift Universe.
@@ -221,6 +228,7 @@ To illustrate the distinction,
 We project uncertainties  on the growth index, $\sigma_\gamma$ for a suite of idealized surveys
 using a Fisher matrix analysis similar to that of \citet{2017ApJ...847..128H, 2017MNRAS.464.2517H}
 \citep[there is an alternative approach using an estimator for the mean pairwise velocity][]{2011PhRvD..83d3004B}.
+***Super-sample vairaince***
 The Fisher information matrix is
 \begin{align}
 F_{ij} 
@@ -241,11 +249,12 @@ C(k,\mu)  =
    \end{bmatrix}
 \label{cov:eq}
 \end{equation}
-and the two parameters considered are $\lambda \in \{\gamma,bD\}$.
+and the parameters considered are $\lambda \in \{\gamma,bD, \Omega_{M0}\}$.
 The parameter dependence enters through $(fD)(\gamma)$ in the relations $P_{vv}\propto (fD\mu)^2$, the SN~Ia host-galaxy overdensity
 power spectrum $P_{\delta \delta }\propto (bD + fD\mu^2)^2$, and the galaxy-velocity cross-correlation $P_{vg}
 \propto  (bD + fD\mu^2)fD$, where $b$ is the galaxy bias and $\mu$ is the cosine of the angle between the $k$-mode
 and the line of sight.  While the $bD$ term does contain information on $\gamma$, its constraining power is not used here.
+Both $f$ and $D$ depend on $\Omega_M=\frac{\Omega_{M0}}{\Omega_{M0} + (1-\Omega_{M0})a^3}$.
 The uncertainty in $\gamma$ is $\sigma_\gamma = \sqrt{\left(F^{-1}\right)_{\gamma\gamma}}$.
 Non-GR models may  also predict a change in the scale-dependence of the growth or non-constant $\gamma$, such observations provide additional leverage in probing gravity
 but are not considered.
@@ -268,12 +277,13 @@ A minimum distance $r_{min}=r(z=0.01)$ is imposed as the physics derivation is t
 where peculiar velocities are significantly  smaller than
 the cosmological redshift.
 The sample-selection efficiency $\epsilon$ is redshift-independent, i.e.\ the native redshift distribution is not sculpted.
-The input bias of SN~Ia host galaxies is set as $b=1.2$.
+The input bias of SN~Ia host galaxies is set as $b=1.2$.  An independent measurement of $\Omega_{M0}=0.3\pm0.005$
+is included and is important contributor to the $\gamma$ constraint.  ***Uniform sampling ***
 
 All the surveys considered  provide meaningful tests of gravity.
 The projected uncertainty in $\gamma$ achieved by the suite of surveys are shown in Figure~\ref{var:fig}.
 The primary analysis of interest uses overdensities (RSD), peculiar velocities, and their cross-correlations.
-The short and shallow,  2-year, $z_{max}=0.1$ survey has $\sigma_\gamma \sim 0.038$,
+The short and shallow,  2-year, $z_{max}=0.11$ survey has $\sigma_\gamma \sim 0.038$,
 which can distinguish  between  General Relativity, $f(R)$,  and DGP gravities at the $>3\sigma$ level.
 The 10-year survey performance asymptotes at $z_{max} \sim0.2$ at a precision of  $\sigma_\gamma \sim 0.01$.
 Figure~\ref{var:fig} also shows uncertainties based on two other analyses, one that only uses peculiar velocities, and
@@ -308,7 +318,7 @@ The Fisher Matrix $F$ is  proportional to the survey solid angle $\Omega$ so $\s
 {\bf Differential Redshift Bin $z$:}  Certain redshifts constrain $\gamma$ more strongly than others.  If at a given moment of a survey we had
 a set of SNe~Ia from which to choose, it turns out the one with the lowest redshift would be preferred.
 This is demonstrated to be the case at the end of both 2- and 10-year surveys with $z_{max}=0.2$.
-The leftpanel of Figure~\ref{dvar:fig} shows
+The left panel of Figure~\ref{dvar:fig} shows
  $|\partial \sigma_\gamma / \partial z|$, which
 for both surveys monotonically decreases from $z=0.01$ out to $z=0.2$.  If we had
 to sculpt the distribution (say due to limited follow-up resources), the preference would be to cut out the highest redshift bins
@@ -332,7 +342,7 @@ An increased survey duration accumulates more supernovae, decreasing shot noise 
 precision in $\gamma$ for all the surveys considered.
 The surveys we consider have varying relative contributions of sample variance and shot noise: those that have a larger shot-noise contribution,
 shorter surveys and those with higher $z_{max}$ (because of the higher $\sigma$), benefit more from extending survey duration.
-These trends are shown in the left panel of Figure~\ref{dvar:fig}, which plots $\sigma_\gamma^{-1}|\partial \sigma_\gamma / \partial \ln{t}|$ as a function of
+These trends are shown in the right panel of Figure~\ref{dvar:fig}, which plots $\sigma_\gamma^{-1}|\partial \sigma_\gamma / \partial \ln{t}|$ as a function of
  $z_{max}$ for two- and ten-year surveys.
 Like survey duration, intrinsic magnitude dispersion is related to survey performance through the shot noise and thus
 has a similar relationship with $\sigma_\gamma$.
@@ -377,7 +387,7 @@ active  research.  Photometric classification benefits from having spectroscopic
 {\bf Host-galaxies Need Precise Redshifts:} Peculiar velocities come from the difference between host-galaxy and cosmological redshifts.  Host redshift uncertainties need to be
  $<0.5$\% in order not to contribute significantly
 to the error budget.  We thus conclude that there is the need for spectroscopic $R>200$ host-galaxy redshifts.  These redshifts could come naturally
-from galaxy signal in  the spectroscopic transient classification if the spectrograph had sufficient resolution.  Alternatively, 
+from galaxy signal in  the spectroscopic transient classification if the spectrograph had sufficient resolution.  ***Check number and explain. ***  Alternatively, 
 moderate-resolution (bright-)galaxy  redshift surveys (e.g.\ DESI, 4MOST) can  provide multiplexed observations of 
 a significant fraction of nearby SN hosts before  discovery or after transient light has faded away.
 
@@ -412,12 +422,20 @@ the high number of SN discoveries together with improved precision in their dist
 galaxies,  powerful probes of gravity through their effect  on the growth of structure. 
 A peculiar velocity survey must discover, classify, and get distances of SNe~Ia, as well as obtain redshifts of their host galaxies.
 Choices in survey design impact the precision obtained on the growth index $\gamma$.  
-No other probe of growth of structure or tracer of peculiar velocity can provide comparable precision on  $\gamma$ in the next decade.
+No other probe of growth of structure or tracer of peculiar velocity can alone provide comparable precision on  $\gamma$ in the next decade.
+Combined low-redshift peculiar velocity and high-redshift RSD $fD$ measurements are highly complimentary as together they probe the
+$\gamma$-dependent shape of $fD(z)$ (not just its normalization) and potential scale-dependent influence of gravitational models, since low-
+and high-redshift surveys are weighted by lower and higher $k$-modes respectively.
 SN~Ia peculiar velocity surveys are of the highest scientific
 interest and we encourage
 the community to develop aggressive surveys in the pursuit of testing  General Relativity and probing gravity. 
 
-\begin{comment}
+***
+DESI and 4MOST will exist in the 2020 decade, (the former having been endorsed by Astro 2010), but at low redshift their constraints on fs8 will be limited by cosmic variance, Since these two redshifts surveys will cover most of the usable sky, they will saturate the RSD technique, making PVs the only way to improve on fs8 at low z. TAIPAN and DESI BGS will be able to measure FP distances for nearly all usable galaxies nearby, so at low z the FP PV technique will also saturate in the coming decade. Thus, SN PV will be the most powerful way to further constrain $\sigma_\gamma$. Moreover, SN PV directly benefits from DESI and 4MOST through the cross-correlation of the galaxy density and velocity fields, and the in the redshifts provided for many of the SN host galaxies.
+
+t TAIPAN+(+4MOST)+DESI are *capable* of saturating the FP technique nearby. If 4MOST or DESI chose not to do FP or fail in the attempt, that is just more reason to do SN PVs! But I think it's a good idea for readers to know that SN PVs are needed even if 4MOST and DESI do the best job they can on FP, simply because one runs out of suitable nearby FP galaxies.
+***
+%\begin{comment}
 \newpage
 We are interested in
 $$F^{-1}_{00,\alpha} = \frac{F_{11,\alpha}}{F_{00}F_{11}-F_{01}^2} - \frac{F_{11}}{(F_{00}F_{11}-F_{01}^2)^2}\left(F_{00,\alpha}F_{11}+
@@ -444,6 +462,16 @@ C =
    P_{vg}(k,\mu)  \\
    P_{vg}(k,\mu)  &
   P_{vv}(k,\mu) + \frac{\sigma^2}{n}
+   \end{bmatrix}.
+\end{equation}
+\begin{equation}
+C^{-1} =
+ \frac{1}{(P_{gg}(k,\mu) + \frac{1}{n})(P_{vv}(k,\mu) + \frac{\sigma^2}{n})- P_{vg}(k,\mu)^2}
+  \begin{bmatrix}
+    P_{vv}(k,\mu) + \frac{\sigma^2}{n}&
+   P_{vg}(k,\mu)^2  \\
+   P_{vg}(k,\mu)^2 &
+   P_{gg}(k,\mu) + \frac{1}{n} 
    \end{bmatrix}.
 \end{equation}
 
@@ -487,7 +515,21 @@ C^{-1}_{,\sigma_M}  =   & \frac{\ln{10}}{5} \frac{z}{1+z} \frac{2\sigma}{n}
   P_{gg}(k,\mu) + \frac{1}{n} 
    \end{bmatrix})\\
  \end{align}
-\end{comment}
+ 
+ \begin{align}
+ P_{vv,\Omega_M} & = 2(f_{,\Omega_M}D + fD_{,\Omega_M})(fD)^{-1}P_{vv}\\
+ P_{\delta \delta,\Omega_M} & = 2(bD_{,\Omega_M} +f_{,\Omega_M}D\mu^2 + fD_{,\Omega_M}\mu^2)(bD+fD\mu^2)^{-1}P_{\delta \delta}\\
+ P_{\delta v,\Omega_M} & =\left( (f_{,\Omega_M}D + fD_{,\Omega_M})(fD)^{-1} + 
+( bD_{,\Omega_M} +f_{,\Omega_M}D\mu^2 + fD_{,\Omega_M}\mu^2)(bD+fD\mu^2)^{-1}\right)
+ P_{\delta v}
+ \end{align}
+ 
+  \begin{align}
+D_{,\Omega_M} & =\gamma D \int_a^1 \Omega_M^{\gamma-1} d\ln{a}\\
+ f_{,\Omega_M} & = \gamma \Omega_M^{\gamma -1} \\
+ \Omega_{M,\Omega_{M_0}} & =\frac{\Omega_{M_0}(1-a^3) + 2a^3-1}{(\Omega_{M_0}+(1-\Omega_{M_0}a^3))^2}
+ \end{align}
+%\end{comment}
 %
 %
 %\begin{align}
