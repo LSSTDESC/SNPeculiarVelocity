@@ -297,6 +297,8 @@ axs.plot(matter[:,0],matter[:,0]**3*(0.08 * sigv_factor *3e5)**2 / (2*restrate/(
 axs.plot(matter[:,0],matter[:,0]**3*(0.15 * sigv_factor *3e5)**2 / (2*restrate/(1+z)), label=r'$k^3\sigma^2/n$; $\sigma_M=0.15$, 2 years, $z=0.1$',ls=':',color='red')
 axs.plot(matter[:,0],matter[:,0]**3*(0.08 * sigv_factor *3e5)**2 / (10*restrate/(1+z)), label=r'$k^3\sigma^2/n$; $\sigma_M=0.08$, 10 years, $z=0.1$',ls='--',color='black')
 axs.plot(matter[:,0],matter[:,0]**3*(0.15 * sigv_factor *3e5)**2 / (10*restrate/(1+z)), label=r'$k^3\sigma^2/n$; $\sigma_M=0.15$, 10 years, $z=0.1$',ls=':',color='black')
+axs.plot(matter[:,0],matter[:,0]**3*(0.2*0.1*3e5)**2 / 1e-3, label=r'$k^3\sigma^2/n$; TAIPAN, $z=0.1$',ls='-.',color='green')
+
 axs.set_ylabel(r'[km$^2$s$^{-2}$]')
 # axs.ticklabel_format(style='sci', axis='y',scilimits=(0,0))
 dum=1.07
@@ -317,7 +319,25 @@ axs.legend(loc=2, prop={'size': 'x-small'})
 plt.subplots_adjust(hspace=0.05)
 plt.tight_layout()
 plt.savefig('new2.png')
-wefwe
+plt.clf()
+fig, axs = plt.subplots(1,1,sharex=True)
+colors=['blue','green','red']
+zs = numpy.array([0.05,0.1,.2])
+axs.plot(matter[:,0],matter[:,0]**3*Pgg(1),label=r'$k^3P_{vv}(\mu=1)$',color='black')
+axs.plot(matter[:,0],matter[:,0]**3*Pgg(0.5),label=r'$k^3P_{vv}(\mu=0.5)$',color='cyan')
+axs.plot(matter[:,0],matter[:,0]**3/1e-3, label=r'$k^3\sigma^2/n$; TAIPAN, $z=0.1$',ls='-.',color='green')
+
+# axs.ticklabel_format(style='sci', axis='y',scilimits=(0,0))
+axs.set_yscale("log", nonposx='clip')
+axs.set_xscale("log", nonposx='clip')
+axs.set_xlabel(r'$k$ [$h$ Mpc$^{-1}$]')
+axs.set_xlim((4e-3,.12))
+axs.legend(loc=2, prop={'size': 'x-small'})
+plt.subplots_adjust(hspace=0.05)
+plt.tight_layout()
+plt.savefig('new3.png')
+
+wef
 
 zs = numpy.array([0.05,0.1,.2])
 fig, axs = plt.subplots(3,1,sharex=True,figsize=(8,5))
