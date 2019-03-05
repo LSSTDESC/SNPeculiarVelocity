@@ -1,0 +1,157 @@
+\documentclass{aastex62}   	% use "amsart" instead of "article" for AMSLaTeX format
+\usepackage{graphicx}				% Use pdf, png, jpg, or eps§ with pdflatex; use eps in DVI mode
+								% TeX will automatically convert eps --> pdf in pdflatex		
+\usepackage{amssymb,amsmath}
+\usepackage{natbib,verbatim}
+%\usepackage{grffile}
+%\usepackage{textcase}
+\usepackage{hyperref}
+%\usepackage[overload]{textcase}
+
+%SetFonts
+
+%SetFonts
+
+\begin{document}
+Consider a galaxy survey that is complete in a volume.  Suppose there are $N_{gal}$ galaxies in the survey.  The volume is divided into $N_{cell} \gg N_{gal}$
+equal-volume cells, such that the number of galaxies that occupy cell $i$, $N_i=0$ or $1$.  Suppose that the expected number density is constant over the volume.
+The number of expected galaxies per cell and its variance (from Poisson statistics) is $\bar{N} = \frac{N_{\text{gal}}}{N_{\text{cell}}}$.  
+Denote the dark matter overdensity correlation function as $\xi^{DM}_{\delta \delta}$. The galaxy overdensity correlation function is
+$\xi_{\delta \delta} =  b^2 \xi^{DM}_{\delta \delta}$.  The number-per-cell correlation function 
+is $\xi_{NN}  =\bar{N}^2 \xi_{\delta \delta}$.
+
+We are interested in the amplitude of the correlation functions, so we parameterize
+ this is $\xi_{NN} =A\bar{N}^2S$.
+The expected covariance in galaxy numbers is
+\begin{align*}
+C &= \bar{N} I + A\bar{N}^2S.
+\end{align*}
+
+The likelihood is written as $-2\ln{L} = \ln{\det{C}} + (N-\bar{N})^T C^{-1}(N-\bar{N}) + const$.   Lets Taylor expand about $A=0$ and collect terms that
+depend on $A$.  The second term gives
+\begin{align*}
+A (N-\bar{N})^T S(N-\bar{N})
+\end{align*}
+The first term gives (check this)
+\begin{align*}
+A\text{Tr}(\bar{N}S),
+\end{align*}
+which is goes to zero as we go to infinitely small cells so $\bar{N} \rightarrow 0$.  So we only have to worry about the first term, which when the
+cells are very small
+\begin{align*}
+A (N-\bar{N})^T S(N-\bar{N}) &= A \left( \sum_{i,j \in {galaxy}} S_{ij} -2 \sum_{i \in {galaxy}, j\in {cell}} \bar{N}N_i S_{ij}  +  \sum_{ i,j\in {cell}}  \bar{N}^2 S_{ij}\right).
+\end{align*}
+The first term is the ``standard'' piece.  The second two pieces are new, which involve integrals over the model correlations.
+
+Lets consider the velocities at the same time.  The covariance matrix looks like
+\begin{align*}
+C &=
+\begin{pmatrix}
+\bar{N} I &  0 \\
+0&\vec{\sigma}_v^2 I \\
+\end{pmatrix}
++A\begin{pmatrix}
+\bar{N}^2\xi_{\delta\delta} &  \bar{N}\xi_{\delta v}\\
+ \bar{N}\xi_{\delta v}& \xi_{vv} \\
+  \end{pmatrix}\\
+  & = \left(\sqrt{\bar{N}}I, \vec{\sigma}_v I \right) \left(I + 
+  A\begin{pmatrix}
+\bar{N}\xi_{\delta\delta} &  \sqrt)\bar{N}) \vec{\sigma}_v \xi_{\delta v}\\
+ \bar{N}\xi_{\delta v}& \xi_{vv} \\
+  \end{pmatrix}
+  \right)\left(\sqrt{\bar{N}}I, \vec{\sigma}_v I \right).
+\end{align*}
+Again the likelihood is written as $-2\ln{L} = \ln{\det{C}} + (N-\bar{N})^T C^{-1}(N-\bar{N}) + const$.   Lets Taylor expand about $A=0$ and collect terms that
+depend on $A$.  
+
+The second term gives
+\begin{align*}
+A (N-\bar{N})^T S(N-\bar{N})
+\end{align*}
+The first term gives (check this)
+\begin{align*}
+A\text{Tr}(\bar{N}S),
+\end{align*}
+which is goes to zero as we go to infinitely small cells so $\bar{N} \rightarrow 0$.  So we only have to worry about the first term, which when the
+cells are very small
+\begin{align*}
+A (N-\bar{N})^T S(N-\bar{N}) &= A \left( \sum_{i,j \in {galaxy}} S_{ij} -2 \sum_{i \in {galaxy}, j\in {cell}} \bar{N}N_i S_{ij}  +  \sum_{ i,j\in {cell}}  \bar{N}^2 S_{ij}\right).
+\end{align*}
+The first term is the ``standard'' piece.  The second two pieces are new, which involve integrals over the model correlations.
+
+
+Taylor expand this around $A=0$.  Then reduce based on cells that have $\sigma_v \rightarrow \infty$.
+\begin{comment}
+
+
+%The overdensity is $\delta_{gg}=-1$ for cells with no galaxies and 
+%$\delta_{gg}=\frac{N_{\text{cell}}}{N_{\text{gal}}}-1$ with one galaxy.  The variance in overdensity is $\frac{N_{\text{cell}}}{N_{\text{gal}}}$.
+%We approximate the Poisson distribution as being Gaussian (the fact that this is a poor approximation we have to check).
+The probability for the data, $\mathbf{x}$ (a vector composed of 0's and 1's) 
+is modeled to come from a Gaussian distribution (despite the fact that Poisson statistics better describes the shot noise) with covariance matrix
+\begin{align*}
+C &= \left(\frac{N_{\text{gal}}}{N_{\text{cell}}}\right)^2\xi_{\delta \delta} + \frac{N_{\text{gal}}}{N_{\text{cell}}}I\\
+ &= \left(\frac{N_{\text{gal}}}{N_{\text{cell}}}\right)
+ \left(I + \frac{N_{\text{gal}}}{N_{\text{cell}}} \xi_{\delta \delta}\right),
+\end{align*}
+where $\xi_{\delta \delta}$ is the overdensity correlation. 
+
+The challenge is to approximate the likelihood not using the full matrix but only the small fraction of cells with a galaxy because the cells with zero galaxies drop out,
+in the limit of $N_{\text{cell}} \rightarrow \infty$.
+
+
+For galaxies counts, the likelihood is the probability that there are $N$ galaxies in a certain configuration described by the distances between all of the pairs $\mathbf{r}_{ij}$,
+given the model expected galaxy density $n$ and the galaxy two-point correlation function $\xi(r)$, as
+$p(\mathbf{r}_{ij};n, \xi(r))$.
+
+Recall the relationship between the joint probability of two galaxies and  the two-point correlation function
+$$p(r;n,\xi) = n^2[1+\xi(r)].$$ 
+
+The relationship between the joint probability of three and four galaxies and three- and four-point correlation functions are introduced in \citet{1975ApJ...196....1P} and \citet{1978ApJ...221...19F}.  If the underlying distribution is Normal, the joint probabilities depend only on the two-point function, such that
+$$p(r_{12},r_{23},r_{13};n,\xi) = n^3[1+\xi_{12}+\xi_{23}+\xi_{13}]$$
+$$p(r_{12},r_{23},r_{13},r_{14},r_{23},r_{24},r_{34};n,\xi) = n^4[1+\xi_{12}+\xi_{23}+\xi_{13}+\xi_{14}+\xi_{23}+\xi_{24}+\xi_{34}+
+\xi_{12}\xi_{34}+
+\xi_{13}\xi_{24}+
+\xi_{14}\xi_{23}].$$
+The joint probability of $N$ galaxies is constructed in an analogous manner and is composed 
+of the $\xi_{ij}$ of all pairs.
+
+Now consider the case of a simultaneous analysis including both galaxy positions and velocities.
+Divide the Universe into $N_{\text{cell}}$ cells whose sizes are small enough that there will only will be one galaxy in each.  The cell centers
+are configured angularly (e.g.\ with HEALPIX) such that any given cell is separated from the others by the same set of quantized azimuthal distances.  With
+the volume binned based on radius, the same set of distances separate any cell from the others.
+Convert the survey containing $N_{\text{gal}}$ galaxies into a galaxy overdensity map, where $\delta_{gg}=-1$ for cells with no galaxies and 
+$\delta_{gg}=\frac{N_{\text{cell}}}{N_{\text{gal}}}-1$.  Then we can write a big covariance matrix $C$ for the overdensity and velocity fields. 
+The covariance matrix is composed of 4 quadrants.  The density piece is $C_{\delta \delta}[i,j] = A\xi_{\delta \delta}(i,j) + \frac{N_{\text{gal}}}{N_{\text{cell}}}\delta_{ij}$ where $i$ and $j$ are cell indices,
+the cross-term piece is $C_{\delta v}[i,j] = A\xi_{\delta v}(i,j)$, and the velocity piece is  $C_{vv}[i,j] =A\xi_{vv}(i,j) +  \sigma^2_v\delta_{ij}$.  For cells
+that do not contain a galaxy $\sigma^2_v=\infty$.  Recall the $\xi$ is a function of distance between two points, thus each of these matrices can be ordered
+to be ``banded'' matrix.  The eigenvalues of banded matrices are known\footnote{\url{http://lampx.tugraz.at/~hadley/ss2/appendix/bandedmatrices/bandedmatrix.php}}.
+The likelihood depends on
+$$-2\ln{L} = 
+\begin{pmatrix}
+\delta_{gg}, v
+\end{pmatrix}
+\begin{pmatrix}
+C_{\delta \delta} & C_{\delta v}\\
+C_{\delta v} & C_{vv}
+\end{pmatrix}^{-1}
+\begin{pmatrix}
+\delta_{gg}\\
+ v
+\end{pmatrix}
++
+\ln{\left(\det{\begin{pmatrix}
+C_{\delta \delta} & C_{\delta v}\\
+C_{\delta v} & C_{vv}
+\end{pmatrix}}\right)} + const.
+$$
+We are not interested in the absolute normalization of the likelihood, so let us consider perturbations around the $A=1$, 
+$$-2\ln{L(A)} +  2\ln{L(A=1)}.$$
+So we are interested in a Taylor expansion of $L$ about $A=1$ taken to the limit of $N_{\text{cell}} \rightarrow \infty$.
+
+ \begin{thebibliography}{1}
+\bibitem[Peebles \& Groth(1975)]{1975ApJ...196....1P} Peebles, P.~J.~E., \& Groth, E.~J.\ 1975, \apj, 196, 1 
+\bibitem[Fry \& Peebles(1978)]{1978ApJ...221...19F} Fry, J.~N., \& Peebles, P.~J.~E.\ 1978, \apj, 221, 19 
+ \end{thebibliography}
+ \end{comment}
+\end{document}
