@@ -289,9 +289,9 @@ sigv_factor = numpy.log(10)/5*z/(1+z)
 # sigv =sigm * sigv_factor *3e5
 
 
-colors=['blue','green','red']
+colors=['grey','grey','grey']
 zs = numpy.array([0.05,0.1,.2])
-axs.plot(matter[:,0],matter[:,0]**3*Pvv(1),label=r'$k^3P_{vv}(\mu=1)$',color='black')
+axs.plot(matter[:,0],matter[:,0]**3*Pvv(1),label=r'$k^3P_{vv}(\mu=1)$',color='magenta')
 axs.plot(matter[:,0],matter[:,0]**3*Pvv(0.5),label=r'$k^3P_{vv}(\mu=0.5)$',color='cyan')
 axs.plot(matter[:,0],matter[:,0]**3*(0.08 * sigv_factor *3e5)**2 / (2*restrate/(1+z)), label=r'$k^3\sigma^2/n$; $\sigma_M=0.08$, 2 years, $z=0.1$',ls='--',color='red')
 axs.plot(matter[:,0],matter[:,0]**3*(0.15 * sigv_factor *3e5)**2 / (2*restrate/(1+z)), label=r'$k^3\sigma^2/n$; $\sigma_M=0.15$, 2 years, $z=0.1$',ls=':',color='red')
@@ -319,6 +319,8 @@ axs.legend(loc=2, prop={'size': 'x-small'})
 plt.subplots_adjust(hspace=0.05)
 plt.tight_layout()
 plt.savefig('new2.png')
+
+wef
 plt.clf()
 fig, axs = plt.subplots(1,1,sharex=True)
 colors=['blue','green','red']

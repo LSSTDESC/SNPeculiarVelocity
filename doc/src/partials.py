@@ -531,8 +531,8 @@ def set2():
     plt.savefig('dvardz.png')
     plt.clf()
 
-set2()
-wefwe
+# set2()
+# wefwe
 
 def set1():
     fig,(ax) = plt.subplots(1, 1)
@@ -571,12 +571,12 @@ def set1():
         var_vonly.append(numpy.array(vvonly_)*2*3.14/.75) #3/4   
         # dvardkmax.append(numpy.array(dvdkmax_)*2*3.14/.75)
  
-    plt.plot(zmaxs,numpy.sqrt(var[0]),label='Two Years',color='red')
-    plt.plot(zmaxs,numpy.sqrt(var_ind[0]),label='Two Years, Independent Surveys',color='red',ls=':')  
     plt.plot(zmaxs,numpy.sqrt(var_vonly[0]),label='Two Years, Velocity Only',color='red',ls='--')  
-    plt.plot(zmaxs,numpy.sqrt(var[1]),label='Ten Years',color='black')
-    plt.plot(zmaxs,numpy.sqrt(var_ind[1]),label='Ten Years, Independent Surveys',color='black',ls=':')   
+    plt.plot(zmaxs,numpy.sqrt(var_ind[0]),label='Two Years, Independent Surveys',color='red',ls=':')  
+    plt.plot(zmaxs,numpy.sqrt(var[0]),label='Two Years, Cross-Correlated',color='red')
     plt.plot(zmaxs,numpy.sqrt(var_vonly[1]),label='Ten Years, Velocity Only',color='black',ls='--') 
+    plt.plot(zmaxs,numpy.sqrt(var_ind[1]),label='Ten Years, Independent Surveys',color='black',ls=':')   
+    plt.plot(zmaxs,numpy.sqrt(var[1]),label='Ten Years, Cross-Correlated',color='black')
 
     plt.xlabel(r'$z_{max}$')
     plt.ylim((0,0.07))
@@ -610,7 +610,7 @@ def set1():
 
 set1()
 
-
+wefwe
 def snIIp():
     fig,(ax) = plt.subplots(1, 1)
     zmax = 0.05
@@ -632,27 +632,22 @@ def snIIp():
         dvsigM_=[]
         dvdkmax_=[]
         for sigm in sigs:
-            f00,f11,f10, f00s,f11s,f10s,f00_ind,f11_ind,f10_ind, f00sigM,f11sigM,f10sigM,f00_vonly,_,_,_ = zintegral(zmax,ng,duration,sigm,restrate)
-            dv_.append(finvp(f00,f11,f10,f00s,f11s,f10s))
-            v_.append(numpy.linalg.inv(numpy.array([[f00,f10],[f10,f11]]))[0,0])
-            vind_.append(numpy.linalg.inv(numpy.array([[f00_ind,f10_ind],[f10_ind,f11_ind]]))[0,0])
-            vvonly_.append(1./f00_vonly)
-            dvsigM_.append(finvp(f00,f11,f10,f00sigM,f11sigM,f10sigM))
-            # dvdkmax_.append(finvp(f00,f11,f10,f00kmax,f11kmax,f10kmax))
-
+            f00,f11,f10, f00s,f11s,f10s,f00_ind,f11_ind,f10_ind, f00sigM,f11sigM,f10sigM,f00_vonly,f02,f12,f22, \
+                f02s,f12s,f22s,f02_ind,f12_ind,f22_ind, f02sigM,f12sigM,f22sigM, f01_vonly, f11_vonly = zintegral(zmax,ng,duration,sigm_Ia,restrate_Ia)
+            v_.append(numpy.linalg.inv(numpy.array([[f00,f10,f02],[f10,f11,f12],[f02,f12,f22+sigOM0sqinv]]))[0,0])
 
         var.append(numpy.array(v_)*2*3.14/.75) #3/4
-        dvards.append(numpy.array(dv_)*2*3.14/.75)
-        var_ind.append(numpy.array(vind_)*2*3.14/.75) #3/4
-        dvardsigM.append(numpy.array(dvsigM_)*2*3.14/.75)
-        var_vonly.append(numpy.array(vvonly_)*2*3.14/.75) #3/4   
+        # dvards.append(numpy.array(dv_)*2*3.14/.75)
+        # var_ind.append(numpy.array(vind_)*2*3.14/.75) #3/4
+        # dvardsigM.append(numpy.array(dvsigM_)*2*3.14/.75)
+        # var_vonly.append(numpy.array(vvonly_)*2*3.14/.75) #3/4   
         # dvardkmax.append(numpy.array(dvdkmax_)*2*3.14/.75)
 
     print (numpy.sqrt(var[0]))
     print (numpy.sqrt(var[1]))
 
 
-#  snIIp()
+snIIp()
 
 def fD_OmegaM():
     gamma=0.55
