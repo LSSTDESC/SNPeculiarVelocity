@@ -608,9 +608,8 @@ def set1():
     plt.savefig('dvardxxx.png')
     plt.clf()
 
-set1()
+#set1()
 
-wefwe
 def snIIp():
     fig,(ax) = plt.subplots(1, 1)
     zmax = 0.05
@@ -647,7 +646,9 @@ def snIIp():
     print (numpy.sqrt(var[1]))
 
 
-snIIp()
+#snIIp()
+
+
 
 def fD_OmegaM():
     gamma=0.55
@@ -667,3 +668,24 @@ def fD_OmegaM():
     plt.clf()
 
 # fD_OmegaM()
+
+# This is the code to determine the survey Figure of Merit
+# The inputs fron Nicolas are the solid angle covered and the number of SNe (if I remember correctly)
+# The inputs in this code are fraction of sky and survey duration
+# Calculating skyfrac is trivial
+# Calculating duration is harder
+# I think that the thing to do is take Nicolas output and make a histogram of number of SNe / solid angle
+# The histogram should should a distribution with a sharp cutoff.
+# The x-scale of the histogram can be renormalized so that the maximum of the histogram has duration=10
+# Then the following code should give an "inverse" figure of merit
+
+def surveyFOM(skyfrac, duration):
+    zmax = 0.2
+
+    f00,f11,f10, f00s,f11s,f10s,f00_ind,f11_ind,f10_ind, f00sigM,f11sigM,f10sigM,f00_vonly,f02,f12,f22, \
+        f02s,f12s,f22s,f02_ind,f12_ind,f22_ind, f02sigM,f12sigM,f22sigM, f01_vonly, f11_vonly = zintegral(zmax,ng,duration,sigm_Ia,restrate_Ia)
+
+    return numpy.linalg.inv(numpy.array([[f00,f10,f02],[f10,f11,f12],[f02,f12,f22+sigOM0sqinv]]))[0,0]*2*3.14/skyfrac
+
+
+surveyFOM()
