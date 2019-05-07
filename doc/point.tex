@@ -1,0 +1,266 @@
+\documentclass{article}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{bm}
+\usepackage{physics}
+\title{Complete draft}
+%\author{Chao Ju, Alex Kim}
+\begin{document}
+\maketitle
+
+There is sufficient information in the distribution of peculiar velocities and overdensities of galaxies to test general relativity on the largest scale. Suppose we have a region that encloses $N_{gal}$ number of galaxies in the universe. We can divide the region into $N_{cell}\gg 1$ number of equal volume cells whose size can be made so small that either one or no galaxy is contained in one cell. This is encoded in a vector $\textbf{N}$ of size $N_{cell}$ whose entries are either 0 or 1. For any 2 cells, we can compute their correlation, a function of the distance $r$ between the cells only. In our application, we consider $\xi_{\delta\delta}$ (the overdensity-overdensity correlation), $\xi_{\delta v}$ (overdensity-velocity correlation), $\xi_{v\delta}$ (velocity-overdensity correlation), and $\xi_{vv}$ (velocity-velocity correlation).\par
+We postulate that deviations from expected variance $\bar{N}$ and expected peculiar velocity $\bar{v}$ are Gaussian. Then the above correlation matrices can be used to construct a block matrix $\textbf{C}$, parameterized by $A$ and $\bm{\sigma}_v$, a vector of shot noise for peculiar velocity measurement:
+\begin{align}
+\textbf{C} &\equiv \textbf{K} + A\textbf{S} \\ 
+&=
+\left(
+\begin{array}{cc}
+\bar{N}\textbf{I} & 0 \nonumber \\
+0 & \bm{\sigma}_v^2\textbf{I}
+\end{array}
+\right)
++
+A
+\left(
+\begin{array}{cc}
+\bar{N}^2\xi_{\delta\delta} & \bar{N}\xi_{\delta v} \\
+\bar{N}\xi_{\delta v} & \xi_{vv}
+\end{array}
+\right).
+\end{align}\par
+The reason we have $\bar{N}$ as the variance for overdensity is that our small galaxy cells are best modeled by Poisson statistics, in which the mean equals the variance. In addition, note that the dimension of $C$ is $N_{cell}+N_{gal}$ by $N_{cell}+N_{gal}$. For the peculiar velocity covariance, we assign $\sigma^2=\infty$ to cells that do not contain any galaxy, and one can show that removing rows and columns that contain those cells has no effect but a constant offset on what we will compute later. \par
+Given the block matrix $C$ and our data $\textbf{x}= [N_1-\bar{N}, N_2-\bar{N}, \hdots, N_{N_{cell}}-\bar{N}, \Delta v_1, \hdots, \Delta v_{N_{gal}}]^T$, where $\Delta v$ is the deviation of the measured velocity from the expected, we can form the Gaussian likelihood as a function of $A$
+\[
+\mathcal{L}(A) = \frac{1}{\sqrt{\left(2\pi\right)^{N_{cell}+N_{gal}} \det \textbf{C}}}\exp\left\{-\frac{1}{2}\textbf{x}^T\textbf{C}^{-1}\textbf{x}\right\}.
+\]\par
+To make the expression cleaner, we take the log of the likelihood and focus on the $A$-dependent part:
+\begin{equation}
+-2\ln\mathcal{L}(A) = \ln\det\textbf{C} + \textbf{x}^T\textbf{C}^{-1}\textbf{x} + \text{const}.
+\end{equation}\par
+Given the enormous size of $\textbf{C}$, computing the log likelihood directly is not possible. In the following, we seek an approximation method accurate to first order in $A$. \par
+First, we focus on the second term, $\textbf{x}^T\textbf{C}^{-1}\textbf{x}$. Looking at the definition of $\textbf{C}$ in equation (1), we want to factor $\textbf{K}$ into an identity matrix. To do so, we introduce matrix $\textbf{M}$ and $\textbf{X}$. We let $\textbf{M}=\sqrt{\textbf{K}}$, and $\textbf{S} = \textbf{M} \textbf{X} \textbf{M}$. Then $\textbf{X}=\textbf{M}^{-1}\textbf{S}\textbf{M}^{-1}$. Now, our matrix $\textbf{C}$ can be re-written in terms of $\textbf{X}$ and $\textbf{M}$:
+\begin{equation}
+\textbf{C} = \textbf{M}(\textbf{I}+A\textbf{X})\textbf{M},
+\end{equation}
+and its inverse, to first order, is
+\[
+\textbf{C}^{-1} = \textbf{M}^{-1}(1-A\textbf{X}) \textbf{M}^{-1} = -A \textbf{K}^{-1}\textbf{S}\textbf{K}^{-1} + \text{const}.
+\] \par
+Having this expression, we can now compute the second term in equation (2). Denoting the value of this term by $s$, we have
+\begin{align*}
+s &=\textbf{x}^T \textbf{C}^{-1}\textbf{x} \\
+&= -A\left(\textbf{x}^T \textbf{K}^{-1}\right)\textbf{S}\left(\textbf{K}^{-1}\textbf{x}\right).
+\end{align*} \par
+Using the equations for covariance calculation from \cite{adam}, we can break the above expression into a sum of 6 terms and write out the explicit solution for each (apart from a zeroth-order constant). Let 
+\[
+-\left(\textbf{x}^T \textbf{K}^{-1}\right)\textbf{S}\left(\textbf{K}^{-1}\textbf{x}\right) = s_1 +s_2+\hdots +s_6
+\]
+\begin{align*}
+s_1&= -\sum_{i,j\in N_{gal}} \xi_{\delta\delta,ij},  \\
+s_2 &= 2 \sum_{i\in N_{gal},j\in N_{cell}} \bar{N} \xi_{\delta\delta,ij}, \\
+&= 2\bar{N} \frac{b^2}{2\pi} \sum_{i\in N_{gal}} \int r^2drd\Omega  \int dk P(k) k^2 j_0 (k |\textbf{r}-\textbf{r}_i|), \\
+s_3 &= -\sum_{i,j\in N_{cell}} \bar{N}^2  \xi_{\delta\delta,ij}, \\ 
+&=-\bar{N}^2 \frac{b^2}{2\pi} \int r_1^2dr_1d\Omega_1 \int r_2^2dr_2 d\Omega_2 \int dk P(k) k^2 j_0 (k |\textbf{r}_1-\textbf{r}_2|), \\
+s_4 &=- \sum_{i,j\in N_{gal}} \frac{\Delta v_i}{\sigma_{v,i}^2} \xi_{vv,ij} \frac{\Delta v_j}{\sigma_{v,j}^2}, \\
+s_5 &= -2 \sum_{i,j\in N_{gal}} \frac{\Delta v_j}{\sigma_{v,j}^2} \xi_{\delta v,ij}, \\
+s_6 &= 2\sum_{i\in N_{cell}, j\in N_{gal}} \bar{N}\frac{\Delta v_j}{\sigma_{v,j}^2} \xi_{\delta v,ij},  \\
+&= 2\bar{N}\sum_{j\in N_{gal}} \frac{aHfb\Delta v_j}{2\pi^2 \sigma^2_{v,j}}\int r^2 dr d\Omega \int dk P(k) k ((\hat{\textbf{r}}-\hat{\textbf{r}_j})\cdot\hat{\textbf{r}_j}) j_1(k|\textbf{r}-\textbf{r}_j|). 
+%s_7 &= A  \sum_{j\in N_{cell}, i\in N_{gal}} \bar{N}\frac{\Delta v_i}{\sigma_{v,i}^2} \xi_{v\delta,ij}  \\
+%&= A\bar{N} \sum_{i\in N_{gal}} \frac{+aHfb\Delta v_i}{2\pi^2 \sigma^2_{v,i}}\int r^2 dr d\Omega \int dk P(k) k (\textbf{r}\cdot\textbf{r}_i) j_1(k|\textbf{r}-\textbf{r}_i|)
+\end{align*} \par
+We note that in the above expressions, $P(k)$ is the power spectrum, $a$ the expansion factor, $H$ the Hubble constant, $b$ the galaxy bias, $f$ the growth rate of structure, and $j_l$ the spherical Bessel function. \par
+Having computed the second term in equation (2), we now turn to the first term, $\ln\det\textbf{C}$. Using equation (3) to factor $\textbf{C}$, we have
+\begin{align*}
+\ln\det(\textbf{C}) &=\ln\det(\textbf{M}(\textbf{I}+A\textbf{X})\textbf{M})) \\
+&= \ln\det(\textbf{I}+A\textbf{X}) +\text{const} \\
+&\approx A \tr \textbf{X} \\
+&= A\tr(\textbf{M}^{-1}\textbf{S}\textbf{M}^{-1}) \\
+&= A\tr 
+\left(
+\begin{array}{cc}
+\bar{N}\xi_{\delta\delta} & \frac{\sqrt{\bar{N}}}{\sigma_{v}} \xi_{\delta v} \\
+\frac{\sqrt{\bar{N}}}{\sigma_{v}} \xi_{v\delta} & \frac{1}{\sigma_{v}^2} \xi_{vv} 
+\end{array}
+\right),
+\end{align*}
+The trace can be broken up into 2 sums, $d_1+d_2$:
+\begin{align*}
+d_1 = \frac{b^2\bar{N}}{2\pi} \int r^2drd\Omega  \int dk P(k) k^2 
+\end{align*}
+since $j_0(0)=1$.
+\[
+d_2 = \sum_{i}\xi_{vv,ii}\sigma_i^{-2}
+\] \par
+In the limit as $N_{cell}$ goes to infinity, $\bar{N}\propto 1/N_{cell}$ goes to zero. Therefore, terms that contain $k$ factors of $N_{cell}$ will vanish in the $N_{cell}\to\infty$ limit unless they also contain $k$ summations over $N_{cell}$: $\sum_{N_{cell}}$. The reason is that $\sum_{N_{cell}}\bar{N}$ stays finite when $N_{cell}\to \infty$. Looking at the above $s$ and $d$ terms, we see that all of them are finite in the large $\bar{N}$ limit, and the the full likelihood to first order in $\bar{N}$ is
+\[
+\boxed{A(s_1+s_2+s_4+s_5+s_6+d_1+d_2)}
+\]\par
+$s_3$ is not selected because it is quadratic in $\bar{N}$.
+\section{Inversion to second order}
+The $O(A^2)$ prefactor in $\textbf{C}^{-1}$ is 
+\begin{align*}
+\textbf{M}^{-1}\textbf{X}^2\textbf{M}^{-1} &= \textbf{M}^{-1} \textbf{M}^{-1} \textbf{S} \textbf{M}^{-1}\textbf{M}^{-1} \textbf{S} \textbf{M}^{-1}\textbf{M}^{-1} \\
+&=\textbf{K}^{-1}\textbf{S}\textbf{K}^{-1}\textbf{S}\textbf{K}^{-1}
+\end{align*}\par
+I first sight I wanted to move $\textbf{S}$ across the $\textbf{K}^{-1}$ by using a commutator, thinking that it might simplify things a lot. But it turned out that the commutator did not lead to the expected cancelation, so let's do it the hard way. We first do $\textbf{K}^{-1}\textbf{S}\textbf{K}^{-1}\textbf{S}$, henceforth denoting the inverse of $\bm{\sigma}^2_v\textbf{I}$ as $\bm{\sigma}^{-1}$:
+\begin{align*}
+\textbf{K}^{-1}\textbf{S}\textbf{K}^{-1}\textbf{S} &=
+\left(
+\begin{array}{cc}
+\bar{N}\xi_{\delta\delta} & \xi_{\delta v} \\
+\bar{N}\bm{\sigma}^{-1} \xi_{v\delta} & \bm{\sigma}^{-1} \xi_{vv}
+\end{array}
+\right)
+\left(
+\begin{array}{cc}
+\bar{N}\xi_{\delta\delta} & \xi_{\delta v} \\
+\bar{N}\bm{\sigma}^{-1} \xi_{v\delta} & \bm{\sigma}^{-1} \xi_{vv}
+\end{array}
+\right) \\
+&=
+\left(
+\begin{array}{cc}
+\bar{N}^2 \xi_{\delta\delta}^2 + \bar{N}\xi_{\delta v}\bm{\sigma}^{-1} \xi_{v\delta} & \bar{N}\xi_{\delta\delta}\xi_{\delta v}+\xi_{\delta v}\bm{\sigma}^{-1}\xi_{vv} \\
+\bar{N}^2\bm{\sigma}^{-1} \xi_{v\delta}\xi_{\delta\delta}+\bar{N}\bm{\sigma}^{-1} \xi_{vv}\bm{\sigma}^{-1} \xi_{v\delta} & \bar{N}\bm{\sigma}^{-1} \xi_{v\delta}\xi_{\delta v} + \bm{\sigma}^{-1} \xi_{vv}\bm{\sigma}^{-1} \xi_{vv}
+\end{array}
+\right)
+\end{align*}\par
+Next, we multiply $\textbf{K}^{-1}$ from the right and get
+\begin{align*}
+\textbf{K}^{-1}\textbf{S}\textbf{K}^{-1}\textbf{S}\textbf{K}^{-1} &=
+\left(
+\begin{array}{cc}
+\bar{N}^2 \xi_{\delta\delta}^2 + \bar{N}\xi_{\delta v}\bm{\sigma}^{-1} \xi_{v\delta} & \bar{N}\xi_{\delta\delta}\xi_{\delta v}+\xi_{\delta v}\bm{\sigma}^{-1}\xi_{vv} \\
+\bar{N}^2\bm{\sigma}^{-1} \xi_{v\delta}\xi_{\delta\delta}+\bar{N}\bm{\sigma}^{-1} \xi_{vv}\bm{\sigma}^{-1} \xi_{v\delta} & \bar{N}\bm{\sigma}^{-1} \xi_{v\delta}\xi_{\delta v} + \bm{\sigma}^{-1} \xi_{vv}\bm{\sigma}^{-1} \xi_{vv}
+\end{array}
+\right)
+\left(
+\begin{array}{cc}
+\bar{N}^{-1}\textbf{I} & 0 \\
+0 & \bm{\sigma}^{-1}
+\end{array}
+\right) \\
+&=
+\left(
+\begin{array}{cc}
+\bar{N} \xi_{\delta\delta}^2 + \xi_{\delta v}\bm{\sigma}^{-1} \xi_{v\delta} & \bar{N}\xi_{\delta\delta}\xi_{\delta v}\bm{\sigma}^{-1}+\xi_{\delta v}\bm{\sigma}^{-1}\xi_{vv}\bm{\sigma}^{-1} \\
+\bar{N}\bm{\sigma}^{-1} \xi_{v\delta}\xi_{\delta\delta}+\bm{\sigma}^{-1} \xi_{vv}\bm{\sigma}^{-1} \xi_{v\delta} & \bar{N}\bm{\sigma}^{-1} \xi_{v\delta}\xi_{\delta v}\bm{\sigma}^{-1} + \bm{\sigma}^{-1} \xi_{vv}\bm{\sigma}^{-1} \xi_{vv}\bm{\sigma}^{-1}
+\end{array}
+\right)
+\end{align*}\par
+Let's denote the 4 blocks in the above matrix by
+\[
+\textbf{K}^{-1}\textbf{S}\textbf{K}^{-1}\textbf{S}\textbf{K}^{-1}=
+\left(
+\begin{array}{cc}
+\textbf{A} & \textbf{B} \\
+\textbf{C} & \textbf{D}
+\end{array}
+\right)
+\]\par
+Let's now compute each block (the summations below are taken from $0$ to $N_{gal}$ unless otherwise specified). 
+\begin{align*}
+\textbf{A}_{ij} &=(\bar{N} \xi_{\delta\delta}^2 + \xi_{\delta v}\bm{\sigma}^{-1} \xi_{v\delta})_{ij} \\
+&= \frac{\bar{N}b^4}{4\pi^4} \int r^2drd\Omega \iint dk_1dk_2 P(k_1)P(k_2) k_1^2k_2^2j_0(k_1|\textbf{r}-\textbf{r}_i|)j_0(k_2|\textbf{r}-\textbf{r}_j|) +\sum_{m}\sigma_{m}^{-2}\xi_{\delta v,im}\xi_{v\delta,mj} \\
+&=\frac{\bar{N}b^4}{4\pi^4} \int r^2drd\Omega \iint dk_1dk_2 P(k_1)P(k_2) k_1^2k_2^2j_0(k_1|\textbf{r}-\textbf{r}_i|)j_0(k_2|\textbf{r}-\textbf{r}_j|)\\
+&+\frac{a^2H^2f^2b^2}{4\pi^2} \sum_m \sigma_{m}^{-2} \iint dk_1dk_2 P(k_1)P(k_2) k_1k_2j_1(k_1|\textbf{r}_i-\textbf{r}_m|)j_1(k_2|\textbf{r}_m-\textbf{r}_j|)(\hat{\textbf{r}}_i-\hat{\textbf{r}}_m)\cdot\hat{\textbf{r}}_m(\hat{\textbf{r}}_m-\hat{\textbf{r}}_j)\cdot\hat{\textbf{r}}_m\\
+\textbf{B}_{ij} &= \frac{\bar{N}aHfb^3\sigma_j^{-2}}{4\pi^4}\int r^2drd\Omega \iint dk_1dk_2 P(k_1)P(k_2)k_1^2k_2(\hat{\textbf{r}}-\hat{\textbf{r}}_j)\cdot\hat{\textbf{r}}_jj_0(k_1|\textbf{r}-\textbf{r}_i|)j_1(k_2|\textbf{r}-\textbf{r}_j|)\\
+&+ \sigma_j^{-2}\sum_m \sigma_m^{-2}\xi_{\delta v,im}\xi_{vv,mj} \\
+&=\frac{\bar{N}aHfb^3\sigma_j^{-2}}{4\pi^4}\int r^2drd\Omega \iint dk_1dk_2 P(k_1)P(k_2)k_1^2k_2(\hat{\textbf{r}}-\hat{\textbf{r}}_j)\cdot\hat{\textbf{r}}_jj_0(k_1|\textbf{r}-\textbf{r}_i|)j_1(k_2|\textbf{r}-\textbf{r}_j|) \\
+&+\frac{\sigma_j^{-2}aHfb}{2\pi^2}\sum_m \sigma_m^{-2} \xi_{vv,mj}\int dk P(k)k j_1(k|\textbf{r}_i-\textbf{r}_m|)(\hat{\textbf{r}}_i-\hat{\textbf{r}}_m)\cdot\hat{\textbf{r}}_m \\
+\textbf{C}_{ij} &=\frac{\bar{N}aHfb^3\sigma_i^{-2}}{4\pi^4}\int r^2drd\Omega \iint dk_1dk_2 P(k_1)P(k_2)k_1k_2^2(\hat{\textbf{r}_i}-\hat{\textbf{r}})\cdot\hat{\textbf{r}}_ij_0(k_2|\textbf{r}-\textbf{r}_j|)j_1(k_1|\textbf{r}-\textbf{r}_i|)\\
+&+ \sigma_j^{-2}\sum_m \sigma_m^{-2}\xi_{vv,im}\xi_{v\delta,mj} \\
+&=\frac{\bar{N}aHfb^3\sigma_i^{-2}}{4\pi^4}\int r^2drd\Omega \iint dk_1dk_2 P(k_1)P(k_2)k_1k_2^2(\hat{\textbf{r}_i}-\hat{\textbf{r}})\cdot\hat{\textbf{r}}_ij_0(k_2|\textbf{r}-\textbf{r}_j|)j_1(k_1|\textbf{r}-\textbf{r}_i|)\\
+&+\frac{\sigma_j^{-2}aHfb}{2\pi^2}\sum_m \sigma_m^{-2} \xi_{vv,im}\int dk P(k)k j_1(k|\textbf{r}_m-\textbf{r}_j|)(\hat{\textbf{r}}_m-\hat{\textbf{r}}_j)\cdot\hat{\textbf{r}}_m\\
+\textbf{D}_{ij} &=\frac{\bar{N}a^2H^2f^2b^2\sigma_i^{-2}\sigma_j^{-2}}{4\pi^4} \int r^2drd\Omega \iint dk_1dk_2 P(k_1)P(k_2)k_1^2k_2^2(\hat{\textbf{r}_i}-\hat{\textbf{r}})\cdot\hat{\textbf{r}}_i(\hat{\textbf{r}}-\hat{\textbf{r}}_j)\cdot\hat{\textbf{r}}_j\times \\ 
+&\times j_1(k_1|\textbf{r}-\textbf{r}_i|)j_1(k_2|\textbf{r}-\textbf{r}_j|) +\sigma_i^{-2}\sigma_j^{-2}\sum_m \sigma_m^{-2}\xi_{vv,im}\xi_{vv,mj}
+\end{align*}\par
+Having obtained the 4 block matrices, we now proceed with the calculation of $\textbf{x}^T\textbf{K}^{-1}\textbf{S}\textbf{K}^{-1}\textbf{S}\textbf{K}^{-1}\textbf{x}$. Similar to what we did for the first order, we break the sum into the following terms (again, summation is within the range of $N_{gal}$ by default unless otherwise stated):
+\begin{align*}
+S_1 &= \sum_{i, j} \textbf{A}_{ij} \\
+&=\frac{\bar{N}b^4}{4\pi^4}\sum_{i, j} \int r^2drd\Omega \iint dk_1dk_2 P(k_1)P(k_2) k_1^2k_2^2j_0(k_1|\textbf{r}-\textbf{r}_i|)j_0(k_2|\textbf{r}-\textbf{r}_j|)  \\
+&+ \frac{a^2H^2f^2b^2}{4\pi^2} \sum_{m,i,j} \sigma_{m}^{-2} \iint dk_1dk_2 P(k_1)P(k_2) k_1k_2j_1(k_1|\textbf{r}_i-\textbf{r}_m|)j_1(k_2|\textbf{r}_m-\textbf{r}_j|)(\hat{\textbf{r}}_i-\hat{\textbf{r}}_m)\cdot\hat{\textbf{r}}_m(\hat{\textbf{r}}_m-\hat{\textbf{r}}_j)\cdot\hat{\textbf{r}}_m\\
+S_2 &=-2\bar{N} \sum_{i\in N_{gal},j\in N_{cell}} \textbf{A}_{ij}\\
+&=\frac{-\bar{N}^2 b^4}{2\pi^4}\sum_{i}\int r^2r_j^2drd\Omega dr_j d\Omega_j \iint dk_1dk_2 P(k_1)P(k_2) k_1^2k_2^2j_0(k_1|\textbf{r}-\textbf{r}_i|)j_0(k_2|\textbf{r}-\textbf{r}_j|)-\frac{a^2H^2f^2b^2\bar{N}}{2\pi^2}\times \\
+&\times  \sum_{m,i} \sigma_{m}^{-2}\int r_j^2dr_j d\Omega_j \iint dk_1dk_2 P(k_1)P(k_2) k_1k_2j_1(k_1|\textbf{r}_i-\textbf{r}_m|)j_1(k_2|\textbf{r}_m-\textbf{r}_j|)(\hat{\textbf{r}}_i-\hat{\textbf{r}}_m)\cdot\hat{\textbf{r}}_m \times \\
+&\times (\hat{\textbf{r}}_m-\hat{\textbf{r}}_j)\cdot\hat{\textbf{r}}_m \\
+S_3 &= \bar{N}^2 \sum_{i, j\in N_{cell}} \textbf{A}_{ij} \\
+&=\frac{\bar{N}^3b^4}{4\pi^4}\int r^2r_i^2r_j^2 drd\Omega d\Omega_i d\Omega_j \iint dk_1dk_2 P(k_1)P(k_2) k_1^2k_2^2j_0(k_1|\textbf{r}-\textbf{r}_i|)j_0(k_2|\textbf{r}-\textbf{r}_j|)  \\
+&+ \frac{a^2H^2f^2b^2 \bar{N}^2}{4\pi^2} \sum_{m} \sigma_{m}^{-2}\int r_i^2r_j^2 dr_idr_j d\Omega_i d\Omega_j  \iint dk_1dk_2 P(k_1)P(k_2) k_1k_2j_1(k_1|\textbf{r}_i-\textbf{r}_m|)j_1(k_2|\textbf{r}_m-\textbf{r}_j|)\times\\
+&\times (\hat{\textbf{r}}_i-\hat{\textbf{r}}_m)\cdot\hat{\textbf{r}}_m(\hat{\textbf{r}}_m-\hat{\textbf{r}}_j)\cdot\hat{\textbf{r}}_m \\
+S_4 &= \sum_{i,j} \textbf{D}_{ij}\Delta v_i \Delta v_j \\
+&= \frac{\bar{N}a^2H^2f^2b^2}{4\pi^4}\sum_{i,j}\sigma_i^{-2}\sigma_j^{-2}\Delta v_i \Delta v_j \int r^2drd\Omega \iint dk_1dk_2 P(k_1)P(k_2)k_1^2k_2^2(\hat{\textbf{r}_i}-\hat{\textbf{r}})\cdot\hat{\textbf{r}}_i(\hat{\textbf{r}}-\hat{\textbf{r}}_j)\cdot\hat{\textbf{r}}_j\times \\ 
+&\times j_1(k_1|\textbf{r}-\textbf{r}_i|)j_1(k_2|\textbf{r}-\textbf{r}_j|) +\sum_{m,i,j} \sigma_i^{-2}\sigma_j^{-2}\sigma_m^{-2}\Delta v_i \Delta v_j\xi_{vv,im}\xi_{vv,mj}\\
+S_5 &= 2\sum_{i,j}\textbf{B}_{ij}\Delta v_j \\
+&=\frac{\bar{N}aHfb^3}{2\pi^4}\sum_{i,j}\sigma_j^{-2}\Delta v_j\int r^2drd\Omega \iint dk_1dk_2 P(k_1)P(k_2)k_1^2k_2(\hat{\textbf{r}}-\hat{\textbf{r}}_j)\cdot\hat{\textbf{r}}_jj_0(k_1|\textbf{r}-\textbf{r}_i|)j_1(k_2|\textbf{r}-\textbf{r}_j|) \\
+&+\frac{\sigma_j^{-2}aHfb}{\pi^2}\sum_{m,i,j}\Delta v_j \sigma_m^{-2} \xi_{vv,mj}\int dk P(k)k j_1(k|\textbf{r}_i-\textbf{r}_m|)(\hat{\textbf{r}}_i-\hat{\textbf{r}}_m)\cdot\hat{\textbf{r}}_m\\
+S_6 &=-2\bar{N} \sum_{i\in N_{cell},j\in N_{gal}}\textbf{B}_{ij} \Delta v_j\\
+&=\frac{-\bar{N}^2aHfb^3}{2\pi^4}\sum_{j}\sigma_j^{-2}\Delta v_j\int r^2r_i^2drdr_id\Omega d\Omega_i \iint dk_1dk_2 P(k_1)P(k_2)k_1^2k_2(\hat{\textbf{r}}-\hat{\textbf{r}}_j)\cdot\hat{\textbf{r}}_jj_0(k_1|\textbf{r}-\textbf{r}_i|)\times \\
+&\times j_1(k_2|\textbf{r}-\textbf{r}_j|)-\frac{\bar{N}aHfb}{\pi^2}\sum_{m,j}\sigma_j^{-2} \Delta v_j \sigma_m^{-2} \xi_{vv,mj}\int r_i^2 dr_id\Omega_i\int dk P(k)k j_1(k|\textbf{r}_i-\textbf{r}_m|)(\hat{\textbf{r}}_i-\hat{\textbf{r}}_m)\cdot\hat{\textbf{r}}_m
+\end{align*}\par
+The seconder-order contribution from $\textbf{x}^T\textbf{C}^{-1}\textbf{x}$ to the likelihood is thus
+\[
+A^2 (S_1 +S_2 +S_3 +S_4 +S_5 +S_6)
+\]\par
+\section{Log det to second order}
+We now calculate the second-order contribution from the log det term. The $O(A^2)$ prefactor in $\ln \det(\textbf{I}+A\textbf{X})$ is
+\[
+-\frac{1}{2}\tr (\textbf{X}^2) = -\frac{1}{2}\tr(\textbf{M}^{-1}\textbf{S}\textbf{M}^{-1}\textbf{M}^{-1}\textbf{S}\textbf{M}^{-1})
+\]\par
+Since the trace is cyclic, we can permute the matrix multiplication and make it into something we've calculated on page 3:
+\begin{align*}
+-\frac{1}{2}\tr (\textbf{X}^2)&=-\frac{1}{2}\tr(\textbf{M}^{-1}\textbf{S}\textbf{M}^{-1}\textbf{M}^{-1}\textbf{S}\textbf{M}^{-1})\\
+&=-\frac{1}{2}\tr(\textbf{M}^{-1}\textbf{M}^{-1}\textbf{S}\textbf{M}^{-1}\textbf{M}^{-1}\textbf{S}) \\
+&= -\frac{1}{2}\tr(\textbf{K}^{-1}\textbf{S}\textbf{K}^{-1}\textbf{S}) \\
+&= -\frac{1}{2}\tr\left\{
+\left(
+\begin{array}{cc}
+\bar{N}^2 \xi_{\delta\delta}^2 + \bar{N}\xi_{\delta v}\bm{\sigma}^{-1} \xi_{v\delta} & \bar{N}\xi_{\delta\delta}\xi_{\delta v}+\xi_{\delta v}\bm{\sigma}^{-1}\xi_{vv} \\
+\bar{N}^2\bm{\sigma}^{-1} \xi_{v\delta}\xi_{\delta\delta}+\bar{N}\bm{\sigma}^{-1} \xi_{vv}\bm{\sigma}^{-1} \xi_{v\delta} & \bar{N}\bm{\sigma}^{-1} \xi_{v\delta}\xi_{\delta v} + \bm{\sigma}^{-1} \xi_{vv}\bm{\sigma}^{-1} \xi_{vv}
+\end{array}
+\right)
+\right\}
+\end{align*}\par
+Expanding the trace, we get (using $D_i$ to label each term)
+\begin{align*}
+D_1 + D_2 + D_3 + D_4 &\equiv -\frac{\bar{N}^2}{2} \sum_{i,j\in N_{cell}} \xi_{\delta\delta,ij}\xi_{\delta\delta,ji} -\frac{\bar{N}}{2}\sum_{i \in N_{cell},j\in N_{gal}} \sigma_j^{-2}\xi_{\delta v,ij} \xi_{v\delta,ji} \\
+&-\frac{\bar{N}}{2} \sum_{i\in N_{gal},j\in N_{cell}} \sigma_i^{-2} \xi_{v\delta,ij}\xi_{\delta v,ji} - \frac{1}{2} \sum_{i,j} \sigma_i^{-2}\sigma_j^{-2} \xi_{vv,ij}\xi_{vv,ji}
+\end{align*}\par
+Let's calculate each $D$:
+\begin{align*}
+D_1 &= -\frac{\bar{N}^2 b^4}{8\pi^4} \int r^2r_i^2drdr_id\Omega d\Omega_i d \iint dk_1dk_2 P(k_1)P(k_2) k_1^2k_2^2j_0(k_1|\textbf{r}-\textbf{r}_i|)j_0(k_2|\textbf{r}-\textbf{r}_i|) \\
+D_2 &= -\frac{a^2H^2f^2b^2\bar{N}}{8\pi^2} \sum_j \sigma_{j}^{-2}\int r_i^2 dr_i d\Omega_i \iint dk_1dk_2 P(k_1)P(k_2) k_1k_2j_1(k_1|\textbf{r}_i-\textbf{r}_j|)j_1(k_2|\textbf{r}_j-\textbf{r}_i|)\times \\
+&\times (\hat{\textbf{r}}_i-\hat{\textbf{r}}_j)\cdot\hat{\textbf{r}}_j(\hat{\textbf{r}}_j-\hat{\textbf{r}}_i)\cdot\hat{\textbf{r}}_j\\
+D_3 &= -\frac{\bar{N}a^2H^2f^2b^2}{8\pi^4} \sum_{i}\sigma_i^{-2} \int r^2drd\Omega \iint dk_1dk_2 P(k_1)P(k_2)k_1^2k_2^2(\hat{\textbf{r}_i}-\hat{\textbf{r}})\cdot\hat{\textbf{r}}_i(\hat{\textbf{r}}-\hat{\textbf{r}}_i)\cdot\hat{\textbf{r}}_i\times \\ 
+&\times j_1(k_1|\textbf{r}-\textbf{r}_i|)j_1(k_2|\textbf{r}-\textbf{r}_i|)\\
+D_4 &=- \frac{1}{2} \sum_{i,j} \sigma_i^{-2}\sigma_j^{-2} \xi_{vv,ij}\xi_{vv,ji}
+\end{align*}\par
+By similar argument as we did at the end of the previous section, all of the above stay finite in the limit $N_{cell}\to\infty$. In summary, the full likelihood at second order (in $A$, not in $\bar{N}$) is
+\[
+\boxed{A^2 (S_1 +S_2' +S_4 +S_5 +S_6'+D_2+D_3+D_4)}
+\]
+where
+\begin{align*}
+S_2' &=-\frac{a^2H^2f^2b^2\bar{N}}{2\pi^2}\times \\
+&\times  \sum_{m,i} \sigma_{m}^{-2}\int r_j^2dr_j d\Omega_j \iint dk_1dk_2 P(k_1)P(k_2) k_1k_2j_1(k_1|\textbf{r}_i-\textbf{r}_m|)j_1(k_2|\textbf{r}_m-\textbf{r}_j|)(\hat{\textbf{r}}_i-\hat{\textbf{r}}_m)\cdot\hat{\textbf{r}}_m \times \\
+&\times (\hat{\textbf{r}}_m-\hat{\textbf{r}}_j)\cdot\hat{\textbf{r}}_m \\
+S_6' &=-\frac{\bar{N}aHfb}{\pi^2}\sum_{m,j}\sigma_j^{-2} \Delta v_j \sigma_m^{-2} \xi_{vv,mj}\int r_i^2 dr_id\Omega_i\int dk P(k)k j_1(k|\textbf{r}_i-\textbf{r}_m|)(\hat{\textbf{r}}_i-\hat{\textbf{r}}_m)\cdot\hat{\textbf{r}}_m
+\end{align*}
+after removing the $O(\bar{N}^2)$ terms. Note that $S_3$ and $D_1$ dropped out completely.
+\section{Full likelihood to second order}
+Adding up both the first and the second order contribution, we have
+\[
+\mathcal{L} =\boxed{ A^2 (S_1 +S_2'  +S_4 +S_5 +S_6'+D_2+D_3+D_4) +A(s_1+s_2+s_4+s_5+s_6+d_1+d_2)}
+\]
+with extremum at
+\[
+\boxed{A^*= -\frac{s_1+s_2+s_4+s_5+s_6+d_1+d_2}{2(S_1 +S_2'  +S_4 +S_5 +S_6'+D_2+D_3+D_4)}}
+\]
+
+\begin{thebibliography}{9}
+\bibitem{adam}
+C. Adams, C. Blake. 
+Improving constraints on the growth rate of structure by modelling the density-velocity cross-correlation in the 6dF Galaxy Survey. arXiv:1706.05205 [astro-ph.CO].
+\end{thebibliography}
+
+\end{document}
