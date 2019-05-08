@@ -3,6 +3,7 @@
 \usepackage{amssymb}
 \usepackage{bm}
 \usepackage{physics}
+\usepackage{verbatim}
 \title{Complete draft}
 %\author{Chao Ju, Alex Kim}
 \begin{document}
@@ -36,7 +37,118 @@ Given the block matrix $C$ and our data $\textbf{x}= [N_1-\bar{N}, N_2-\bar{N}, 
 To make the expression cleaner, we take the log of the likelihood and focus on the $A$-dependent part:
 \begin{equation}
 -2\ln\mathcal{L}(A) = \ln\det\textbf{C} + \textbf{x}^T\textbf{C}^{-1}\textbf{x} + \text{const}.
+\label{log:eqn}
 \end{equation}\par
+
+%  ---- Change
+%NEW STUFF
+
+We new expand the log-likelihood as a Taylor series for small $A$ around $A=0$.
+
+First, we focus on the  term $\textbf{x}^T\textbf{C}^{-1}\textbf{x}$. We rewrite $\textbf{C}$ by normalizing out its uncorrelated $\textbf{K}$ term
+by   introducing the matrices $\textbf{M}$ and $\textbf{X}$,
+where $\textbf{M}=\sqrt{\textbf{K}}$ and $\textbf{S} = \textbf{M} \textbf{X} \textbf{M}$ such that $\textbf{X}=\textbf{M}^{-1}\textbf{S}\textbf{M}^{-1}$. Now, our matrix $\textbf{C}$ can be re-written in terms of $\textbf{X}$ and $\textbf{M}$:
+\begin{equation}
+\textbf{C} = \textbf{M}(\textbf{I}+A\textbf{X})\textbf{M}.
+\end{equation}
+Expanded as a Taylor series
+\begin{align}
+\textbf{C}^{-1} & = \textbf{M}^{-1}(1-A\textbf{X}+A^2 \textbf{X}^2 + \ldots) \textbf{M}^{-1} \\
+& = \textbf{K}^{-1}   -A \textbf{K}^{-1}\textbf{S}\textbf{K}^{-1} +\frac{A^2}{2} \textbf{K}^{-1}\textbf{S}\textbf{K}^{-1}\textbf{S}\textbf{K}^{-1} +O(A^3) + \ldots 
+\end{align}
+%= -A \textbf{K}^{-1}\textbf{S}\textbf{K}^{-1} + \text{const}.
+%\] \par
+
+We evaluate $\textbf{x}^T \textbf{C}^{-1}\textbf{x}$ by splitting up the counts and velocities.  The data vector $\textbf{x}$ is composed of the counts
+ $\textbf{N}-\bar{N}$ and peculiar velocities $\mathbf{\Delta v}$, whereas $\textbf{S}$ is comprised of $\bar{N}^2\xi_{\delta\delta}$, $\bar{N}\xi_{\delta v}$,
+and $\xi_{vv}$.  In this manner
+\begin{align}
+\textbf{x}^T \textbf{K}^{-1}\textbf{S}\textbf{K}^{-1} \textbf{x}& = (\textbf{N}-\bar{N}) \xi_{\delta\delta}  (\textbf{N}-\bar{N})  + 2  (\textbf{N}-\bar{N}) \xi_{\delta v}\frac{\mathbf{\Delta v}}{\bm{\sigma}_v^2}+ 
+\frac{\mathbf{\Delta v}}{\bm{\sigma}_v^2} \xi_{vv}\frac{\mathbf{\Delta v}}{\bm{\sigma}_v^2}.
+\end{align}
+Noting that $N_i=1$ when the cell $i$ contains a galaxy and zero otherwise and that only cells with a peculiar velocity measurement contribute ($\sigma_v =\infty$
+for cells without such a measurement), and that in the limit of infinitely small cells, $\bar{N}\sum_{i,j\in N_{cell}} = n \int dV$, where $n$ is the galaxy number density,
+\begin{align*}
+\textbf{x}^T \textbf{K}^{-1}\textbf{S}\textbf{K}^{-1} \textbf{x}& = \sum_{i,j\in N_{gal}} \xi_{\delta\delta,ij} -2 \bar{N} \sum_{i\in N_{gal},j\in N_{cell}} \xi_{\delta\delta,ij}\\
+& +\bar{N}^2  \sum_{i,j\in N_{cell}}  \xi_{\delta\delta,ij} + 2 \sum_{i,j\in N_{gal}} \frac{\Delta v_j}{\sigma_{v,j}^2} \xi_{\delta v,ij} \\
+& -2\bar{N}\sum_{i\in N_{cell}, j\in N_{gal}} \frac{\Delta v_j}{\sigma_{v,j}^2} \xi_{\delta v,ij}  + \sum_{i,j\in N_{gal}} \frac{\Delta v_i}{\sigma_{v,i}^2} \xi_{vv,ij} \frac{\Delta v_j}{\sigma_{v,j}^2}\\
+& = \sum_{i,j\in N_{gal}} \left( \xi_{\delta\delta,ij} + 2  \frac{\Delta v_j}{\sigma_{v,j}^2} \xi_{\delta v,ij} + \frac{\Delta v_i}{\sigma_{v,i}^2} \xi_{vv,ij} \frac{\Delta v_j}{\sigma_{v,j}^2}\right)\\
+&-2 n \sum_{i\in N_{gal}}\int \left(\xi_{\delta\delta,iV} + \frac{\Delta v_i}{\sigma_{v,i}^2} \xi_{v \delta,iV}\right) dV\\
+& +n^2  \int \xi_{\delta\delta,V_1V_2}dV_1dV_2.
+\end{align*}
+
+Now consider the next term $\textbf{K}^{-1}\textbf{S}\textbf{K}^{-1}\textbf{S}\textbf{K}^{-1}$.  The middle section is
+\begin{align}
+\textbf{S}\textbf{K}^{-1}\textbf{S} & =
+\begin{pmatrix}
+ \bar{N}^2  \xi_{\delta v}\frac{1}{\bm{\sigma}_v^2}  \xi_{v \delta}  & \bar{N} \xi_{\delta v} \frac{1} {\bm{\sigma}_v^2} \xi_{vv}  \\
+ \bar{N} \xi_{v v} \frac{1} {\bm{\sigma}_v^2} \xi_{v \delta}   &  \xi_{vv} \frac{1}{\bm{\sigma}_v^2} \xi_{vv}
+\end{pmatrix}
+\end{align}
+to leading order of $\bar{N}$ anticipating that we will take the limit where it goes to zero.
+Then
+\begin{align}
+\textbf{x}^T \textbf{K}^{-1}\textbf{S}\textbf{K}^{-1}\textbf{S}\textbf{K}^{-1} \textbf{x}
+& = \sum_{i,j\in N_{gal}} \left( \left(\xi_{\delta v}\frac{1}{\bm{\sigma}_v^2}  \xi_{v \delta}\right)_{ij}
+ + 2  \frac{\Delta v_j}{\sigma_{v,j}^2} \left(\xi_{\delta v} \frac{1} {\bm{\sigma}_v^2} \xi_{vv}  \right)_{ij} + \frac{\Delta v_i}{\sigma_{v,i}^2} \left( \xi_{vv} \frac{1}{\bm{\sigma}_v^2} \xi_{vv}\right)_{ij} \frac{\Delta v_j}{\sigma_{v,j}^2}\right)\\
+&-2 n \sum_{i\in N_{gal}}\int \left( \left(\xi_{\delta v}\frac{1}{\bm{\sigma}_v^2}  \xi_{v \delta}\right)_{iV} + \frac{\Delta v_i}{\sigma_{v,i}^2} \left( \xi_{v v} \frac{1} {\bm{\sigma}_v^2} \xi_{v \delta}  \right)_{iV} \right) dV\\
+& +n^2  \int  \left(\xi_{\delta v}\frac{1}{\bm{\sigma}_v^2}  \xi_{v \delta}\right)_{V_1V_2}dV_1dV_2.
+\end{align}
+
+We have assembled the contributions of $\textbf{x}^T \textbf{C}^{-1}\textbf{x}$ to second order in $A$.
+
+Returning to the other contribution to the log-likelihood in Eq.~\ref{log:eqn} we have
+\begin{align*}
+\ln\det(\textbf{C}) &=\ln\det(\textbf{M}(\textbf{I}+A\textbf{X})\textbf{M})) \\
+&= \ln\det(\textbf{I}+A\textbf{X}) +\text{const} \\
+&= A \tr \textbf{X} -\frac{A^2}{2}\tr \textbf{X}^2+ O(A^3) + \ldots\\
+\end{align*}
+Now
+\begin{equation}
+\textbf{X} = \textbf{M}^{-1}\textbf{S}\textbf{M}^{-1} = 
+\begin{pmatrix}
+\bar{N}\xi_{\delta\delta} & \frac{\sqrt{\bar{N}}}{\sigma_{v}} \xi_{\delta v} \\
+\frac{\sqrt{\bar{N}}}{\sigma_{v}} \xi_{v\delta} & \frac{1}{\sigma_{v}^2} \xi_{vv} 
+\end{pmatrix}.
+\end{equation}
+The contribution to the trace of the upper diagonal in the limit of small cell volumes is
+\begin{equation}
+\bar{N} \tr \xi_{\delta\delta} = n \int \xi_{\delta\delta,VV} dV
+\end{equation}
+and the lower diagonal is
+\begin{equation}
+\tr  \frac{1}{\sigma_{v}^2} \xi_{vv} =  \sum_{i \in N_{gal}}   \frac{1}{\sigma_{v,i}^2} \xi_{vv,ii}.
+\end{equation}
+
+The trace of $\textbf{X}^2$ has terms, to leading order in $\bar{N}$, has terms
+\begin{equation}
+\bar{N}  \tr  \xi_{\delta v} \frac{1}{\sigma_{v}}  \frac{1}{\sigma_{v}}  \xi_{v \delta} = n \int \left( \xi_{\delta v} \frac{1}{\sigma_{v}}  \frac{1}{\sigma_{v}}  \xi_{v \delta} \right)_{VV} dV
+\end{equation}
+and 
+\begin{equation}
+\tr   \xi_{vv} \frac{1}{\sigma_{v}^2}  \frac{1}{\sigma_{v}^2} \xi_{vv} =  \sum_{i \in N_{gal}} \left(  \xi_{vv} \frac{1}{\sigma_{v}^2}  \frac{1}{\sigma_{v}^2} \xi_{vv} \right)_{ii}
+\end{equation}
+
+Putting everything together, the expansion of the log-likelihood in $A$ has the first order coefficient
+\begin{align}
+c_1 &=- \sum_{i,j\in N_{gal}} \left( \xi_{\delta\delta,ij} + 2  \frac{\Delta v_j}{\sigma_{v,j}^2} \xi_{\delta v,ij} + \frac{\Delta v_i}{\sigma_{v,i}^2} \xi_{vv,ij} \frac{\Delta v_j}{\sigma_{v,j}^2}\right)\\
+& +\sum_{i \in N_{gal}} \left( \frac{1}{\sigma_{v,i}^2} \xi_{vv,ii}   + 2n \int \left(\xi_{\delta\delta,iV} + \frac{\Delta v_i}{\sigma_{v,i}^2} \xi_{v \delta,iV}\right) dV  \right)\\
+& +n \int \xi_{\delta\delta,VV} dV  -n^2  \int \xi_{\delta\delta,V_1V_2}dV_1dV_2
+\end{align}
+and the second order coefficient
+\begin{align}
+c_2 & = \frac{1}{2} \Biggl( 
+ \sum_{i,j\in N_{gal}} \left( \left(\xi_{\delta v}\frac{1}{\bm{\sigma}_v^2}  \xi_{v \delta}\right)_{ij}
+ + 2  \frac{\Delta v_j}{\sigma_{v,j}^2} \left(\xi_{\delta v} \frac{1} {\bm{\sigma}_v^2} \xi_{vv}  \right)_{ij} + \frac{\Delta v_i}{\sigma_{v,i}^2} \left( \xi_{vv} \frac{1}{\bm{\sigma}_v^2} \xi_{vv}\right)_{ij} \frac{\Delta v_j}{\sigma_{v,j}^2}\right)\\
+&- \sum_{i \in N_{gal}}\left( \left(  \xi_{vv} \frac{1}{\sigma_{v}^2}  \frac{1}{\sigma_{v}^2} \xi_{vv} \right)_{ii}  +2n \int \left( \left(\xi_{\delta v}\frac{1}{\bm{\sigma}_v^2}  \xi_{v \delta}\right)_{iV} + \frac{\Delta v_i}{\sigma_{v,i}^2} \left( \xi_{v v} \frac{1} {\bm{\sigma}_v^2} \xi_{v \delta}  \right)_{iV} \right) dV  \right)\\
+&-n  \int \left( \xi_{\delta v} \frac{1}{\sigma_{v}}  \frac{1}{\sigma_{v}}  \xi_{v \delta} \right)_{VV} dV  +n^2  \int  \left(\xi_{\delta v}\frac{1}{\bm{\sigma}_v^2}  \xi_{v \delta}\right)_{V_1V_2}dV_1dV_2 \Biggr).
+\end{align}
+
+In this second-order approximation of the log-likelihood, the minimum occurs at $A_{\text{min}}=-c_1/2c_2$ and the second derivative is $2c_2$.
+
+\begin{comment}
+END NEW STUFF
+
 Given the enormous size of $\textbf{C}$, computing the log likelihood directly is not possible. In the following, we seek an approximation method accurate to first order in $A$. \par
 First, we focus on the second term, $\textbf{x}^T\textbf{C}^{-1}\textbf{x}$. Looking at the definition of $\textbf{C}$ in equation (1), we want to factor $\textbf{K}$ into an identity matrix. To do so, we introduce matrix $\textbf{M}$ and $\textbf{X}$. We let $\textbf{M}=\sqrt{\textbf{K}}$, and $\textbf{S} = \textbf{M} \textbf{X} \textbf{M}$. Then $\textbf{X}=\textbf{M}^{-1}\textbf{S}\textbf{M}^{-1}$. Now, our matrix $\textbf{C}$ can be re-written in terms of $\textbf{X}$ and $\textbf{M}$:
 \begin{equation}
@@ -256,7 +368,7 @@ with extremum at
 \[
 \boxed{A^*= -\frac{s_1+s_2+s_4+s_5+s_6+d_1+d_2}{2(S_1 +S_2'  +S_4 +S_5 +S_6'+D_2+D_3+D_4)}}
 \]
-
+\end{comment}
 \begin{thebibliography}{9}
 \bibitem{adam}
 C. Adams, C. Blake. 
