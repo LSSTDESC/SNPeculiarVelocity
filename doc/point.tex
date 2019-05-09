@@ -9,10 +9,15 @@
 \begin{document}
 \maketitle
 
+
 There is sufficient information in the distribution of peculiar velocities and overdensities of galaxies to test general relativity on the largest scale. Suppose we have a region that encloses $N_{gal}$ number of galaxies in the universe. We can divide the region into $N_{cell}\gg 1$ number of equal volume cells whose size can be made so small that either one or no galaxy is contained in one cell. This is encoded in a vector $\textbf{N}$ of size $N_{cell}$ whose entries are either 0 or 1. For any 2 cells, we can compute their correlation, a function of the distance $r$ between the cells only. In our application, we consider $\xi_{\delta\delta}$ (the overdensity-overdensity correlation), $\xi_{\delta v}$ (overdensity-velocity correlation), $\xi_{v\delta}$ (velocity-overdensity correlation), and $\xi_{vv}$ (velocity-velocity correlation).\par
+
+The data  is $\textbf{x}= [N_1-\bar{N}, N_2-\bar{N}, \hdots, N_{N_{cell}}-\bar{N}, \Delta v_1, \hdots, \Delta v_{N_{gal}}]^T$, where $\Delta v$ is the deviation of the measured velocity from the expected, 
+
 We postulate that deviations from expected variance $\bar{N}$ and expected peculiar velocity $\bar{v}$ are Gaussian. Then the above correlation matrices can be used to construct a block matrix $\textbf{C}$, parameterized by $A$ and $\bm{\sigma}_v$, a vector of shot noise for peculiar velocity measurement:
 \begin{align}
-\textbf{C} &\equiv \textbf{K} + A\textbf{S} \\ 
+\textbf{C} &\equiv \textbf{C}_0 + \textbf{S}\\
+%\textbf{C} &\equiv \textbf{C}_0 + A\textbf{S} \\ 
 &=
 \left(
 \begin{array}{cc}
@@ -21,55 +26,146 @@ We postulate that deviations from expected variance $\bar{N}$ and expected pecul
 \end{array}
 \right)
 +
-A
+\begin{pmatrix}
+\bar{N}^2\xi_{gg} & \bar{N}\xi_{g v} \\
+\bar{N}\xi_{v g} & \xi_{vv}
+\end{pmatrix},
+\end{align}
+where $\xi_{gg}$, $\xi_{vv}$, and $\bar{N}\xi_{g v}$ are the galaxy overdensity and peculiar velocity correlation functions and their cross-correlation
+respectively.  
+
+The reason we have $\bar{N}$ as the variance for overdensity is that our small galaxy cells are best modeled by Poisson statistics, in which the mean equals the variance. In addition, note that the dimension of $C$ is $N_{cell}+N_{gal}$ by $N_{cell}+N_{gal}$. For the peculiar velocity covariance, we assign $\sigma^2=\infty$ to cells that do not contain any galaxy, and one can show that removing rows and columns that contain those cells has no effect but a constant offset on what we will compute later.
+
+
+The science parameters $\theta$ enter through these correlation functions, and may include $\theta \in \{fD, bD, \gamma, \Omega_{M_0},\ldots\}$ and others
+that describe the matter power spectrum.
+For example, the parameter $fD$ enters in through the relations $\xi_{vv}\propto (fD\mu)^2$, the SN~Ia host-galaxy count overdensity
+power spectrum $\xi_{g g }\propto (bD + fD\mu^2)^2$, and the galaxy-velocity cross-correlation $\xi_{vg}
+\propto  (bD + fD\mu^2)fD$, where $b$ is the galaxy bias and $\mu\equiv \cos{(\hat{k} \cdot \hat{r})}$ where $\hat{r}$ is the direction of
+the line of sight.  
+Assuming linear dependence of the parameters,
+\begin{align}
+\textbf{C} 
+&=
 \left(
 \begin{array}{cc}
-\bar{N}^2\xi_{\delta\delta} & \bar{N}\xi_{\delta v} \\
-\bar{N}\xi_{\delta v} & \xi_{vv}
+\bar{N}\textbf{I} & 0 \nonumber \\
+0 & \bm{\sigma}_v^2\textbf{I}
 \end{array}
-\right).
-\end{align}\par
-The reason we have $\bar{N}$ as the variance for overdensity is that our small galaxy cells are best modeled by Poisson statistics, in which the mean equals the variance. In addition, note that the dimension of $C$ is $N_{cell}+N_{gal}$ by $N_{cell}+N_{gal}$. For the peculiar velocity covariance, we assign $\sigma^2=\infty$ to cells that do not contain any galaxy, and one can show that removing rows and columns that contain those cells has no effect but a constant offset on what we will compute later. \par
-Given the block matrix $C$ and our data $\textbf{x}= [N_1-\bar{N}, N_2-\bar{N}, \hdots, N_{N_{cell}}-\bar{N}, \Delta v_1, \hdots, \Delta v_{N_{gal}}]^T$, where $\Delta v$ is the deviation of the measured velocity from the expected, we can form the Gaussian likelihood as a function of $A$
+\right)
++ \sum_\theta \theta
+\begin{pmatrix}
+\bar{N}^2\xi_{gg,\theta} & \bar{N}\xi_{g v,\theta} \\
+\bar{N}\xi_{v g,\theta} & \xi_{vv,\theta}
+\end{pmatrix}\\
+&=
+\left(
+\begin{array}{cc}
+\bar{N}\textbf{I} & 0 \nonumber \\
+0 & \bm{\sigma}_v^2\textbf{I}
+\end{array}
+\right)
++ \sum_\alpha \theta_\alpha \textbf{S}_\alpha .
+\end{align} 
+
+%\left(
+%\begin{array}{cc}
+%\bar{N}\textbf{I} & 0 \nonumber \\
+%0 & \bm{\sigma}_v^2\textbf{I}
+%\end{array}
+%\right)
+%+
+%A
+%\left(
+%\begin{array}{cc}
+%\bar{N}^2\xi_{\delta\delta} & \bar{N}\xi_{\delta v} \\
+%\bar{N}\xi_{\delta v} & \xi_{vv}
+%\end{array}
+%\right).
+%\end{align}\par
+
+
+The Gaussian likelihood as a function of $\theta$
 \[
-\mathcal{L}(A) = \frac{1}{\sqrt{\left(2\pi\right)^{N_{cell}+N_{gal}} \det \textbf{C}}}\exp\left\{-\frac{1}{2}\textbf{x}^T\textbf{C}^{-1}\textbf{x}\right\}.
+\mathcal{L}(\theta) = \frac{1}{\sqrt{\left(2\pi\right)^{N_{cell}+N_{gal}} \det \textbf{C}}}\exp\left\{-\frac{1}{2}\textbf{x}^T\textbf{C}^{-1}\textbf{x}\right\}.
 \]\par
 To make the expression cleaner, we take the log of the likelihood and focus on the $A$-dependent part:
 \begin{equation}
--2\ln\mathcal{L}(A) = \ln\det\textbf{C} + \textbf{x}^T\textbf{C}^{-1}\textbf{x} + \text{const}.
+-2\ln\mathcal{L}(\theta) = \ln\det\textbf{C} + \textbf{x}^T\textbf{C}^{-1}\textbf{x} + \text{const}.
 \label{log:eqn}
-\end{equation}\par
+\end{equation}
+
+The estimator and Fisher Matrix for this Gaussian likelihood are known
+\begin{equation}
+\hat{\theta}_\alpha = \frac{1}{2} F^{-1}_{\alpha \beta} [(\textbf{x}^T \textbf{C}^{-1} \textbf{S}_\beta \textbf{C}^{-1} \textbf{x}) - \tr(\textbf{C}^{-1} \textbf{S}_\beta \textbf{C}^{-1} \textbf{C}_0)]
+\end{equation}
+and
+\begin{equation}
+F_{\alpha\beta} = \frac{1}{2} \tr(\textbf{C}^{-1} \textbf{S}_\beta \textbf{C}^{-1} \textbf{C}_0 \textbf{S}_\beta).
+\end{equation}
+
+The term
+\begin{align}
+\textbf{x}^T \textbf{C}^{-1} \textbf{S}_\beta \textbf{C}^{-1} \textbf{x} & \approx \textbf{x}^T \textbf{C}_0^{-1} \textbf{S}_\beta \textbf{C}_0^{-1} \textbf{x}\\
+&=(\textbf{N}-\bar{N}) \xi_{\delta\delta,\theta_\beta}  (\textbf{N}-\bar{N})  + 2  (\textbf{N}-\bar{N}) \xi_{\delta v,\theta_\beta}\frac{\mathbf{\Delta v}}{\bm{\sigma}_v^2}+ 
+\frac{\mathbf{\Delta v}}{\bm{\sigma}_v^2} \xi_{vv,\theta_\beta}\frac{\mathbf{\Delta v}}{\bm{\sigma}_v^2}.
+\end{align}
+Noting that $N_i=1$ when the cell $i$ contains a galaxy and zero otherwise and that only cells with a peculiar velocity measurement contribute ($\sigma_v =\infty$
+for cells without such a measurement), and that in the limit of infinitely small cells, $\bar{N}\sum_{i,j\in N_{cell}} = \int n dV$, where $n$ is the galaxy number density,
+\begin{align*}
+\textbf{x}^T \textbf{C}^{-1} \textbf{S}_\beta \textbf{C}^{-1} \textbf{x} & \approx \sum_{i,j\in N_{gal}} \xi_{\delta\delta,\theta_\beta,ij} -2 \bar{N} \sum_{i\in N_{gal},j\in N_{cell}} \xi_{\delta\delta,\theta_\beta,ij}\\
+& +\bar{N}^2  \sum_{i,j\in N_{cell}}  \xi_{\delta\delta,\theta_\beta,ij} + 2 \sum_{i,j\in N_{gal}} \frac{\Delta v_j}{\sigma_{v,j}^2} \xi_{\delta v,\theta_\beta,ij} \\
+& -2\bar{N}\sum_{i\in N_{cell}, j\in N_{gal}} \frac{\Delta v_j}{\sigma_{v,j}^2} \xi_{\delta v,\theta_\beta,ij}  + \sum_{i,j\in N_{gal}} \frac{\Delta v_i}{\sigma_{v,i}^2} \xi_{vv,\theta_\beta,ij} \frac{\Delta v_j}{\sigma_{v,j}^2}\\
+& = \sum_{i,j\in N_{gal}} \left( \xi_{\delta\delta,\theta_\beta}(x_i,x_j) + 2  \frac{\Delta v_j}{\sigma_{v,j}^2} \xi_{\delta v,\theta_\beta}(x_i,x_j) + \frac{\Delta v_i}{\sigma_{v,i}^2} \xi_{vv,\theta_\beta}(x_i,x_j) \frac{\Delta v_j}{\sigma_{v,j}^2}\right)\\
+&-2  \sum_{i\in N_{gal}}\int n(x_i) \left(\xi_{\delta\delta,\theta_\beta}(x_i,y) + \frac{\Delta v_i}{\sigma_{v,i}^2} \xi_{v \delta,\theta_\beta}(x_i,y) \right) d^3y\\
+&  + \int n(x) n(y) \xi_{\delta\delta,\theta_\beta}(x,y)d^3xd^3y.
+\end{align*}
+
+The trace term is
+\begin{align}
+ \tr(\textbf{C}^{-1} \textbf{S}_\beta \textbf{C}^{-1} \textbf{C}_0) & \approx  \tr(\textbf{C}_0^{-1} \textbf{S}_\beta) \\
+ & = \bar{N} \tr(\xi_{\delta\delta,\beta}) + \tr(\frac{1}{\sigma^2_v} \xi_{vv,\beta})\\
+ & = \int n(x) \xi_{\delta \delta,\beta}(x,x) d^3x +  \sum_{i\in N_{gal}} \frac{1}{\sigma^2_{v,i}} \xi_{vv,\beta}(x_i,x_i)
+\end{align}
+
+
+The remaining term to the leading term in $\bar{N}$ is
+\begin{align}
+ \tr(\textbf{C}^{-1} \textbf{S}_\alpha \textbf{C}^{-1} \textbf{S}_\beta) & \approx  \tr(\textbf{C}_0^{-1} \textbf{S}_\alpha \textbf{C}_0^{-1} \textbf{S}_\beta)  \\
+ & = \bar{N} \tr(\xi_{\delta v,\alpha} \frac{1}{\bm{\sigma}^2_v} \xi_{v\delta,\beta} ) + \tr(\frac{1}{\bm{\sigma}^2_v} \xi_{vv,\alpha}  \frac{1}{\bm{\sigma}^2_v}  \xi_{vv,\beta})\\
+ & = \int n(x) \sum_{i\in N_{gal}} \xi_{\delta v,\alpha}(x,x_i) \frac{1}{\sigma^2_{v,i}} \xi_{v\delta,\beta} (x_i,x) d^3x \\
+ & +  \sum_{i,j\in N_{gal}} \frac{1}{\sigma^2_{v,i}} \xi_{vv,\alpha}(x_i,x_j)  \frac{1}{\sigma^2_{v,j}}  \xi_{vv,\beta}(x_j,x_i).
+\end{align}
 
 %  ---- Change
 %NEW STUFF
+\begin{comment}
+We now expand the log-likelihood as a Taylor series for small $\theta$ around $\theta=0$.
 
-We new expand the log-likelihood as a Taylor series for small $A$ around $A=0$.
-
-First, we focus on the  term $\textbf{x}^T\textbf{C}^{-1}\textbf{x}$. We rewrite $\textbf{C}$ by normalizing out its uncorrelated $\textbf{K}$ term
+First, we focus on the  term $\textbf{x}^T\textbf{C}^{-1}\textbf{x}$. We rewrite $\textbf{C}$ by normalizing out its uncorrelated $\textbf{C}_0$ term
 by   introducing the matrices $\textbf{M}$ and $\textbf{X}$,
-where $\textbf{M}=\sqrt{\textbf{K}}$ and $\textbf{S} = \textbf{M} \textbf{X} \textbf{M}$ such that $\textbf{X}=\textbf{M}^{-1}\textbf{S}\textbf{M}^{-1}$. Now, our matrix $\textbf{C}$ can be re-written in terms of $\textbf{X}$ and $\textbf{M}$:
+where $\textbf{M}=\sqrt{\textbf{C}_0}$ and $\textbf{S} = \textbf{M} \textbf{X} \textbf{M}$ such that $\textbf{X}=\textbf{M}^{-1}\textbf{S}\textbf{M}^{-1}$. Now, our matrix $\textbf{C}$ can be re-written in terms of $\textbf{X}$ and $\textbf{M}$:
 \begin{equation}
 \textbf{C} = \textbf{M}(\textbf{I}+A\textbf{X})\textbf{M}.
 \end{equation}
 Expanded as a Taylor series
 \begin{align}
 \textbf{C}^{-1} & = \textbf{M}^{-1}(1-A\textbf{X}+A^2 \textbf{X}^2 + \ldots) \textbf{M}^{-1} \\
-& = \textbf{K}^{-1}   -A \textbf{K}^{-1}\textbf{S}\textbf{K}^{-1} +\frac{A^2}{2} \textbf{K}^{-1}\textbf{S}\textbf{K}^{-1}\textbf{S}\textbf{K}^{-1} +O(A^3) + \ldots 
+& = \textbf{C}_0^{-1}   -A \textbf{C}_0^{-1}\textbf{S}\textbf{C}_0^{-1} +\frac{A^2}{2} \textbf{C}_0^{-1}\textbf{S}\textbf{C}_0^{-1}\textbf{S}\textbf{C}_0^{-1} +O(A^3) + \ldots 
 \end{align}
-%= -A \textbf{K}^{-1}\textbf{S}\textbf{K}^{-1} + \text{const}.
+%= -A \textbf{C}_0^{-1}\textbf{S}\textbf{C}_0^{-1} + \text{const}.
 %\] \par
 
-We evaluate $\textbf{x}^T \textbf{C}^{-1}\textbf{x}$ by splitting up the counts and velocities.  The data vector $\textbf{x}$ is composed of the counts
- $\textbf{N}-\bar{N}$ and peculiar velocities $\mathbf{\Delta v}$, whereas $\textbf{S}$ is comprised of $\bar{N}^2\xi_{\delta\delta}$, $\bar{N}\xi_{\delta v}$,
-and $\xi_{vv}$.  In this manner
+
+A term of interest is 
 \begin{align}
-\textbf{x}^T \textbf{K}^{-1}\textbf{S}\textbf{K}^{-1} \textbf{x}& = (\textbf{N}-\bar{N}) \xi_{\delta\delta}  (\textbf{N}-\bar{N})  + 2  (\textbf{N}-\bar{N}) \xi_{\delta v}\frac{\mathbf{\Delta v}}{\bm{\sigma}_v^2}+ 
+\textbf{x}^T \textbf{C}_0^{-1}\textbf{S}\textbf{C}_0^{-1} \textbf{x}& = (\textbf{N}-\bar{N}) \xi_{\delta\delta}  (\textbf{N}-\bar{N})  + 2  (\textbf{N}-\bar{N}) \xi_{\delta v}\frac{\mathbf{\Delta v}}{\bm{\sigma}_v^2}+ 
 \frac{\mathbf{\Delta v}}{\bm{\sigma}_v^2} \xi_{vv}\frac{\mathbf{\Delta v}}{\bm{\sigma}_v^2}.
 \end{align}
 Noting that $N_i=1$ when the cell $i$ contains a galaxy and zero otherwise and that only cells with a peculiar velocity measurement contribute ($\sigma_v =\infty$
 for cells without such a measurement), and that in the limit of infinitely small cells, $\bar{N}\sum_{i,j\in N_{cell}} = n \int dV$, where $n$ is the galaxy number density,
 \begin{align*}
-\textbf{x}^T \textbf{K}^{-1}\textbf{S}\textbf{K}^{-1} \textbf{x}& = \sum_{i,j\in N_{gal}} \xi_{\delta\delta,ij} -2 \bar{N} \sum_{i\in N_{gal},j\in N_{cell}} \xi_{\delta\delta,ij}\\
+\textbf{x}^T \textbf{C}_0^{-1}\textbf{S}\textbf{C}_0^{-1} \textbf{x}& = \sum_{i,j\in N_{gal}} \xi_{\delta\delta,ij} -2 \bar{N} \sum_{i\in N_{gal},j\in N_{cell}} \xi_{\delta\delta,ij}\\
 & +\bar{N}^2  \sum_{i,j\in N_{cell}}  \xi_{\delta\delta,ij} + 2 \sum_{i,j\in N_{gal}} \frac{\Delta v_j}{\sigma_{v,j}^2} \xi_{\delta v,ij} \\
 & -2\bar{N}\sum_{i\in N_{cell}, j\in N_{gal}} \frac{\Delta v_j}{\sigma_{v,j}^2} \xi_{\delta v,ij}  + \sum_{i,j\in N_{gal}} \frac{\Delta v_i}{\sigma_{v,i}^2} \xi_{vv,ij} \frac{\Delta v_j}{\sigma_{v,j}^2}\\
 & = \sum_{i,j\in N_{gal}} \left( \xi_{\delta\delta,ij} + 2  \frac{\Delta v_j}{\sigma_{v,j}^2} \xi_{\delta v,ij} + \frac{\Delta v_i}{\sigma_{v,i}^2} \xi_{vv,ij} \frac{\Delta v_j}{\sigma_{v,j}^2}\right)\\
@@ -77,9 +173,29 @@ for cells without such a measurement), and that in the limit of infinitely small
 & +n^2  \int \xi_{\delta\delta,V_1V_2}dV_1dV_2.
 \end{align*}
 
-Now consider the next term $\textbf{K}^{-1}\textbf{S}\textbf{K}^{-1}\textbf{S}\textbf{K}^{-1}$.  The middle section is
+
+
+We evaluate $\textbf{x}^T \textbf{C}^{-1}\textbf{x}$ by splitting up the counts and velocities.  The data vector $\textbf{x}$ is composed of the counts
+ $\textbf{N}-\bar{N}$ and peculiar velocities $\mathbf{\Delta v}$, whereas $\textbf{S}$ is comprised of $\bar{N}^2\xi_{\delta\delta}$, $\bar{N}\xi_{\delta v}$,
+and $\xi_{vv}$.  In this manner
 \begin{align}
-\textbf{S}\textbf{K}^{-1}\textbf{S} & =
+\textbf{x}^T \textbf{C}_0^{-1}\textbf{S}\textbf{C}_0^{-1} \textbf{x}& = (\textbf{N}-\bar{N}) \xi_{\delta\delta}  (\textbf{N}-\bar{N})  + 2  (\textbf{N}-\bar{N}) \xi_{\delta v}\frac{\mathbf{\Delta v}}{\bm{\sigma}_v^2}+ 
+\frac{\mathbf{\Delta v}}{\bm{\sigma}_v^2} \xi_{vv}\frac{\mathbf{\Delta v}}{\bm{\sigma}_v^2}.
+\end{align}
+Noting that $N_i=1$ when the cell $i$ contains a galaxy and zero otherwise and that only cells with a peculiar velocity measurement contribute ($\sigma_v =\infty$
+for cells without such a measurement), and that in the limit of infinitely small cells, $\bar{N}\sum_{i,j\in N_{cell}} = n \int dV$, where $n$ is the galaxy number density,
+\begin{align*}
+\textbf{x}^T \textbf{C}_0^{-1}\textbf{S}\textbf{C}_0^{-1} \textbf{x}& = \sum_{i,j\in N_{gal}} \xi_{\delta\delta,ij} -2 \bar{N} \sum_{i\in N_{gal},j\in N_{cell}} \xi_{\delta\delta,ij}\\
+& +\bar{N}^2  \sum_{i,j\in N_{cell}}  \xi_{\delta\delta,ij} + 2 \sum_{i,j\in N_{gal}} \frac{\Delta v_j}{\sigma_{v,j}^2} \xi_{\delta v,ij} \\
+& -2\bar{N}\sum_{i\in N_{cell}, j\in N_{gal}} \frac{\Delta v_j}{\sigma_{v,j}^2} \xi_{\delta v,ij}  + \sum_{i,j\in N_{gal}} \frac{\Delta v_i}{\sigma_{v,i}^2} \xi_{vv,ij} \frac{\Delta v_j}{\sigma_{v,j}^2}\\
+& = \sum_{i,j\in N_{gal}} \left( \xi_{\delta\delta,ij} + 2  \frac{\Delta v_j}{\sigma_{v,j}^2} \xi_{\delta v,ij} + \frac{\Delta v_i}{\sigma_{v,i}^2} \xi_{vv,ij} \frac{\Delta v_j}{\sigma_{v,j}^2}\right)\\
+&-2 n \sum_{i\in N_{gal}}\int \left(\xi_{\delta\delta,iV} + \frac{\Delta v_i}{\sigma_{v,i}^2} \xi_{v \delta,iV}\right) dV\\
+& +n^2  \int \xi_{\delta\delta,V_1V_2}dV_1dV_2.
+\end{align*}
+
+Now consider the next term $\textbf{C}_0^{-1}\textbf{S}\textbf{C}_0^{-1}\textbf{S}\textbf{C}_0^{-1}$.  The middle section is
+\begin{align}
+\textbf{S}\textbf{C}_0^{-1}\textbf{S} & =
 \begin{pmatrix}
  \bar{N}^2  \xi_{\delta v}\frac{1}{\bm{\sigma}_v^2}  \xi_{v \delta}  & \bar{N} \xi_{\delta v} \frac{1} {\bm{\sigma}_v^2} \xi_{vv}  \\
  \bar{N} \xi_{v v} \frac{1} {\bm{\sigma}_v^2} \xi_{v \delta}   &  \xi_{vv} \frac{1}{\bm{\sigma}_v^2} \xi_{vv}
@@ -88,7 +204,7 @@ Now consider the next term $\textbf{K}^{-1}\textbf{S}\textbf{K}^{-1}\textbf{S}\t
 to leading order of $\bar{N}$ anticipating that we will take the limit where it goes to zero.
 Then
 \begin{align}
-\textbf{x}^T \textbf{K}^{-1}\textbf{S}\textbf{K}^{-1}\textbf{S}\textbf{K}^{-1} \textbf{x}
+\textbf{x}^T \textbf{C}_0^{-1}\textbf{S}\textbf{C}_0^{-1}\textbf{S}\textbf{C}_0^{-1} \textbf{x}
 & = \sum_{i,j\in N_{gal}} \left( \left(\xi_{\delta v}\frac{1}{\bm{\sigma}_v^2}  \xi_{v \delta}\right)_{ij}
  + 2  \frac{\Delta v_j}{\sigma_{v,j}^2} \left(\xi_{\delta v} \frac{1} {\bm{\sigma}_v^2} \xi_{vv}  \right)_{ij} + \frac{\Delta v_i}{\sigma_{v,i}^2} \left( \xi_{vv} \frac{1}{\bm{\sigma}_v^2} \xi_{vv}\right)_{ij} \frac{\Delta v_j}{\sigma_{v,j}^2}\right)\\
 &-2 n \sum_{i\in N_{gal}}\int \left( \left(\xi_{\delta v}\frac{1}{\bm{\sigma}_v^2}  \xi_{v \delta}\right)_{iV} + \frac{\Delta v_i}{\sigma_{v,i}^2} \left( \xi_{v v} \frac{1} {\bm{\sigma}_v^2} \xi_{v \delta}  \right)_{iV} \right) dV\\
@@ -146,26 +262,26 @@ c_2 & = \frac{1}{2} \Biggl(
 
 In this second-order approximation of the log-likelihood, the minimum occurs at $A_{\text{min}}=-c_1/2c_2$ and the second derivative is $2c_2$.
 
-\begin{comment}
+
 END NEW STUFF
 
 Given the enormous size of $\textbf{C}$, computing the log likelihood directly is not possible. In the following, we seek an approximation method accurate to first order in $A$. \par
-First, we focus on the second term, $\textbf{x}^T\textbf{C}^{-1}\textbf{x}$. Looking at the definition of $\textbf{C}$ in equation (1), we want to factor $\textbf{K}$ into an identity matrix. To do so, we introduce matrix $\textbf{M}$ and $\textbf{X}$. We let $\textbf{M}=\sqrt{\textbf{K}}$, and $\textbf{S} = \textbf{M} \textbf{X} \textbf{M}$. Then $\textbf{X}=\textbf{M}^{-1}\textbf{S}\textbf{M}^{-1}$. Now, our matrix $\textbf{C}$ can be re-written in terms of $\textbf{X}$ and $\textbf{M}$:
+First, we focus on the second term, $\textbf{x}^T\textbf{C}^{-1}\textbf{x}$. Looking at the definition of $\textbf{C}$ in equation (1), we want to factor $\textbf{C}_0$ into an identity matrix. To do so, we introduce matrix $\textbf{M}$ and $\textbf{X}$. We let $\textbf{M}=\sqrt{\textbf{C}_0}$, and $\textbf{S} = \textbf{M} \textbf{X} \textbf{M}$. Then $\textbf{X}=\textbf{M}^{-1}\textbf{S}\textbf{M}^{-1}$. Now, our matrix $\textbf{C}$ can be re-written in terms of $\textbf{X}$ and $\textbf{M}$:
 \begin{equation}
 \textbf{C} = \textbf{M}(\textbf{I}+A\textbf{X})\textbf{M},
 \end{equation}
 and its inverse, to first order, is
 \[
-\textbf{C}^{-1} = \textbf{M}^{-1}(1-A\textbf{X}) \textbf{M}^{-1} = -A \textbf{K}^{-1}\textbf{S}\textbf{K}^{-1} + \text{const}.
+\textbf{C}^{-1} = \textbf{M}^{-1}(1-A\textbf{X}) \textbf{M}^{-1} = -A \textbf{C}_0^{-1}\textbf{S}\textbf{C}_0^{-1} + \text{const}.
 \] \par
 Having this expression, we can now compute the second term in equation (2). Denoting the value of this term by $s$, we have
 \begin{align*}
 s &=\textbf{x}^T \textbf{C}^{-1}\textbf{x} \\
-&= -A\left(\textbf{x}^T \textbf{K}^{-1}\right)\textbf{S}\left(\textbf{K}^{-1}\textbf{x}\right).
+&= -A\left(\textbf{x}^T \textbf{C}_0^{-1}\right)\textbf{S}\left(\textbf{C}_0^{-1}\textbf{x}\right).
 \end{align*} \par
 Using the equations for covariance calculation from \cite{adam}, we can break the above expression into a sum of 6 terms and write out the explicit solution for each (apart from a zeroth-order constant). Let 
 \[
--\left(\textbf{x}^T \textbf{K}^{-1}\right)\textbf{S}\left(\textbf{K}^{-1}\textbf{x}\right) = s_1 +s_2+\hdots +s_6
+-\left(\textbf{x}^T \textbf{C}_0^{-1}\right)\textbf{S}\left(\textbf{C}_0^{-1}\textbf{x}\right) = s_1 +s_2+\hdots +s_6
 \]
 \begin{align*}
 s_1&= -\sum_{i,j\in N_{gal}} \xi_{\delta\delta,ij},  \\
@@ -212,11 +328,11 @@ $s_3$ is not selected because it is quadratic in $\bar{N}$.
 The $O(A^2)$ prefactor in $\textbf{C}^{-1}$ is 
 \begin{align*}
 \textbf{M}^{-1}\textbf{X}^2\textbf{M}^{-1} &= \textbf{M}^{-1} \textbf{M}^{-1} \textbf{S} \textbf{M}^{-1}\textbf{M}^{-1} \textbf{S} \textbf{M}^{-1}\textbf{M}^{-1} \\
-&=\textbf{K}^{-1}\textbf{S}\textbf{K}^{-1}\textbf{S}\textbf{K}^{-1}
+&=\textbf{C}_0^{-1}\textbf{S}\textbf{C}_0^{-1}\textbf{S}\textbf{C}_0^{-1}
 \end{align*}\par
-I first sight I wanted to move $\textbf{S}$ across the $\textbf{K}^{-1}$ by using a commutator, thinking that it might simplify things a lot. But it turned out that the commutator did not lead to the expected cancelation, so let's do it the hard way. We first do $\textbf{K}^{-1}\textbf{S}\textbf{K}^{-1}\textbf{S}$, henceforth denoting the inverse of $\bm{\sigma}^2_v\textbf{I}$ as $\bm{\sigma}^{-1}$:
+I first sight I wanted to move $\textbf{S}$ across the $\textbf{C}_0^{-1}$ by using a commutator, thinking that it might simplify things a lot. But it turned out that the commutator did not lead to the expected cancelation, so let's do it the hard way. We first do $\textbf{C}_0^{-1}\textbf{S}\textbf{C}_0^{-1}\textbf{S}$, henceforth denoting the inverse of $\bm{\sigma}^2_v\textbf{I}$ as $\bm{\sigma}^{-1}$:
 \begin{align*}
-\textbf{K}^{-1}\textbf{S}\textbf{K}^{-1}\textbf{S} &=
+\textbf{C}_0^{-1}\textbf{S}\textbf{C}_0^{-1}\textbf{S} &=
 \left(
 \begin{array}{cc}
 \bar{N}\xi_{\delta\delta} & \xi_{\delta v} \\
@@ -237,9 +353,9 @@ I first sight I wanted to move $\textbf{S}$ across the $\textbf{K}^{-1}$ by usin
 \end{array}
 \right)
 \end{align*}\par
-Next, we multiply $\textbf{K}^{-1}$ from the right and get
+Next, we multiply $\textbf{C}_0^{-1}$ from the right and get
 \begin{align*}
-\textbf{K}^{-1}\textbf{S}\textbf{K}^{-1}\textbf{S}\textbf{K}^{-1} &=
+\textbf{C}_0^{-1}\textbf{S}\textbf{C}_0^{-1}\textbf{S}\textbf{C}_0^{-1} &=
 \left(
 \begin{array}{cc}
 \bar{N}^2 \xi_{\delta\delta}^2 + \bar{N}\xi_{\delta v}\bm{\sigma}^{-1} \xi_{v\delta} & \bar{N}\xi_{\delta\delta}\xi_{\delta v}+\xi_{\delta v}\bm{\sigma}^{-1}\xi_{vv} \\
@@ -262,7 +378,7 @@ Next, we multiply $\textbf{K}^{-1}$ from the right and get
 \end{align*}\par
 Let's denote the 4 blocks in the above matrix by
 \[
-\textbf{K}^{-1}\textbf{S}\textbf{K}^{-1}\textbf{S}\textbf{K}^{-1}=
+\textbf{C}_0^{-1}\textbf{S}\textbf{C}_0^{-1}\textbf{S}\textbf{C}_0^{-1}=
 \left(
 \begin{array}{cc}
 \textbf{A} & \textbf{B} \\
@@ -287,7 +403,7 @@ Let's now compute each block (the summations below are taken from $0$ to $N_{gal
 \textbf{D}_{ij} &=\frac{\bar{N}a^2H^2f^2b^2\sigma_i^{-2}\sigma_j^{-2}}{4\pi^4} \int r^2drd\Omega \iint dk_1dk_2 P(k_1)P(k_2)k_1^2k_2^2(\hat{\textbf{r}_i}-\hat{\textbf{r}})\cdot\hat{\textbf{r}}_i(\hat{\textbf{r}}-\hat{\textbf{r}}_j)\cdot\hat{\textbf{r}}_j\times \\ 
 &\times j_1(k_1|\textbf{r}-\textbf{r}_i|)j_1(k_2|\textbf{r}-\textbf{r}_j|) +\sigma_i^{-2}\sigma_j^{-2}\sum_m \sigma_m^{-2}\xi_{vv,im}\xi_{vv,mj}
 \end{align*}\par
-Having obtained the 4 block matrices, we now proceed with the calculation of $\textbf{x}^T\textbf{K}^{-1}\textbf{S}\textbf{K}^{-1}\textbf{S}\textbf{K}^{-1}\textbf{x}$. Similar to what we did for the first order, we break the sum into the following terms (again, summation is within the range of $N_{gal}$ by default unless otherwise stated):
+Having obtained the 4 block matrices, we now proceed with the calculation of $\textbf{x}^T\textbf{C}_0^{-1}\textbf{S}\textbf{C}_0^{-1}\textbf{S}\textbf{C}_0^{-1}\textbf{x}$. Similar to what we did for the first order, we break the sum into the following terms (again, summation is within the range of $N_{gal}$ by default unless otherwise stated):
 \begin{align*}
 S_1 &= \sum_{i, j} \textbf{A}_{ij} \\
 &=\frac{\bar{N}b^4}{4\pi^4}\sum_{i, j} \int r^2drd\Omega \iint dk_1dk_2 P(k_1)P(k_2) k_1^2k_2^2j_0(k_1|\textbf{r}-\textbf{r}_i|)j_0(k_2|\textbf{r}-\textbf{r}_j|)  \\
@@ -323,7 +439,7 @@ Since the trace is cyclic, we can permute the matrix multiplication and make it 
 \begin{align*}
 -\frac{1}{2}\tr (\textbf{X}^2)&=-\frac{1}{2}\tr(\textbf{M}^{-1}\textbf{S}\textbf{M}^{-1}\textbf{M}^{-1}\textbf{S}\textbf{M}^{-1})\\
 &=-\frac{1}{2}\tr(\textbf{M}^{-1}\textbf{M}^{-1}\textbf{S}\textbf{M}^{-1}\textbf{M}^{-1}\textbf{S}) \\
-&= -\frac{1}{2}\tr(\textbf{K}^{-1}\textbf{S}\textbf{K}^{-1}\textbf{S}) \\
+&= -\frac{1}{2}\tr(\textbf{C}_0^{-1}\textbf{S}\textbf{C}_0^{-1}\textbf{S}) \\
 &= -\frac{1}{2}\tr\left\{
 \left(
 \begin{array}{cc}
