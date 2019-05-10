@@ -121,19 +121,20 @@ for cells without such a measurement), and that in the limit of infinitely small
 &  + \int n(x) n(y) \xi_{\delta\delta,\theta_\beta}(x,y)d^3xd^3y.
 \end{align*}
 
-The trace term is
+The trace term depends on only the zero-lag correlation
 \begin{align}
  \tr(\textbf{C}^{-1} \textbf{S}_\beta \textbf{C}^{-1} \textbf{C}_0) & \approx  \tr(\textbf{C}_0^{-1} \textbf{S}_\beta) \\
  & = \bar{N} \tr(\xi_{\delta\delta,\beta}) + \tr(\frac{1}{\sigma^2_v} \xi_{vv,\beta})\\
- & = \int n(x) \xi_{\delta \delta,\beta}(x,x) d^3x +  \sum_{i\in N_{gal}} \frac{1}{\sigma^2_{v,i}} \xi_{vv,\beta}(x_i,x_i)
+ & = \int n(x) \xi_{\delta \delta,\beta}(x,x) d^3x +  \sum_{i\in N_{gal}} \frac{1}{\sigma^2_{v,i}} \xi_{vv,\beta}(x_i,x_i).
 \end{align}
 
-
-The remaining term to the leading term in $\bar{N}$ is
+The term in the Fisher matrix, to the leading term in $\bar{N}$ is
 \begin{align}
  \tr(\textbf{C}^{-1} \textbf{S}_\alpha \textbf{C}^{-1} \textbf{S}_\beta) & \approx  \tr(\textbf{C}_0^{-1} \textbf{S}_\alpha \textbf{C}_0^{-1} \textbf{S}_\beta)  \\
- & = \bar{N} \tr(\xi_{\delta v,\alpha} \frac{1}{\bm{\sigma}^2_v} \xi_{v\delta,\beta} ) + \tr(\frac{1}{\bm{\sigma}^2_v} \xi_{vv,\alpha}  \frac{1}{\bm{\sigma}^2_v}  \xi_{vv,\beta})\\
- & = \int n(x) \sum_{i\in N_{gal}} \xi_{\delta v,\alpha}(x,x_i) \frac{1}{\sigma^2_{v,i}} \xi_{v\delta,\beta} (x_i,x) d^3x \\
+ & = \bar{N}^2 \tr(\xi_{\delta \delta,\alpha}\xi_{\delta \delta,\beta})+
+ \bar{N} \tr(\xi_{\delta v,\alpha} \frac{1}{\bm{\sigma}^2_v} \xi_{v\delta,\beta} ) + \tr(\frac{1}{\bm{\sigma}^2_v} \xi_{vv,\alpha}  \frac{1}{\bm{\sigma}^2_v}  \xi_{vv,\beta})\\
+ & = \int n(x) n(y) \xi_{\delta \delta,\alpha}(x,y)\xi_{\delta \delta,\beta}(y,x) d^3x d^3y \\
+ & + \int n(x) \sum_{i\in N_{gal}} \xi_{\delta v,\alpha}(x,x_i) \frac{1}{\sigma^2_{v,i}} \xi_{v\delta,\beta} (x_i,x) d^3x \\
  & +  \sum_{i,j\in N_{gal}} \frac{1}{\sigma^2_{v,i}} \xi_{vv,\alpha}(x_i,x_j)  \frac{1}{\sigma^2_{v,j}}  \xi_{vv,\beta}(x_j,x_i).
 \end{align}
 
@@ -173,7 +174,7 @@ for cells without such a measurement), and that in the limit of infinitely small
 & +n^2  \int \xi_{\delta\delta,V_1V_2}dV_1dV_2.
 \end{align*}
 
-
+\end{comment}
 
 We evaluate $\textbf{x}^T \textbf{C}^{-1}\textbf{x}$ by splitting up the counts and velocities.  The data vector $\textbf{x}$ is composed of the counts
  $\textbf{N}-\bar{N}$ and peculiar velocities $\mathbf{\Delta v}$, whereas $\textbf{S}$ is comprised of $\bar{N}^2\xi_{\delta\delta}$, $\bar{N}\xi_{\delta v}$,
@@ -192,6 +193,7 @@ for cells without such a measurement), and that in the limit of infinitely small
 &-2 n \sum_{i\in N_{gal}}\int \left(\xi_{\delta\delta,iV} + \frac{\Delta v_i}{\sigma_{v,i}^2} \xi_{v \delta,iV}\right) dV\\
 & +n^2  \int \xi_{\delta\delta,V_1V_2}dV_1dV_2.
 \end{align*}
+\begin{comment}
 
 Now consider the next term $\textbf{C}_0^{-1}\textbf{S}\textbf{C}_0^{-1}\textbf{S}\textbf{C}_0^{-1}$.  The middle section is
 \begin{align}
