@@ -2,7 +2,6 @@
 
 import numpy as np 
 import matplotlib.pyplot as plt
-#import healpy as hp
 import os
 import re
 import partials
@@ -53,7 +52,7 @@ so =np.argsort(rt)
 dtp = []
 list = []
 
-for index in range(len(rt)-1):
+for index in range(len(rt)):
     list= (so[index],fom_10[so[index]])
     dtp.append((list))
 
@@ -82,6 +81,8 @@ plt.yticks(fontsize=20)
 plt.tick_params(length=10,width=1.2)
 plt.xlabel("$\sigma_\gamma^{-1}$(cadence) / $\sigma_\gamma^{-1}$(baseline2018a)",fontsize=20)
 plt.ylim(0.5,13.5)
+plt.vlines(1.,0.5,13.5,colors='k',linestyles='dashed',label="baseline2018a") 
+plt.legend()
 plt.show()
-plt.savefig('FOM_Gamma_OSTF_new.pdf')
+plt.savefig('sn_pv_FOM_Gamma.pdf')
 
