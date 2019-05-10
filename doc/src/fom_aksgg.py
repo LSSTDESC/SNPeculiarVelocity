@@ -84,5 +84,5 @@ plt.ylim(0.5,13.5)
 plt.vlines(1.,0.5,13.5,colors='k',linestyles='dashed',label="baseline2018a") 
 plt.legend()
 plt.show()
-plt.savefig('sn_pv_FOM_Gamma.pdf')
+plt.savefig('sn_pv_FoM_Gamma.pdf')
 
