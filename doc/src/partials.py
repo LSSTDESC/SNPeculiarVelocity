@@ -688,4 +688,4 @@ def surveyFOM(skyfrac, duration):
     return numpy.linalg.inv(numpy.array([[f00,f10,f02],[f10,f11,f12],[f02,f12,f22+sigOM0sqinv]]))[0,0]*2*3.14/skyfrac
 
 
-surveyFOM()
+#surveyFOM()
