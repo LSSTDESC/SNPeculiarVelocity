@@ -10,17 +10,27 @@
 \maketitle
 
 
-There is sufficient information in the distribution of peculiar velocities and overdensities of galaxies to test general relativity on the largest scale. Suppose we have a region that encloses $N_{gal}$ number of galaxies in the universe. We can divide the region into $N_{cell}\gg 1$ number of equal volume cells whose size can be made so small that either one or no galaxy is contained in one cell. This is encoded in a vector $\textbf{N}$ of size $N_{cell}$ whose entries are either 0 or 1. For any 2 cells, we can compute their correlation, a function of the distance $r$ between the cells only. In our application, we consider $\xi_{\delta\delta}$ (the overdensity-overdensity correlation), $\xi_{\delta v}$ (overdensity-velocity correlation), $\xi_{v\delta}$ (velocity-overdensity correlation), and $\xi_{vv}$ (velocity-velocity correlation).\par
+%There is sufficient information in the distribution of peculiar velocities and overdensities of galaxies to test general relativity on the largest scale. Suppose we have a region that encloses $N_{gal}$ number of galaxies in the universe. We can divide the region into $N_{cell}\gg 1$ number of equal volume cells whose size can be made so small that either one or no galaxy is contained in one cell. This is encoded in a vector $\textbf{N}$ of size $N_{cell}$ whose entries are either 0 or 1. For any 2 cells, we can compute their correlation, a function of the distance $r$ between the cells only. In our application, we consider $\xi_{\delta\delta}$ (the overdensity-overdensity correlation), $\xi_{\delta v}$ (overdensity-velocity correlation), $\xi_{v\delta}$ (velocity-overdensity correlation), and $\xi_{vv}$ (velocity-velocity correlation).\par
+
+Consider a galaxy count and peculiar velocity survey that covers a volume, which is divided into $N_{cell}$ equal-volume cells.  Each cell will contain some
+number of survey galaxies; when the cell volume is large then each cell is likely to contain many galaxies whereas when the cell volume is small each cell is likely
+to have either one or no galaxies.  Similarly, when the cell volume is large  its  peculiar velocity is determined combining all the velocity measurements therein,
+whereas when the volume is small the cell velocity is likely to be that of the one galaxy therein or there is no measurement, alternatively viewed as an infinite
+uncertainty measurement.  We denote $N_{gal}$ as the number of cells that contains at least one galaxy, at the large cell volume limit
+$N_{gal}=N_{cell}$ whereas in the limit of infinitely small cell volumes it is
+the number of galaxies in the survey.
 
 %The data  is $\textbf{x}= [N_1-\bar{N}, N_2-\bar{N}, \hdots, N_{N_{cell}}-\bar{N}, \Delta v_1, \hdots, \Delta v_{N_{gal}}]^T$, where $\Delta v$ is the deviation of the measured velocity from the expected, 
-The data themselves are denoted as $\textbf{y} = [N_1, N_2, \hdots, N_{N_{cell}}, v_1, \hdots, v_{N_{gal}}]$
-and are modeled as $\textbf{y}_0 =[\bar{N}, \bar{N}, \hdots, \bar{N}, v^0_{1}, \hdots, v^0_{N_{gal}}]$.  For now we assume that the model is not fixed but depends
+The data in the cells are denoted as $\textbf{y} = [N_1, N_2, \hdots, N_{N_{cell}}, v_1, \hdots, v_{N_{gal}}]$
+and are modeled as $\textbf{y}_0 =[\bar{N}, \bar{N}, \hdots, \bar{N}, v_{0,1}, \hdots, v_{0,N_{gal}}]$.  For now we assume that the model is not fixed but depends
 on linear parameters $p_\alpha$ such that
  $\textbf{y}_0 = p_\alpha \textbf{x}_\alpha$.
-Their difference is  denoted as $\Delta \textbf{y}= \textbf{y} - \textbf{y}_0 $ and $\Delta v= v-v^0$.  (Although the note is written in terms of velocities
-in practice we expect to work with magnitudes as the are observed.)
+Their difference is  denoted as $\Delta \textbf{y}= \textbf{y} - \textbf{y}_0 $ and $\Delta v= v-v_0$.  (Although the note is written in terms of velocities
+in practice we expect to work with magnitudes.)
 
-We postulate that deviations from expected variance $\bar{N}$ and expected peculiar velocity $\bar{v}$ are Gaussian. Then the above correlation matrices can be used to construct a block matrix $\textbf{C}$, parameterized by $A$ and $\bm{\sigma}_v$, a vector of shot noise for peculiar velocity measurement:
+We model the observations as being drawn from a Gaussian distribution.
+The variance in number counts in a cell is $\bar{N}$ and the vector of peculiar velocity measurement in the cells is denoted $\bm{\sigma}_v$,
+  Then the above correlation matrices can be used to construct a block matrix $\textbf{C}$:
 \begin{align}
 \textbf{C} &\equiv \textbf{C}_0 + \textbf{S}\\
 %\textbf{C} &\equiv \textbf{C}_0 + A\textbf{S} \\ 
@@ -37,18 +47,31 @@ We postulate that deviations from expected variance $\bar{N}$ and expected pecul
 \bar{N}\xi_{v g} & \xi_{vv}
 \end{pmatrix},
 \end{align}
-where $\xi_{gg}$, $\xi_{vv}$, and $\bar{N}\xi_{g v}$ are the galaxy overdensity and peculiar velocity correlation functions and their cross-correlation
+where $\xi_{gg}$, $\xi_{vv}$, and $\xi_{g v}$ are the galaxy overdensity and peculiar velocity correlation functions and their cross-correlation
 respectively.  
+The dimension of $C$ is $N_{cell}+N_{gal}$ by $N_{cell}+N_{gal}$. For the peculiar velocity covariance, we assign $\sigma^2=\infty$ to cells that do not contain any galaxy, and one can show that removing rows and columns that contain those cells has no effect but a constant offset on what we will compute later.
 
-The reason we have $\bar{N}$ as the variance for overdensity is that our small galaxy cells are best modeled by Poisson statistics, in which the mean equals the variance. In addition, note that the dimension of $C$ is $N_{cell}+N_{gal}$ by $N_{cell}+N_{gal}$. For the peculiar velocity covariance, we assign $\sigma^2=\infty$ to cells that do not contain any galaxy, and one can show that removing rows and columns that contain those cells has no effect but a constant offset on what we will compute later.
 
-
-The science parameters $\theta$ enter through these correlation functions, and may include $\theta \in \{fD, bD, \gamma, \Omega_{M_0},\ldots\}$ and others
+The science parameters $\theta$ enter through the correlation functions, and may include $\theta \in \{fD, bD, \gamma, \Omega_{M_0},\ldots\}$ and others
 that describe the matter power spectrum.
 For example, the parameter $fD$ enters in through the relations $\xi_{vv}\propto (fD\mu)^2$, the SN~Ia host-galaxy count overdensity
 power spectrum $\xi_{g g }\propto (bD + fD\mu^2)^2$, and the galaxy-velocity cross-correlation $\xi_{vg}
 \propto  (bD + fD\mu^2)fD$, where $b$ is the galaxy bias and $\mu\equiv \cos{(\hat{k} \cdot \hat{r})}$ where $\hat{r}$ is the direction of
-the line of sight.  
+the line of sight.   There are also the parameters $p$ that linearly affect the mean of the Gaussian, a primary example being the combination
+$M+5\log{H_0}$ where $M$ is the SN absolute magnitude and $H_0$ is the Hubble constant.
+
+
+The Gaussian likelihood as a function of $\theta$ is
+\[
+\mathcal{L}(\theta) = \frac{1}{\sqrt{\left(2\pi\right)^{N_{cell}+N_{gal}} \det \textbf{C}}}\exp\left\{-\frac{1}{2}\Delta \textbf{y}^T\textbf{C}^{-1}\Delta \textbf{y}\right\}.
+\]
+and
+\begin{equation}
+-2\ln\mathcal{L}(\theta) = \ln\det\textbf{C} + \Delta \textbf{y}^T\textbf{C}^{-1}\Delta \textbf{y} + \text{const}.
+\label{log:eqn}
+\end{equation}
+
+
 Assuming linear dependence of the parameters,
 \begin{align}
 \textbf{C} 
@@ -59,21 +82,47 @@ Assuming linear dependence of the parameters,
 0 & \bm{\sigma}_v^2\textbf{I}
 \end{array}
 \right)
-+ \sum_\theta \theta
++ \sum_\alpha \theta_\alpha
 \begin{pmatrix}
-\bar{N}^2\xi_{gg,\theta} & \bar{N}\xi_{g v,\theta} \\
-\bar{N}\xi_{v g,\theta} & \xi_{vv,\theta}
+\bar{N}^2\xi_{gg,{\theta_\alpha}} & \bar{N}\xi_{g v,{\theta_\alpha}} \\
+\bar{N}\xi_{v g,{\theta_\alpha}} & \xi_{vv,{\theta_\alpha}}
 \end{pmatrix}\\
 &=
-\left(
-\begin{array}{cc}
-\bar{N}\textbf{I} & 0 \nonumber \\
-0 & \bm{\sigma}_v^2\textbf{I}
-\end{array}
-\right)
-+ \sum_\alpha \theta_\alpha \textbf{S}_\alpha .
+\textbf{C}_0
++ \sum_\alpha \theta_\alpha \textbf{S}_\alpha,
 \end{align} 
+where the comma represents the partial derivative.
 
+%\begin{comment}
+%The inverse can be expanded as
+%\begin{align}
+%\textbf{C}^{-1}
+%&=
+%\textbf{C}_0^{-1} \left( 1 +  \sum_\alpha \theta_\alpha \textbf{S}_\alpha \textbf{C}_0^{-1} \right)^{-1}\\
+%&=
+%\textbf{C}_0^{-1} \sum_{i=0}^{\infty} (-1)^i \left(\sum_\alpha \theta_\alpha \textbf{S}_\alpha \textbf{C}_0^{-1} \right)^i.
+%\end{align} 
+%
+%In our case
+%\begin{align}
+% \textbf{S}_\alpha \textbf{C}_0^{-1} & = 
+% \begin{pmatrix}
+% \bar{N}\xi_{gg,\theta_\alpha} & \frac{\bar{N}}{ \bm{\sigma}_v^2} \xi_{gv,\theta_\alpha}\\
+% \xi_{vg,\theta_\alpha} & \frac{1}{ \bm{\sigma}_v^2} \xi_{vv,\theta_\alpha}\\
+% \end{pmatrix}
+% \end{align}
+%
+%We will eventually take the limit where $\bar{N} \rightarrow 0$.
+%Then
+%\begin{align}
+%\left(\sum_\alpha \theta_\alpha \textbf{S}_\alpha \textbf{C}_0^{-1} \right)^i &  \approx 
+%\sum_{\alpha}  \ldots \sum_{\delta}  \theta_{\alpha} \ldots \theta_\delta
+%  \begin{pmatrix}
+% \frac{\bar{N}}{ \bm{\sigma}_v^{2(i-1)}} \xi_{gv,\theta_\alpha}  \xi_{vg,\theta_\beta} \ldots  \xi_{vg,\theta_\gamma} & \frac{\bar{N}}{ \bm{\sigma}_v^{2i}} \xi_{gv,\theta_\alpha} \xi_{vv,\theta_\beta} \ldots  \xi_{vv,\theta_\gamma} \\
+% \frac{1}{ \bm{\sigma}_v^{2(i-1)}} \xi_{vv,\theta_\alpha} \xi_{vg,\theta_\beta}\ldots  \xi_{vg,\theta_\gamma}   & \frac{1}{ \bm{\sigma}_v^{2i}} \xi_{vv,\theta_\alpha} \xi_{vv,\theta_\beta}\ldots  \xi_{vv,\theta_\gamma}\\
+% \end{pmatrix}.
+%\end{align}
+%\end{comment}
 %\left(
 %\begin{array}{cc}
 %\bar{N}\textbf{I} & 0 \nonumber \\
@@ -92,20 +141,11 @@ Assuming linear dependence of the parameters,
 
 
 
-The Gaussian likelihood as a function of $\theta$
-\[
-\mathcal{L}(\theta) = \frac{1}{\sqrt{\left(2\pi\right)^{N_{cell}+N_{gal}} \det \textbf{C}}}\exp\left\{-\frac{1}{2}\Delta \textbf{y}^T\textbf{C}^{-1}\Delta \textbf{y}\right\}.
-\]\par
-To make the expression cleaner, we take the log of the likelihood and focus on the $A$-dependent part:
-\begin{equation}
--2\ln\mathcal{L}(\theta) = \ln\det\textbf{C} + \Delta \textbf{y}^T\textbf{C}^{-1}\Delta \textbf{y} + \text{const}.
-\label{log:eqn}
-\end{equation}
-
-The estimator and Fisher matrix for this Gaussian likelihood are
+The estimator and Fisher matrix for this Gaussian likelihood are well known (and derived in  \S\ref{appendix:sec}).
 \begin{align}
-\hat{\theta}_\alpha & = \frac{1}{2} F^{(\theta \theta)\,-1}_{\alpha \beta} [(\Delta \textbf{y}^T \textbf{C}^{-1} \textbf{S}_\beta \textbf{C}^{-1} \Delta \textbf{y}) - \tr(\textbf{C}^{-1} \textbf{S}_\beta \textbf{C}^{-1} \textbf{C}_0)]\\
+\hat{\theta}_\alpha & = \frac{1}{2} F^{(\theta \theta)\,-1}_{\alpha \beta} [(\Delta \textbf{y}^T \textbf{C}^{-1} \textbf{S}_\beta \textbf{C}^{-1} \Delta \textbf{y}) - \tr(\textbf{C}^{-1} \textbf{S}_\beta \textbf{C}^{-1} \textbf{C}_0)] \nonumber \\
 \hat{p}_\alpha  &=  F^{(pp)\, -1}_{\alpha \beta}  (\textbf{y}^T  \textbf{C}^{-1} x_\beta)
+\label{estimators:eqn}
 \end{align}
 where  
 \begin{align}
@@ -114,40 +154,115 @@ F^{(pp)}_{\alpha\beta} & =x^T_\alpha \textbf{C}^{-1} x_\beta\\
 F^{(\theta p)}_{\alpha\beta} & = 0.
 \end{align}
 
-We focus on the parameters $\theta$ related to the covariance matrix .
-The term
-\begin{align}
-\Delta \textbf{y}^T \textbf{C}^{-1} \textbf{S}_\beta \textbf{C}^{-1} \Delta \textbf{y} & \approx \Delta \textbf{y}^T \textbf{C}_0^{-1} \textbf{S}_\beta \textbf{C}_0^{-1} \Delta \textbf{y}\\
-&=(\textbf{N}-\bar{N}) \xi_{\delta\delta,\theta_\beta}  (\textbf{N}-\bar{N})  + 2  (\textbf{N}-\bar{N}) \xi_{\delta v,\theta_\beta}\frac{\mathbf{\Delta v}}{\bm{\sigma}_v^2}+ 
-\frac{\mathbf{\Delta v}}{\bm{\sigma}_v^2} \xi_{vv,\theta_\beta}\frac{\mathbf{\Delta v}}{\bm{\sigma}_v^2}.
-\end{align}
-Noting that $N_i=1$ when the cell $i$ contains a galaxy and zero otherwise and that only cells with a peculiar velocity measurement contribute ($\sigma_v =\infty$
-for cells without such a measurement), and that in the limit of infinitely small cells, $\bar{N}\sum_{i,j\in N_{cell}} = \int n dV$, where $n$ is the galaxy number density,
+%Let us consider the limit where there are an infinite number of cells and $\bar{N} \rightarrow 0$ and $\bar{N}\sum_{i,j\in N_{cell}} = n \int dV$, where $n$ is the galaxy number density,
+Denoting $\textbf{M}_\beta = \textbf{C}^{-1} \textbf{S}_\beta \textbf{C}^{-1}$ and splitting the calculation into quadrants  corresponding to the galaxy and velocity indices,
+the complicated terms are
 \begin{align*}
-\Delta \textbf{y}^T \textbf{C}^{-1} \textbf{S}_\beta \textbf{C}^{-1} \Delta \textbf{y} & \approx \sum_{i,j\in N_{gal}} \xi_{\delta\delta,\theta_\beta,ij} -2 \bar{N} \sum_{i\in N_{gal},j\in N_{cell}} \xi_{\delta\delta,\theta_\beta,ij}\\
-& +\bar{N}^2  \sum_{i,j\in N_{cell}}  \xi_{\delta\delta,\theta_\beta,ij} + 2 \sum_{i,j\in N_{gal}} \frac{\Delta v_j}{\sigma_{v,j}^2} \xi_{\delta v,\theta_\beta,ij} \\
-& -2\bar{N}\sum_{i\in N_{cell}, j\in N_{gal}} \frac{\Delta v_j}{\sigma_{v,j}^2} \xi_{\delta v,\theta_\beta,ij}  + \sum_{i,j\in N_{gal}} \frac{\Delta v_i}{\sigma_{v,i}^2} \xi_{vv,\theta_\beta,ij} \frac{\Delta v_j}{\sigma_{v,j}^2}\\
-& = \sum_{i,j\in N_{gal}} \left( \xi_{\delta\delta,\theta_\beta}(x_i,x_j) + 2  \frac{\Delta v_j}{\sigma_{v,j}^2} \xi_{\delta v,\theta_\beta}(x_i,x_j) + \frac{\Delta v_i}{\sigma_{v,i}^2} \xi_{vv,\theta_\beta}(x_i,x_j) \frac{\Delta v_j}{\sigma_{v,j}^2}\right)\\
-&-2  \sum_{i\in N_{gal}}\int n(x_i) \left(\xi_{\delta\delta,\theta_\beta}(x_i,y) + \frac{\Delta v_i}{\sigma_{v,i}^2} \xi_{v \delta,\theta_\beta}(x_i,y) \right) d^3y\\
-&  + \int n(x) n(y) \xi_{\delta\delta,\theta_\beta}(x,y)d^3xd^3y.
+\Delta \textbf{y}^T \textbf{C}^{-1} \textbf{S}_\beta \textbf{C}^{-1} \Delta \textbf{y}  
+ %& = \frac{1}{\bar{N}^2}\int \int n(x_1) n(x_2) (N(x_1)-\bar{N}) M_{gg}(x_1,x_2) (N(x_2)-\bar{N})  d^3x_1  d^3x_2\\
+%& +   \frac{2}{\bar{N}}\int \sum_{i=1}^{N} n(x_1) (N(x_1)-\bar{N}) M_{gv}(x_1,x_i) \Delta v_i  d^3x_1 \\
+%& + \sum_{i=1}^{N}  \sum_{j=1}^{N}  \Delta v_i M_{vv}(x_i,x_j) \Delta v_j\\
+&= \sum_{i=1}^{N_{\text gal}}  \sum_{j=1}^{N_{\text gal}} N_i M_{\beta,gg}(x_i,x_j) N_j 
+ - 2\bar{N}   \sum_{i=1}^{N_{\text cell}} \sum_{j=1}^{N_{\text gal}}  M_{\beta,gg}(x_i,x_j) N_j \\
+& +\bar{N}^2 \sum_{i=1}^{N_{\text cell}} \sum_{j=1}^{N_{\text cell}}  M_{\beta,gg}(x_i,x_j) 
+ +   2 \sum_{i=1}^{N_{\text gal}}  \sum_{j=1}^{N_{\text gal}}  N_i M_{\beta,gv}(x_i,x_j) \Delta v_j  \\
+& -   2 \bar{N}  \sum_{i=1}^{N_{\text cell}} \sum_{j=1}^{N_{\text gal}}  M_{\beta,gv}(x_i,x_j) \Delta v_j 
++ \sum_{i=1}^{N_{\text gal}}  \sum_{j=1}^{N_{\text gal}}  \Delta v_i M_{\beta,vv}(x_i,x_j) \Delta v_j ,
+\end{align*}
+\begin{align*}
+\tr (\textbf{C}^{-1} \textbf{S}_\beta \textbf{C}^{-1} \textbf{S}_\alpha) & 
+=  \sum_{i=1}^{N_{\text cell}} \sum_{j=1}^{N_{\text cell}} M_{\beta,gg}(x_i,x_j)\textbf{S}_{\alpha,gg}(x_j,x_i)  +  2 \sum_{i=1}^{N_{\text cell}} \sum_{j=1}^{N_{\text gal}} M_{\beta,gv}(x_i,x_j)\textbf{S}_{\alpha,vg} (x_j,x_i)\\
+& + \sum_{i=1}^{N_{\text gal}} \sum_{j=1}^{N_{\text gal}} M_{\beta,vv}(x_i,x_j) \textbf{S}_{\alpha,vv}(x_j,x_i),
+\end{align*}
+\begin{align*}
+\tr (\textbf{C}^{-1} \textbf{S}_\beta \textbf{C}^{-1} \textbf{C}_0) & 
+=  \sum_{i=1}^{N_{\text cell}} \sum_{j=1}^{N_{\text cell}} M_{\beta,gg}(x_i,x_j)\textbf{C}_{0,gg}(x_j,x_i)  + \sum_{i=1}^{N_{\text gal}} \sum_{j=1}^{N_{\text gal}} M_{\beta,vv}(x_i,x_j) \textbf{C}_{0,vv}(x_j,x_i)\\
+ & 
+= \bar{N} \sum_{i=1}^{N_{\text cell}} M_{\beta,gg}(x_i,x_i)  + \sum_{i=1}^{N_{\text gal}}  M_{\beta,vv}(x_i,x_i) \sigma^{2}_{vi} .
 \end{align*}
 
-The trace term depends on only the zero-lag correlation
-\begin{align}
- \tr(\textbf{C}^{-1} \textbf{S}_\beta \textbf{C}^{-1} \textbf{C}_0) & \approx  \tr(\textbf{C}_0^{-1} \textbf{S}_\beta) \\
- & = \bar{N} \tr(\xi_{\delta\delta,\beta}) + \tr(\frac{1}{\sigma^2_v} \xi_{vv,\beta})\\
- & = \int n(x) \xi_{\delta \delta,\beta}(x,x) d^3x +  \sum_{i\in N_{gal}} \frac{1}{\sigma^2_{v,i}} \xi_{vv,\beta}(x_i,x_i).
-\end{align}
+An interesting limit is when there are infinitely small cell sizes.  Then $N_{gal}$ (the number of cells with galaxies) approaches the number
+of galaxies, those cells have $N_i=1$,  and $\bar{N}\sum_{i\in N_{cell}} = n \int dV$, where $n$ is the galaxy number density.
+The calculation then is then `binless', with sums over sample objects and integrals to account for the volume where there are no objects.
+In this limit, a Poisson rather than Gaussian model distribution better describes expectations. 
 
-The term in the Fisher matrix, to the leading term in $\bar{N}$ is
-\begin{align}
- \tr(\textbf{C}^{-1} \textbf{S}_\alpha \textbf{C}^{-1} \textbf{S}_\beta) & \approx  \tr(\textbf{C}_0^{-1} \textbf{S}_\alpha \textbf{C}_0^{-1} \textbf{S}_\beta)  \\
- & = \bar{N}^2 \tr(\xi_{\delta \delta,\alpha}\xi_{\delta \delta,\beta})+
- \bar{N} \tr(\xi_{\delta v,\alpha} \frac{1}{\bm{\sigma}^2_v} \xi_{v\delta,\beta} ) + \tr(\frac{1}{\bm{\sigma}^2_v} \xi_{vv,\alpha}  \frac{1}{\bm{\sigma}^2_v}  \xi_{vv,\beta})\\
- & = \int n(x) n(y) \xi_{\delta \delta,\alpha}(x,y)\xi_{\delta \delta,\beta}(y,x) d^3x d^3y \\
- & + \int n(x) \sum_{i\in N_{gal}} \xi_{\delta v,\alpha}(x,x_i) \frac{1}{\sigma^2_{v,i}} \xi_{v\delta,\beta} (x_i,x) d^3x \\
- & +  \sum_{i,j\in N_{gal}} \frac{1}{\sigma^2_{v,i}} \xi_{vv,\alpha}(x_i,x_j)  \frac{1}{\sigma^2_{v,j}}  \xi_{vv,\beta}(x_j,x_i).
-\end{align}
+Finding the roots of Eq.~\ref{estimators:eqn} to get the estimators is non-trivial.  In particular the $\hat{\theta}$ appears in $\mathbf{C}^{-1}$, a large matrix that
+isn't obviously easy to invert.  Using the renormalization group, \cite{2019PhRvD..99d3538M} reparameterizes the likelihood such that much of the parameter-dependence
+gets shifted to other terms leaving a smaller
+band-diagonal matrix that remains to be inverted.  Applying his methodology to our problem is an interesting direction to pursue.
+
+For our purposes, having a precise answer is probably unnecessary.
+Solving the right hand side of Eq.~\ref{estimators:eqn} to lowest (zeroth) order in $\theta$ gives a useful approximate answer.  Replacing
+$\textbf{C}^{-1}$ with the diagonal $\textbf{C}_0^{-1}$ gives
+\begin{align*}
+\textbf{M}_{\beta,gg} & \approx \xi_{gg,\theta_\beta}\\
+\textbf{M}_{\beta,gv} & \approx \xi_{gv,\theta_\beta} \bm{\sigma}^{-2}_v\\
+\textbf{M}_{\beta,vv} & \approx \bm{\sigma}^{-2}_v \xi_{vv,\theta_\beta} \bm{\sigma}^{-2}_v .
+\end{align*}
+so that
+\begin{align*}
+\Delta \textbf{y}^T \textbf{C}^{-1} \textbf{S}_\beta \textbf{C}^{-1} \Delta \textbf{y}  
+&\approx \sum_{i=1}^{N_{\text gal}}  \sum_{j=1}^{N_{\text gal}} N_i \xi_{gg,\theta_\beta}(x_i,x_j) N_j 
+ - 2\bar{N}   \sum_{i=1}^{N_{\text cell}} \sum_{j=1}^{N_{\text gal}}  \xi_{gg,\theta_\beta}(x_i,x_j)N_j \\
+& +\bar{N}^2 \sum_{i=1}^{N_{\text cell}} \sum_{j=1}^{N_{\text cell}} \xi_{gg,\theta_\beta}(x_i,x_j)
+ +   2 \sum_{i=1}^{N_{\text gal}}  \sum_{j=1}^{N_{\text gal}}  N_i  \xi_{gv,\theta_\beta}(x_i,x_j)\frac{\Delta v_j}{\sigma^2_{v,j}} \\
+& -   2 \bar{N}  \sum_{i=1}^{N_{\text cell}} \sum_{i=1}^{N_{\text gal}}   \xi_{gv,\theta_\beta}(x_i,x_j) \frac{\Delta v_j}{\sigma^2_{v,j}} 
++ \sum_{i=1}^{N_{\text gal}}  \sum_{j=1}^{N_{\text gal}}   \frac{\Delta v_i}{\sigma^2_{v,i}}  \xi_{vv,\theta_\beta}(x_i,x_j)  \frac{\Delta v_j}{\sigma^2_{v,j}},\\
+%\Delta \textbf{y}^T \textbf{C}^{-1} \textbf{S}_\beta \textbf{C}^{-1} \Delta \textbf{y} & \approx \sum_{i,j\in N_{gal}} N_i N_j \xi_{\delta\delta,\theta_\beta}(x_i,x_j) -2 \bar{N} \sum_{i\in N_{gal},j\in N_{cell}} \xi_{\delta\delta,\theta_\beta,ij}\\
+%& +\bar{N}^2  \sum_{i,j\in N_{cell}}  \xi_{\delta\delta,\theta_\beta,ij} + 2 \sum_{i,j\in N_{gal}} \frac{\Delta v_j}{\sigma_{v,j}^2} \xi_{\delta v,\theta_\beta,ij} \\
+%& -2\bar{N}\sum_{i\in N_{cell}, j\in N_{gal}} \frac{\Delta v_j}{\sigma_{v,j}^2} \xi_{\delta v,\theta_\beta,ij}  + \sum_{i,j\in N_{gal}} \frac{\Delta v_i}{\sigma_{v,i}^2} \xi_{vv,\theta_\beta,ij} \frac{\Delta v_j}{\sigma_{v,j}^2}\\
+%& = \sum_{i,j\in N_{gal}} \left( \xi_{\delta\delta,\theta_\beta}(x_i,x_j) + 2  \frac{\Delta v_j}{\sigma_{v,j}^2} \xi_{\delta v,\theta_\beta}(x_i,x_j) + \frac{\Delta v_i}{\sigma_{v,i}^2} \xi_{vv,\theta_\beta}(x_i,x_j) \frac{\Delta v_j}{\sigma_{v,j}^2}\right)\\
+%&-2  \sum_{i\in N_{gal}}\int n(x_i) \left(\xi_{\delta\delta,\theta_\beta}(x_i,y) + \frac{\Delta v_i}{\sigma_{v,i}^2} \xi_{v \delta,\theta_\beta}(x_i,y) \right) d^3y\\
+%&  + \int n(x) n(y) \xi_{\delta\delta,\theta_\beta}(x,y)d^3xd^3y.
+\end{align*}
+\begin{align*}
+\tr (\textbf{C}^{-1} \textbf{S}_\beta \textbf{C}^{-1} \textbf{S}_\alpha) & 
+= \bar{N}^2  \sum_{i=1}^{N_{\text cell}} \sum_{j=1}^{N_{\text cell}} \xi_{gg,\theta_\beta}(x_i,x_j)\xi_{gg,\theta_\alpha}(x_j,x_i) 
++2 \bar{N}   \sum_{i=1}^{N_{\text cell}} \sum_{j=1}^{N_{\text gal}}\frac{1}{\sigma^{2}_{vj}}   \xi_{gv,\theta_\beta} (x_i,x_j)\xi_{\alpha,vg} (x_j,x_i)\\
+& + \sum_{i=1}^{N_{\text gal}} \sum_{j=1}^{N_{\text gal}} \frac{1}{\sigma^{2}_{vi} \sigma^{2}_{vj}} \xi_{vv,\theta_\beta}(x_i,x_j)\xi_{vv,\theta_\alpha}(x_j,x_i) 
+\end{align*}
+\begin{align*}
+\tr (\textbf{C}^{-1} \textbf{S}_\beta \textbf{C}^{-1} \textbf{C}_0) & 
+=   \bar{N} \sum_{i=1}^{N_{\text cell}}  \xi_{gg,\theta_\beta}(x_i,x_i)  + \sum_{i=1}^{N_{\text gal}} \frac{1}{ \sigma^{2}_{vi}}\xi_{vv,\theta_\alpha}(x_i,x_i)
+\end{align*}
+
+The SN~Ia rate is $2.69 \times 10^{-5} \text{Mpc}^{-3} \text{yr}^{-1}$, meaning that after 10 years there
+will be around 1 supernova every 3700~$\text{Mpc}^{3}$.
+The Universe is $2.4 \times 10^9$~Mpc$^3$ out to $z=0.2$.  A rough bound on the number of necessary cells is $6\times 10^{5}$.
+When taking the linear approximation the calculation scales as $N_{cell}^2$, so this is possible to do on a laptop.
+The exact solution requires matrix factorizations that scale as $N_{cell}^3$, which is not so possible on a laptop.
+
+%%\begin{comment}
+%%We focus on the parameters $\theta$ related to the covariance matrix.
+%%The term
+%%\begin{align}
+%%\Delta \textbf{y}^T \textbf{C}^{-1} \textbf{S}_\beta \textbf{C}^{-1} \Delta \textbf{y} & \approx \Delta \textbf{y}^T \textbf{C}_0^{-1} \textbf{S}_\beta \textbf{C}_0^{-1} \Delta \textbf{y}\\
+%%&=(\textbf{N}-\bar{N}) \xi_{\delta\delta,\theta_\beta}  (\textbf{N}-\bar{N})  + 2  (\textbf{N}-\bar{N}) \xi_{\delta v,\theta_\beta}\frac{\mathbf{\Delta v}}{\bm{\sigma}_v^2}+ 
+%%\frac{\mathbf{\Delta v}}{\bm{\sigma}_v^2} \xi_{vv,\theta_\beta}\frac{\mathbf{\Delta v}}{\bm{\sigma}_v^2}.
+%%\end{align}
+%%Noting that $N_i=1$ when the cell $i$ contains a galaxy and zero otherwise and that only cells with a peculiar velocity measurement contribute ($\sigma_v =\infty$
+%%for cells without such a measurement), and that in the limit of infinitely small cells, $\bar{N}\sum_{i\in N_{cell}} = \int n dV$, where $n$ is the galaxy number density,
+%%\end{comment}
+%
+%
+%
+%The trace term depends on only the zero-lag correlation
+%\begin{align}
+% \tr(\textbf{C}^{-1} \textbf{S}_\beta \textbf{C}^{-1} \textbf{C}_0) & \approx  \tr(\textbf{C}_0^{-1} \textbf{S}_\beta) \\
+% & = \bar{N} \tr(\xi_{\delta\delta,\beta}) + \tr(\frac{1}{\sigma^2_v} \xi_{vv,\beta})\\
+%% & = \int n(x) \xi_{\delta \delta,\beta}(x,x) d^3x +  \sum_{i\in N_{gal}} \frac{1}{\sigma^2_{v,i}} \xi_{vv,\beta}(x_i,x_i).
+%\end{align}
+%
+%The term in the Fisher matrix, to the leading term in $\bar{N}$ is
+%\begin{align}
+% \tr(\textbf{C}^{-1} \textbf{S}_\alpha \textbf{C}^{-1} \textbf{S}_\beta) & \approx  \tr(\textbf{C}_0^{-1} \textbf{S}_\alpha \textbf{C}_0^{-1} \textbf{S}_\beta)  \\
+% & = \bar{N}^2 \tr(\xi_{\delta \delta,\alpha}\xi_{\delta \delta,\beta})+
+% \bar{N} \tr(\xi_{\delta v,\alpha} \frac{1}{\bm{\sigma}^2_v} \xi_{v\delta,\beta} ) + \tr(\frac{1}{\bm{\sigma}^2_v} \xi_{vv,\alpha}  \frac{1}{\bm{\sigma}^2_v}  \xi_{vv,\beta})\\
+% & = \int n(x) n(y) \xi_{\delta \delta,\alpha}(x,y)\xi_{\delta \delta,\beta}(y,x) d^3x d^3y \\
+% & + \int n(x) \sum_{i\in N_{gal}} \xi_{\delta v,\alpha}(x,x_i) \frac{1}{\sigma^2_{v,i}} \xi_{v\delta,\beta} (x_i,x) d^3x \\
+% & +  \sum_{i,j\in N_{gal}} \frac{1}{\sigma^2_{v,i}} \xi_{vv,\alpha}(x_i,x_j)  \frac{1}{\sigma^2_{v,j}}  \xi_{vv,\beta}(x_j,x_i).
+%\end{align}
+
 
 %  ---- Change
 %NEW STUFF
@@ -499,6 +614,7 @@ with extremum at
 
 \appendix
 \section{Estimator and Fisher Matrix}
+\label{appendix:sec}
 Suppose we have a likelihood that has parameters $\theta$ and $p$ such that
 $$f\equiv-\ln{\mathcal{L}(\theta,p)} = \frac{1}{2}\left(\ln{(\det(C(\theta)))} + (y-y_0 )^T C^{-1} (y-y_0)\right),$$
 where $C$ is invertible (the covariance matrix is positive definite),
@@ -506,25 +622,30 @@ $$y_0 = p_\alpha x_\alpha,$$ and
  $$C=C_0 + \theta_\alpha S_\alpha.$$
 Then
 \begin{align}
-\frac{df}{d\theta_\alpha} &= \frac{1}{2}\left(\tr(C^{-1}S_\alpha)   + (y-y_0)^T  C^{-1} S_{\alpha} C^{-1}  (y-y_0)\right)\\ 
+\frac{df}{d\theta_\alpha} &= \frac{1}{2}\left(\tr(C^{-1}S_\alpha)   - (y-y_0)^T  C^{-1} S_{\alpha} C^{-1}  (y-y_0)\right)\\ 
 \frac{df}{dp_{\alpha}} &= -(y-y_0)^T C^{-1} x_\alpha\\ 
-\frac{df^2}{d\theta_{\alpha} d\theta_\beta} &= \frac{1}{2}  \tr (C^{-1} S_\beta C^{-1}  S_\alpha) +  (y-y_0)^T (
-C^{-1} S_{\beta } C^{-1} S_\alpha C^{-1}
+\frac{df^2}{d\theta_{\alpha} d\theta_\beta} &=- \frac{1}{2}  \tr (C^{-1} S_\alpha C^{-1}  S_\beta) +  (y-y_0)^T (
+C^{-1} S_{\alpha} C^{-1} S_\beta C^{-1}
 )
 (y-y_0) \\ 
-\frac{df^2}{dp_{\alpha} dp_\beta} &= x^T_\beta C^{-1} x_\alpha\\ 
-\frac{df^2}{dp_\alpha \,d\theta_\beta} &=-  (y-y_0)^T C^{-1}  S _\beta C^{-1} x_\alpha\\
-F_{\alpha \beta}^{(\theta \theta)} & \equiv \left \langle  \frac{df^2}{d\theta_{\alpha} d\theta_\beta} \right \rangle = \frac{1}{2} \tr (C^{-1} S_\beta C^{-1}  S_\alpha) \\ 
-F_{\alpha \beta}^{(p p)}  & \equiv \left \langle  \frac{df^2}{dp_{\alpha} dp_\beta} \right \rangle= x^T_\beta C^{-1} x_\alpha\\ 
-F_{\alpha \beta}^{(\theta p)}  & \equiv \left \langle  \frac{df^2}{dp_\alpha \,d\theta_\beta} \right \rangle =0.
+\frac{df^2}{dp_{\alpha} dp_\beta} &= x^T_\alpha C^{-1} x_\beta\\ 
+\frac{df^2}{d\theta_\alpha\,dp_\beta} &= (y-y_0)^T C^{-1}  S _\alpha C^{-1} x_\beta.
 \end{align}
+For a Gaussian distribution
+\begin{align}
+F_{\alpha \beta}^{(\theta \theta)} & = \left \langle  \frac{df^2}{d\theta_{\alpha} d\theta_\beta} \right \rangle =  -\frac{1}{2} \tr (C^{-1} S_\alpha C^{-1}  S_\beta)    + \tr (C^{-1} S_\alpha C^{-1}  S_\beta) \\ 
+& = \frac{1}{2} \tr (C^{-1} S_\alpha C^{-1}  S_\beta) \\
+F_{\alpha \beta}^{(p p)}  & = \left \langle  \frac{df^2}{dp_{\alpha} dp_\beta} \right \rangle=  x^T_\alpha C^{-1} x_\beta\\ 
+F_{\alpha \beta}^{(\theta p)}  & = \left \langle  \frac{df^2}{d\theta_\alpha \,dp_\beta} \right \rangle =0,
+\end{align}
+where the ensemble averages in the Fisher matrices satisfy  $\langle y-y_0 \rangle = 0$, $\langle (y-y_0) (y-y_0)^T\rangle = C$.
 
 We are interested in the properties of the function at its minimum, i.e. at $(\hat{\theta},\hat{p})$ occurs where $df/d\theta_\alpha=0 $ and $df/dp{_\alpha}=0$.
 \begin{align}
-0 & = \frac{1}{2}\left(\tr(C^{-1}S_\alpha C^{-1} C)  + (y-y_0)^T  C^{-1} S_{\alpha} C^{-1}  (y-y_0)\right) \\
-& = \frac{1}{2}\left(\tr(C^{-1}S_\alpha C^{-1} (C_0 + \hat{\theta}_\beta S_\beta) )  + (y-y_0)^T  C^{-1} S_{\alpha} C^{-1}  (y-y_0)\right) \\
-& =\hat{ \theta}_\beta F^{(\theta \theta)}_{\alpha \beta} +  \frac{1}{2}\left(\tr(C^{-1}S_\alpha C^{-1} C_0)  + (y-y_0)^T  C^{-1} S_{\alpha} C^{-1}  (y-y_0)\right) \\
-\hat{ \theta}_\beta  & = - \frac{1}{2} F^{(\theta \theta)\, -1}_{\beta \alpha} \left(\tr(C^{-1}S_\alpha C^{-1} C_0)  + (y-y_0)^T  C^{-1} S_{\alpha} C^{-1}  (y-y_0)\right) \\
+0 & = \frac{1}{2}\left(\tr(C^{-1}S_\alpha C^{-1} C)  - (y-y_0)^T  C^{-1} S_{\alpha} C^{-1}  (y-y_0)\right) \\
+& = \frac{1}{2}\left(\tr(C^{-1}S_\alpha C^{-1} (C_0 + \hat{\theta}_\beta S_\beta) )  - (y-y_0)^T  C^{-1} S_{\alpha} C^{-1}  (y-y_0)\right) \\
+& =\hat{ \theta}_\beta F^{(\theta \theta)}_{\alpha \beta} +  \frac{1}{2}\left(\tr(C^{-1}S_\alpha C^{-1} C_0)  - (y-y_0)^T  C^{-1} S_{\alpha} C^{-1}  (y-y_0)\right) \\
+\hat{ \theta}_\beta  & =  \frac{1}{2} F^{(\theta \theta)\, -1}_{\beta \alpha} \left( (y-y_0)^T  C^{-1} S_{\alpha} C^{-1}  (y-y_0) - \tr(C^{-1}S_\alpha C^{-1} C_0) \right) \\
 0 &=  (y-\hat{p}_\beta x_\beta )^T C^{-1} x_\alpha \\
 & = y^TC^{-1} x_\alpha - \hat{p}_\beta F^{(pp)}_{\alpha \beta} \\
  \hat{p}_\beta  & =   F^{(pp)\,-1}_{\beta \alpha} (y^TC^{-1} x_\alpha ).
@@ -534,7 +655,8 @@ We are interested in the properties of the function at its minimum, i.e. at $(\h
 \begin{thebibliography}{9}
 \bibitem{adam}
 C. Adams, C. Blake. 
-Improving constraints on the growth rate of structure by modelling the density-velocity cross-correlation in the 6dF Galaxy Survey. arXiv:1706.05205 [astro-ph.CO].
+Improving constraints on the growth rate of structure by modelling the density-velocity cross-correlation in the 6dF Galaxy Survey. arXiv:1706.05205 [astro-ph.CO]
+\bibitem[McDonald(2019)]{2019PhRvD..99d3538M} McDonald, P.\ 2019, PRD, 99, 43538
 \end{thebibliography}
 
 \end{document}
