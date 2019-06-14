@@ -38,7 +38,7 @@ def Cinverse_partial(m00,m11,m01,dm00,dm11,dm01):
         - numpy.array([[m11,-m01],[-m01,m00]])/den**2 * (dm00*m11 + m00*dm11 - 2*m01*dm01)
 
 def OmegaM(a,OmegaM0=OmegaM0):
-    return OmegaM0*a**3/(OmegaM0 + (1-OmegaM0)*a**3)
+    return OmegaM0/a**3/(OmegaM0 + (1-OmegaM0)*a**3)
 
 def integrand_dlnfs(a,*args):
     return numpy.log(OmegaM(a,*args))* OmegaM(a,*args)**0.55 / a
@@ -531,7 +531,7 @@ def set2():
     plt.savefig('dvardz.png')
     plt.clf()
 
-# set2()
+set2()
 # wefwe
 
 def set1():
@@ -608,7 +608,7 @@ def set1():
     plt.savefig('dvardxxx.png')
     plt.clf()
 
-#set1()
+set1()
 
 def snIIp():
     fig,(ax) = plt.subplots(1, 1)
@@ -667,7 +667,7 @@ def fD_OmegaM():
     plt.show()
     plt.clf()
 
-# fD_OmegaM()
+fD_OmegaM()
 
 # This is the code to determine the survey Figure of Merit
 # The inputs fron Nicolas are the solid angle covered and the number of SNe (if I remember correctly)
