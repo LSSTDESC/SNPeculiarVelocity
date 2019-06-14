@@ -38,7 +38,7 @@ def Cinverse_partial(m00,m11,m01,dm00,dm11,dm01):
         - numpy.array([[m11,-m01],[-m01,m00]])/den**2 * (dm00*m11 + m00*dm11 - 2*m01*dm01)
 
 def OmegaM(a,OmegaM0=OmegaM0):
-    return OmegaM0/a**3/(OmegaM0 + (1-OmegaM0)*a**3)
+    return OmegaM0/(OmegaM0 + (1-OmegaM0)*a**3)
 
 def integrand_dlnfs(a,*args):
     return numpy.log(OmegaM(a,*args))* OmegaM(a,*args)**0.55 / a
