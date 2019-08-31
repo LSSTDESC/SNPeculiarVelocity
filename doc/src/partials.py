@@ -3,6 +3,7 @@
 import numpy
 import matplotlib.pyplot as plt
 import matplotlib
+from matplotlib import ticker, cm
 import scipy.integrate as integrate
 from astropy.cosmology import FlatLambdaCDM
 matplotlib.rcParams['font.size'] = 14
@@ -295,6 +296,27 @@ def traces(z,mu,ng,duration,sigm,restrate):
         numpy.array(lO_ind),numpy.array(bO_ind),numpy.array(OO_ind),numpy.array(lOsigM),numpy.array(bOsigM),numpy.array(OOsigM), \
         numpy.array(lO_vonly), numpy.array(OO_vonly)
 
+def traces_fast(z,mu,ng,duration,sigm,restrate):
+
+    cmatrices = Cmatrices(z,mu,ng,duration,sigm,restrate)
+
+    ll=[]
+    lb=[]
+    bb=[]
+    lO=[]
+    bO=[]
+    OO=[]
+
+    for C, Cinv, C_l,C_b,Cinvn,CinvsigM, C_Om in zip(cmatrices[0],cmatrices[1],cmatrices[2],cmatrices[3],cmatrices[4],cmatrices[5],cmatrices[6]):
+        ll.append(numpy.trace(Cinv@C_l@Cinv@C_l))
+        bb.append(numpy.trace(Cinv@C_b@Cinv@C_b))
+        lb.append(numpy.trace(Cinv@C_l@Cinv@C_b))
+        lO.append(numpy.trace(Cinv@C_l@Cinv@C_Om))
+        bO.append(numpy.trace(Cinv@C_b@Cinv@C_Om))
+        OO.append(numpy.trace(Cinv@C_Om@Cinv@C_Om))
+
+    return numpy.array(ll),numpy.array(bb),numpy.array(lb),numpy.array(lO),numpy.array(bO),numpy.array(OO)
+
 def muintegral(z,ng,duration,sigm,restrate):
     mus=numpy.arange(0,1.001,0.05)
 
@@ -363,6 +385,29 @@ def muintegral(z,ng,duration,sigm,restrate):
     return 2*ll,2*bb,2*bl, 2*lls,2*bbs,2*bls,2*ll_ind,2*bb_ind,2*bl_ind, 2*llsigM,2*bbsigM,2*blsigM,2*ll_vonly, 2*lO, 2*bO, 2*OO, \
         2*lOs,2*bOs,2*OOs,2*lO_ind,2*bO_ind,2*OO_ind, 2*lOsigM,2*bOsigM,2*OOsigM, 2*lO_vonly,2*OO_vonly
 
+def muintegral_fast(z,ng,duration,sigm,restrate):
+    mus=numpy.arange(0,1.001,0.05)
+
+    ll=numpy.zeros((len(mus),len(matter[:,0])))
+    bb=numpy.zeros((len(mus),len(matter[:,0])))
+    bl=numpy.zeros((len(mus),len(matter[:,0])))
+    lO=numpy.zeros((len(mus),len(matter[:,0])))
+    bO=numpy.zeros((len(mus),len(matter[:,0])))
+    OO=numpy.zeros((len(mus),len(matter[:,0])))
+
+    for i in range(len(mus)):
+        # dum = traces_fast(z,mus[i],ng,duration,sigm,restrate)
+        ll[i],bb[i],bl[i], lO[i],bO[i],OO[i]= traces_fast(z,mus[i],ng,duration,sigm,restrate)
+
+    ll = numpy.trapz(ll,mus,axis=0)
+    bb = numpy.trapz(bb,mus,axis=0)
+    bl = numpy.trapz(bl,mus,axis=0)
+    lO = numpy.trapz(lO,mus,axis=0)
+    bO = numpy.trapz(bO,mus,axis=0)
+    OO = numpy.trapz(OO,mus,axis=0)
+
+    return 2*ll,2*bb,2*bl, 2*lO, 2*bO, 2*OO
+
 
 def kintegral(z,zmax,ng,duration,sigm,restrate):
     kmin = numpy.pi/(zmax*3e3)
@@ -404,6 +449,21 @@ def kintegral(z,zmax,ng,duration,sigm,restrate):
 
     return ll,bb,bl, lls,bbs,bls,ll_ind,bb_ind,bl_ind, llsigM,bbsigM,blsigM,ll_vonly,lO,bO,OO, \
         lOs,bOs,OOs,lO_ind,bO_ind,OO_ind, lOsigM,bOsigM,OOsigM,lO_vonly, OO_vonly
+
+def kintegral_fast(z,zmax,ng,duration,sigm,restrate):
+    kmin = numpy.pi/(zmax*3e3)
+    kmax = 0.1
+    w = numpy.logical_and(matter[:,0] >= kmin, matter[:,0]< kmax)
+
+    ll,bb,bl,lO,bO,OO = muintegral_fast(z,ng,duration,sigm,restrate)
+    ll = numpy.trapz(matter[:,0][w]**2*ll[w],matter[:,0][w])
+    bb = numpy.trapz(matter[:,0][w]**2*bb[w],matter[:,0][w])
+    bl = numpy.trapz(matter[:,0][w]**2*bl[w],matter[:,0][w])
+    lO = numpy.trapz(matter[:,0][w]**2*lO[w],matter[:,0][w])
+    bO = numpy.trapz(matter[:,0][w]**2*bO[w],matter[:,0][w])
+    OO = numpy.trapz(matter[:,0][w]**2*OO[w],matter[:,0][w])
+
+    return ll,bb,bl,lO,bO,OO 
 
 # utility numbers
 zmax_zint = 0.3
@@ -491,6 +551,30 @@ def zintegral(zmax,ng,duration,sigm,restrate):
         lOs,bOs,OOs,lO_ind, bO_ind, OO_ind, lOsigM,bOsigM,OOsigM,lO_vonly,OO_vonly
 
 
+def zintegral_fast(zmax,ng,duration,sigm,restrate):
+    w = zs_zint <= zmax
+    zs = zs_zint[w]
+    rs = rs_zint[w]
+
+    ll=numpy.zeros(len(rs))
+    bb=numpy.zeros(len(rs))
+    bl=numpy.zeros(len(rs))
+    lO=numpy.zeros(len(rs))
+    bO=numpy.zeros(len(rs))
+    OO=numpy.zeros(len(rs))
+
+    for i in range(len(rs)):
+        ll[i],bb[i],bl[i],lO[i],bO[i],OO[i] = kintegral_fast(zs[i],zmax,ng,duration,sigm,restrate)
+
+    ll = numpy.trapz(rs**2*ll,rs)
+    bb = numpy.trapz(rs**2*bb,rs)
+    bl = numpy.trapz(rs**2*bl,rs)
+    lO = numpy.trapz(rs**2*lO,rs)
+    bO = numpy.trapz(rs**2*bO,rs)
+    OO = numpy.trapz(rs**2*OO,rs)
+    return ll, bb, bl, lO,bO,OO
+
+
 def set2():
     fig,(ax) = plt.subplots(1, 1)
     durations = [2.,10.]
@@ -531,7 +615,7 @@ def set2():
     plt.savefig('dvardz.png')
     plt.clf()
 
-set2()
+# set2()
 # wefwe
 
 def set1():
@@ -608,7 +692,7 @@ def set1():
     plt.savefig('dvardxxx.png')
     plt.clf()
 
-set1()
+#set1()
 
 def snIIp():
     fig,(ax) = plt.subplots(1, 1)
@@ -667,7 +751,7 @@ def fD_OmegaM():
     plt.show()
     plt.clf()
 
-fD_OmegaM()
+#fD_OmegaM()
 
 # This is the code to determine the survey Figure of Merit
 # The inputs fron Nicolas are the solid angle covered and the number of SNe (if I remember correctly)
