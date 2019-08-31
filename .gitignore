@@ -1,5 +1,11 @@
+*.gz
 *.pkl
 *.pyc
 .ipynb_checkpoints/
 *.o
 *.a
+*.out
+*.log
+*.pdf
+*.png
+*.aux
