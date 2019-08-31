@@ -656,14 +656,23 @@ We are interested in the properties of the function at its minimum, i.e. at $(\h
 
 Suppose we have two sets of data, the number of galaxies $N$ in a volume
 bin and the radial velocities of galaxies $v$.  These may or may not be the same galaxies.
+We also assume that the universe is periodic with a minimum length scale, meaning that fields can be
+described by a finite number of Fourier modes.  Given a model of gravity, we can deterministically calculate the
+velocity field given the density field.
 The likelihood is then
 \begin{align}
 L(\theta; N, v) & =p(N, v| \theta) \\
-&= \int  p(N | \delta)  p(v | u)  p(\delta,v| \theta) d\delta\, du\\ 
-& = \int  \prod_{i=1}^{N_{bin}}   p(N_i | \delta_i)p(v| u) p(\delta, u | \theta)d\delta\, du\\ 
-& = \int  \prod_{i=1}^{N_{bin}}  \sum_{\tilde{N}_i =N_i}^\infty  p(N_i | \tilde{N}_i) p(\tilde{N}_i | \delta) p(v| u) p(\delta, u | \theta) d\delta\, du \\
-& = \int  \prod_{i=1}^{N_{bin}}  \sum_{\tilde{N}_i =N_i}^\infty  \mathcal{B}(N_i; \tilde{N}_i, p_i) \mathcal{P}(\tilde{N}_i ; N_{0i}(\delta))p(v| u) p(\delta, u | \theta) d\delta\, du \\
-&= \int  \exp \left[ \sum_{i=1}^{N_{bin}} \ln{  \left( \sum_{\tilde{N}_i =N_i}^\infty  \mathcal{B}(N_i; \tilde{N}_i, p_i) \mathcal{P}(\tilde{N}_i ; N_{0i}(\delta))\right)} \right]  p(v| u) p(\delta, u | \theta) d\delta\, du
+& = \int p(N,v,\delta | \theta) d\delta \\\
+& = p(v|\theta)  \int p(N | \delta) p(\delta| v, \theta) d\delta \\
+& = p(v|\theta)  \int \prod_{i=1}^{N_{bin}}  p(N_i | \delta) p(\delta| v, \theta) d\delta \\
+& = p(v|\theta)  \int \prod_{i=1}^{N_{bin}}  \sum_{\tilde{N}_i =N_i}^\infty    p(N_i | \tilde{N}_i) p(\tilde{N}_i | \delta)  p(\delta| v, \theta) d\delta \\
+& = p(v|\theta)  \int \prod_{i=1}^{N_{bin}}  \sum_{\tilde{N}_i =N_i}^\infty    \mathcal{B}(N_i; \tilde{N}_i, p_i) \mathcal{P}(\tilde{N}_i ; N_{0i}(\delta))  p(\delta| v, \theta) d\delta \\
+& =  p(v|\theta)  \int  \exp \left[ \sum_{i=1}^{N_{bin}} \ln{  \left( \sum_{\tilde{N}_i =N_i}^\infty  \mathcal{B}(N_i; \tilde{N}_i, p_i) \mathcal{P}(\tilde{N}_i ; N_{0i}(\delta))\right)} \right]  p(\delta| v, \theta) d\delta 
+%&= \int  p(N | \delta)  p(v | u)  p(\delta,v| \theta) d\delta\, du\\ 
+%& = \int  \prod_{i=1}^{N_{bin}}   p(N_i | \delta_i)p(v| u) p(\delta, u | \theta)d\delta\, du\\ 
+%& = \int  \prod_{i=1}^{N_{bin}}  \sum_{\tilde{N}_i =N_i}^\infty  p(N_i | \tilde{N}_i) p(\tilde{N}_i | \delta) p(v| u) p(\delta, u | \theta) d\delta\, du \\
+%& = \int  \prod_{i=1}^{N_{bin}}  \sum_{\tilde{N}_i =N_i}^\infty  \mathcal{B}(N_i; \tilde{N}_i, p_i) \mathcal{P}(\tilde{N}_i ; N_{0i}(\delta))p(v| u) p(\delta, u | \theta) d\delta\, du \\
+%&= \int  \exp \left[ \sum_{i=1}^{N_{bin}} \ln{  \left( \sum_{\tilde{N}_i =N_i}^\infty  \mathcal{B}(N_i; \tilde{N}_i, p_i) \mathcal{P}(\tilde{N}_i ; N_{0i}(\delta))\right)} \right]  p(v| u) p(\delta, u | \theta) d\delta\, du
 \end{align}
 Here $\delta$ and $i$ are  the mass-density  and momentum fields at the bin/galaxy positions, $\tilde{N}_i$ is the latent parameter
 for the  total number of galaxies in bin $i$, $N_{0i}(\hat{\delta})$ is the expected
@@ -682,6 +691,26 @@ The first is a term as if there were zero galaxies in all bins, $N_i=0\ \forall 
 \end{align}
 where in the limit of  infinitesimally small bins $N_{0}$ approaches zero and
 the integral replaces the summation.
+
+Consider a cell with $N_i$ galaxies.  It contributes a 
+\begin{align}
+\ln{  \left( \sum_{\tilde{N}_i =N_i}^\infty  \mathcal{B}(N_i; \tilde{N}_i, p_i) \mathcal{P}(\tilde{N}_i ; N_{0i}(\delta))\right)}\\
+= \ln{  \left( \sum_{\tilde{N}_i =N_i}^\infty \frac{\tilde{N}_i!}{N_i!(\tilde{N}_i-N_i)!}   p_i^{N_i} (1-p_i)^{ \tilde{N}_i-N_i} \frac{N_{0i}^{\tilde{N}_i} e^{-N_{0i}}}{\tilde{N}_i!} \right)}
+ \\
+ = \ln{  \left( \frac{(p_iN_{0i})^N_ie^{-p_iN_{0i}}}{N_i!}  \right)} \\
+ =  N_i \ln{\left(  p_i  N_{0i} \right) } -p_i N_{0i} - \ln{N_i!}.
+\end{align}
+For those cells that have a galaxy subtract out the probability for zero objects.  Each of these cells thus contribute
+\begin{equation}
+ N_i \ln{\left(  p_i  N_{0i} \right) } - \ln{N_i!}.
+\end{equation}
+
+The exponent term is proportional to (we don't care about multiplicative terms independent of the parameters)
+\begin{align}
+\exp\left(- \sum_{i=1}^{N_{bin}} p_i N_{0i}  \right)
+ \prod_{i=1}^{N_{bin}}  (p_i N_{0i})^{N_i} 
+\end{align}
+
 The second term is over those cells that have one galaxy:
 \begin{align}
 \sum_{i \in \{N_i \ne 0\}}
@@ -690,21 +719,25 @@ The second term is over those cells that have one galaxy:
  =\sum_{i \in \{N_i \ne 0\}} \ln{  \left( \sum_{\tilde{N}_i =1}^\infty   \tilde{N}_i p_i (1-p_i)^{ \tilde{N}_i-1} \frac{N_{0i}^{\tilde{N}_i} e^{-N_{0i}}}{\tilde{N}_i!} \right)}
 - \ln{  \left( \sum_{\tilde{N}_i =0}^\infty   (1-p_i)^{ \tilde{N}_i} \frac{N_{0i}^{\tilde{N}_i} e^{-N_{0i}}}{\tilde{N}_i!} \right)} \\
  = \sum_{i=1}^{N_{\text{galaxies}}} \ln{  \left(  p_i  {N_{0i} } \right)} \\
-  = \sum_{i=1}^{N_{\text{galaxies}}} \ln{  \left(  p_i  n_{0}(x_i) \hat{\delta} V \right)}
+  = \sum_{i=1}^{N_{\text{galaxies}}} \ln{  \left(  p_i  n_{0}(x_i) \delta V \right)}
 \end{align}
 
 Then the likelihood is
 \begin{align}
 L(\theta; N, v) 
-&\propto \int  \exp \left(- \int  p(x) n_{0}(x) d^3x\right)  \prod_{i=1}^{N_{\text{galaxies}}} p_i n_0(x_i) p(v_i| u_i) p(\delta, u | \theta) d\delta\, du .
+&\propto p(v|\theta)  \int \exp \left(- \int  p(x) n_{0}(x) d^3x\right)  \prod_{i=1}^{N_{\text{galaxies}}} p(x_i) n_0(x_i)  p(\delta| v, \theta) d\delta \\
+& \approx p(v|\theta)  \int \prod_{j=1}^{N_\text{grid}} \exp \left( - \frac{p(x_j) n_{0}(x_j)}{N_\text{grid}}\right) \prod_{i=1}^{N_{\text{galaxies}}} p(x_i) n_0(x_i)  p(\delta| v, \theta) d\delta 
+%&\propto \int  \exp \left(- \int  p(x) n_{0}(x) d^3x\right)  \prod_{i=1}^{N_{\text{galaxies}}} p(x_i) n_0(x_i) p(v_i| u_i) p(\delta, u | \theta) d\delta\, du \\
+%& \approx  \int  \prod_{j=1}^{N_\text{grid}} \exp \left( - \frac{p(x_j) n_{0}(x_j)}{N_\text{grid}}\right) \prod_{i=1}^{N_{\text{galaxies}}} p(x_i) n_0(x_i) p(v_i| u_i) p(\delta, u | \theta) d\delta\, du.
 \end{align}
 The exponential term depends on $\delta$ at every differential volume.  The
 remaining terms of the integrand depend only on the $\delta_i$ and $u_i$ at galaxy coordinates.
 
-When the universe is modeled as a periodic cube much larger than the survey. the the density field can be describe by discrete points. 
-Further assuming a cutoff in power at $k_{max}$, the field can be described by a finite grid.  Then the parameters $\delta$ and $u$ will be
-the Fourier density and momentum at grid points, having a covariance matrix composed of four diagonal submatrices. 
-The density and momentum at any point in real space can be constructed from the parameters.
+When the universe is modeled as periodic, the fields therein can be expanded as a Fourier series.  Truncating the expansion at some $k_{max}$
+means that the a field can be described by a finite set of numbers.  The parameters $\delta$ and $u$ will be
+the Fourier density and momentum at grid points.  Realizations of these parameters can be easily generated because their 
+ covariance matrix is composed of four diagonal submatrices. 
+The density and momentum at any point in real space can be constructed from the parameters using the Fourier transform.
 
 \newpage
 \section{How to analyze}
