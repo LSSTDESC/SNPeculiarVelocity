@@ -18,7 +18,7 @@ gamma=0.55
 sigOM0sqinv=1/0.005**2
 
 # power spectrum from CAMB
-matter = numpy.loadtxt("../../pv/dragan/matterpower.dat")
+matter = numpy.loadtxt("/Users/akim/project/PeculiarVelocity/pv/dragan/matterpower.dat")
 
 # vv
 f=OmegaM0**0.55
