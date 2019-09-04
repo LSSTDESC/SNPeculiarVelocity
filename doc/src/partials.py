@@ -47,6 +47,16 @@ def integrand_dlnfs(a,*args):
 def dlnfs8dg(a,*args):
     return numpy.log(OmegaM(a,*args)) + integrate.quad(integrand_dlnfs, 1e-8, a)[0]
 
+def dfdg(a,*args):
+    om = OmegaM(a,*args)
+    return om**gamma * numpy.log(om)
+
+def integrand_dDdg(a,*args):
+    return dfdg(a,*args) / a
+
+def dDdg(a,*args):
+    return D(a,*args) * integrate.quad(integrand_dDdg, 1e-8, a)[0]
+
 def integrand_D(a,*args):
     return  OmegaM(a,*args)**0.55 / a
 
@@ -73,8 +83,9 @@ def dfdOm(a):
 def Pvv(mu,f,D):
     return (f*D*mu*100)**2*matter[:,1]/matter[:,0]**2
 
-def Pvv_l(mu,f,D):
-    return 2*f*D*(mu*100)**2*matter[:,1]/matter[:,0]**2
+def Pvv_l(mu,f,D,dDdg, dfdg):
+    return (dfdg*D+f*dDdg)*2*f*D*(mu*100)**2*matter[:,1]/matter[:,0]**2
+        # return 2*f*D*(mu*100)**2*matter[:,1]/matter[:,0]**2
 
 def Pvv_Om(mu,f,D, dfdOm, dDdOmOverD):
     return 2*f*D*(mu*100)**2*matter[:,1]/matter[:,0]**2 * (f*dDdOmOverD*D + dfdOm * D )
@@ -85,11 +96,13 @@ b= 1.2
 def Pgg(mu,f,D):
     return (b*D+f*D*mu**2)**2*matter[:,1]
 
-def Pgg_l(mu,f,D):
-    return 2*mu**2*(b*D+f*D*mu**2)*matter[:,1]
+def Pgg_l(mu,f,D,dDdg, dfdg):
+    # return 2*mu**2*(b*D+f*D*mu**2)*matter[:,1]
+    return 2*(b*D+f*D*mu**2)*(b*dDdg + (f*dDdg+dfdg*D)*mu**2)*matter[:,1]
 
 def Pgg_b(mu,f,D):
-    return 2*(b*D+f*D*mu**2)*matter[:,1]
+#    return 2*(b*D+f*D*mu**2)*matter[:,1]   
+    return 2*D*(b*D+f*D*mu**2)*matter[:,1]
 
 def Pgg_Om(mu,f,D, dfdOm, dDdOmOverD):
     return 2*(b*D+f*D*mu**2)*matter[:,1] * (b*dDdOmOverD*D + f* dDdOmOverD*D*mu**2 + dfdOm * D*mu**2 )
@@ -99,11 +112,13 @@ def Pgg_Om(mu,f,D, dfdOm, dDdOmOverD):
 def Pgv(mu,f,D):
     return (b*D+f*D*mu**2)*(f*D*mu*100)*matter[:,1]/matter[:,0]
 
-def Pgv_l(mu,f,D):
-    return (mu**2*(f*D*mu*100)+(b*D+f*D*mu**2)*(mu*100))*matter[:,1]/matter[:,0]
+def Pgv_l(mu,f,D,dDdg, dfdg):
+    return ( (b*D+f*D*mu**2)*(dfdg*D + f*dDdg)*mu*100 + (bdDdg + (dfdg*D + f*dDdg)*mu**2)*(f*D*mu*100)) *matter[:,1]/matter[:,0]
+    # return (mu**2*(f*D*mu*100)+(b*D+f*D*mu**2)*(mu*100))*matter[:,1]/matter[:,0]
 
 def Pgv_b(mu,f,D):
-    return (f*D*mu*100)*matter[:,1]/matter[:,0]
+    # return (f*D*mu*100)*matter[:,1]/matter[:,0]
+    return D*(f*D*mu*100)*matter[:,1]/matter[:,0]
 
 def Pgv_Om(mu,f,D, dfdOm, dDdOmOverD):
     return ((b*dDdOmOverD*D + f*dDdOmOverD*D*mu**2 + dfdOm*D*mu**2) * (f*D*mu*100) +(b*D+f*D*mu**2) *mu*100*(f*dDdOmOverD*D + dfdOm*D) )*matter[:,1]/matter[:,0]
@@ -166,16 +181,19 @@ def Cmatrices(z,mu,ng,duration,sigm,restrate):
 
     f = OmegaM(a)**.55
     D_ = D(a)
+    dDdg_ = dDdg(a)
+    dfdg_ = dfdg_(a)
     dfdOm_ = dfdOm(a)
     dDdOmOverD_ = dDdOmOverD(a)
+
 
     pggs = Pgg(mu,f,D_)
     pgvs = Pgv(mu,f,D_)
     pvvs = Pvv(mu,f,D_)
 
-    pggs_l = Pgg_l(mu,f,D_)
-    pgvs_l = Pgv_l(mu,f,D_)
-    pvvs_l = Pvv_l(mu,f,D_)
+    pggs_l = Pgg_l(mu,f,D_,dDdg_, dfdg_)
+    pgvs_l = Pgv_l(mu,f,D_,dDdg_, dfdg_)
+    pvvs_l = Pvv_l(mu,f,D_,dDdg_, dfdg_)
 
     pggs_b = Pgg_b(mu,f,D_)
     pgvs_b = Pgv_b(mu,f,D_)
@@ -196,7 +214,7 @@ def Cmatrices(z,mu,ng,duration,sigm,restrate):
     for pgg, pgv, pvv, pgg_l, pgv_l, pvv_l, pgg_b, pgv_b, pgg_Om, pgv_Om, pvv_Om  in zip(pggs,pgvs,pvvs,pggs_l,pgvs_l,pvvs_l,pggs_b,pgvs_b,pggs_Om,pgvs_Om,pvvs_Om):
         C.append(numpy.array([[pgg+ninv,pgv],[pgv,pvv+nvinv]]))
         Cinv.append(numpy.linalg.inv(C[-1]))
-        dCdl.append(numpy.array([[pgg_l,pgv_l],[pgv_l,pvv_l]])*OmegaM_a**0.55*lnfgfactor) # second term converts from fsigma8 to gamma
+        dCdl.append(numpy.array([[pgg_l,pgv_l],[pgv_l,pvv_l]]))   #*OmegaM_a**0.55*lnfgfactor) # second term converts from fsigma8 to gamma
         dCdb.append(numpy.array([[pgg_b,pgv_b],[pgv_b,0]]))
         dCdOm.append(numpy.array([[pgg_Om,pgv_Om],[pgv_Om,pvv_Om]]))
 
