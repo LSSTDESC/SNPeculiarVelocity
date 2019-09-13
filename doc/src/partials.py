@@ -6,6 +6,7 @@ import matplotlib
 from matplotlib import ticker, cm
 import scipy.integrate as integrate
 from astropy.cosmology import FlatLambdaCDM
+import astropy
 matplotlib.rcParams['font.size'] = 14
 matplotlib.rcParams['lines.linewidth'] = 2.0
 
@@ -113,7 +114,7 @@ def Pgv(mu,f,D):
     return (b*D+f*D*mu**2)*(f*D*mu*100)*matter[:,1]/matter[:,0]
 
 def Pgv_l(mu,f,D,dDdg, dfdg):
-    return ( (b*D+f*D*mu**2)*(dfdg*D + f*dDdg)*mu*100 + (bdDdg + (dfdg*D + f*dDdg)*mu**2)*(f*D*mu*100)) *matter[:,1]/matter[:,0]
+    return ( (b*D+f*D*mu**2)*(dfdg*D + f*dDdg)*mu*100 + (dDdg + (dfdg*D + f*dDdg)*mu**2)*(f*D*mu*100)) *matter[:,1]/matter[:,0]
     # return (mu**2*(f*D*mu*100)+(b*D+f*D*mu**2)*(mu*100))*matter[:,1]/matter[:,0]
 
 def Pgv_b(mu,f,D):
@@ -169,8 +170,18 @@ def Cmatrices(z,mu,ng,duration,sigm,restrate):
     a = 1/(1.+z)
     OmegaM_a = OmegaM(a)
     n = duration*restrate/(1+z)
-    sigv_factor = numpy.log(10)/5*z/(1+z)
-    sigv =sigm * sigv_factor *3e5
+    # sigv_factor = numpy.log(10)/5*z/(1+z)
+    # sigv =sigm * sigv_factor *3e5
+    # print(sigv_factor,sigv)
+    effz = (cosmo.H(z)*cosmo.comoving_distance(z)/astropy.constants.c).decompose().value
+    # print('effx',effz)
+    # print(z,cosmo.H(z),cosmo.comoving_distance(z),cosmo.H(z)*cosmo.comoving_distance(z)/astropy.constants.c)
+    term = 5/numpy.log(10)*numpy.abs(1-1/effz)
+    # print (term)
+    # print (1/term)
+    sigv_factor=1/term
+    sigv = 3e5*sigm*sigv_factor
+
     lnfgfactor = dlnfs8dg(a)
 
     sigv2 = sigv**2
@@ -182,7 +193,7 @@ def Cmatrices(z,mu,ng,duration,sigm,restrate):
     f = OmegaM(a)**.55
     D_ = D(a)
     dDdg_ = dDdg(a)
-    dfdg_ = dfdg_(a)
+    dfdg_ = dfdg(a)
     dfdOm_ = dfdOm(a)
     dDdOmOverD_ = dDdOmOverD(a)
 
