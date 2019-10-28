@@ -63,7 +63,8 @@ def integrand_D(a,*args):
 
 # normalized to a=1
 def D(a,*args):
-    return numpy.exp(-integrate.quad(integrand_D, a,1,args=args)[0])
+    return 1./1000*numpy.exp(integrate.quad(integrand_D, 1./1000,a,args=(gamma,OmegaM0))[0])
+    # return numpy.exp(-integrate.quad(integrand_D, a,1,args=args)[0])
 
 def dOmdOm0(a,OmegaM0=OmegaM0):
     den= (OmegaM0 + (1-OmegaM0)*a**3) 
