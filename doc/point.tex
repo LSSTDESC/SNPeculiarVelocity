@@ -651,7 +651,86 @@ We are interested in the properties of the function at its minimum, i.e. at $(\h
 & = y^TC^{-1} x_\alpha - \hat{p}_\beta F^{(pp)}_{\alpha \beta} \\
  \hat{p}_\beta  & =   F^{(pp)\,-1}_{\beta \alpha} (y^TC^{-1} x_\alpha ).
 \end{align}
+
 \newpage
+\section{More Complete Model}
+
+
+The model consists of top-level parameters
+\begin{itemize}
+\item $\gamma$: Growth index;
+\item $\Omega_{M0}$: Mass density;
+\item $b$: Host-galaxy bias;
+\item $\sigma^2_{v,\text{NL}}$: Contribution of velocities due to overdensities of scales $k>k_{v,\text{max}}$;
+\item $\sigma^2_{\rho,\text{NL}}$: Overdensities of scales $k>k_{\rho,\text{max}}$;
+\item $\mathcal{M} = M -5\log{H_0}$: The zeropoint of the SN Hubble diagram;
+\item $\sigma_M$: SN~Ia intrinsic magnitude dispersion.
+\end{itemize}
+For shorthand these are collectively labeled with $\theta$.
+
+The model latent parameters are
+\begin{itemize}
+\item $\bar{\delta} | \gamma, \Omega_{M0}$: Fourier modes that describe the linear density field through $P_{\delta \delta}(f\sigma_8(\gamma, \Omega_{M0}))$;
+\item $\delta | \bar{\delta}, \sigma^2_{\rho,\text{NL}}$: The density field including non-linear density effects;
+\item $\delta_g | \delta, b$: The galaxy density field;
+\item $v | \delta$: The velocity field excluding non-linear velocity effects;
+\item $\{u_\alpha, \mu_\alpha + 5\log{H_0} \}| \delta_g $: Comoving coordinates for the  SNe in the universe;
+\item $\Delta M_\alpha | \sigma_M$: Absolute magnitude difference from the average for SN $\alpha$;
+\item $\Delta v_\alpha| \sigma^2_{v,\text{NL}}$:  Non-linear peculiar velocity for SN $\alpha$;
+\end{itemize}
+From these parameters we have the expected values of the SN observables
+\begin{align*}
+m_\alpha &=  (\mu_\alpha + 5\log{H_0})+\mathcal{M} + \Delta M_\alpha\\
+z_\alpha &= f(\mu_\alpha,v_\alpha+\Delta v_\alpha).
+%n_\alpha(u,m)& = n_0 \sum_\alpha \delta(m_\alpha,z_\alpha).
+\end{align*}
+%There is another set of latent parameters for a set of ``virtual'' SNe.
+%\begin{itemize}
+%\item $\{u_\alpha, \mu_\alpha + 5\log{H_0}\} | \delta_g$: True comoving coordinates for the set of SN;;
+%\item $\Delta M_\alpha | \sigma_M$: Absolute magnitude difference from the average for SN $\alpha$;
+%\end{itemize}
+For shorthand these are collectively called $\phi$.
+
+The data is a set of supernovae.  The data for supernova $i$ are 
+\begin{itemize}
+\item $\hat{u}_i $: Angular coordinates RA and Dec;
+\item $\hat{m}_i $: peak magnitude (proxy for distance);
+\item $\hat{z}_i $: redshift;
+\end{itemize}
+
+I have a model where the probability of the data is
+\begin{align}
+p(\bar{\delta}|\gamma,\Omega_{M0})  p(\delta| \bar{\delta},\sigma^2_{\rho,\text{NL}})  p(\delta_g|\delta,b) p(v|\delta)\\
+p(\{u_\alpha, \mu_\alpha + 5\log{H_0}\} | \delta_g) \\
+p(\{\Delta M_\alpha\} | \sigma_M) p(\{m_\alpha\} | \{\mu_\alpha + 5\log{H_0}\},\{\Delta M_\alpha\},\mathcal{M})\\
+    p(\{\Delta v_\alpha\} | \sigma^2_v)
+     p(\{z_\alpha\}| \{\mu_\alpha\}, v, \{\Delta v_\alpha\})\\
+ %    p(\{\hat{u}_\alpha\}| \{u_\alpha\}) p(\{\hat{m}_\alpha\}| \{m_\alpha\})  \\
+     p( \{\hat{u}_i\}, \{\hat{m}_i\}  | \{u_\alpha\}, \{m_\alpha\})       p(\{\hat{z}_i\}| \{z_\alpha\}).
+\end{align}
+The first line describes the fields, the second the SNe, the third their apparent magnitudes, the fourth apparent redshifts, and the last
+connects the model observables with their experimental realizations.
+The $p( \{\hat{u}_i\}, \{\hat{m}_i\}  | \{u_\alpha\}, \{m_\alpha\})$ does not depend on ordering.
+
+The term $p(\{u_\alpha, \mu_\alpha + 5\log{H_0}\} | \delta_g)$ is the probability of the appearance of objects at certain coordinates and non-appearance elsewhere.
+It is convenient to rewrite this term as
+\begin{align}
+p(\{u_\alpha, \mu_\alpha + 5\log{H_0}\} | \delta_g) & = p(0| \delta_g) \prod_\alpha \frac{ p(u_\alpha, \mu_\alpha + 5\log{H_0} | \delta_g)}{p(0_\alpha| \delta_g)}  \\
+& = e^{-{\bar{N}}}  \prod_\alpha \frac{\bar{n}_\alpha^{n_\alpha}}{n_\alpha!}
+\end{align}
+where $\bar{N}$ is the expected number of discovered SN, $\bar{n}$ is the expected number of SN discovered at position $\alpha$, and
+$n_\alpha$ is the number of SNe found at the same $\alpha$ position.  We expect $\bar{n} \propto \delta_g$.
+
+The survey has a selection function that is dependent on the angular position and observed magnitude $S(u,m)$.
+It is thus straightforward to include the selection when calculating $p( \{\hat{u}_i\}, \{\hat{m}_i\}  | \{u_\alpha\}, \{m_\alpha\})$.
+
+
+\newpage
+
+
+The average magnitude distance modulus of the bin is $\mu_\beta$ and the bin has linear radial peculiar velocity $v_\beta$.
+Each SN~Ia in that space is parameterized by $\Delta M_i$ and $\Delta v_i$.  We assume RA and Dec are measured
+perfectly, e.g. no lensing.
 \section{Model}
 
 Suppose we have two sets of data, the number of galaxies $N$ in a volume

@@ -58,8 +58,11 @@ def integrand_dDdg(a,*args):
 def dDdg(a,*args):
     return D(a,*args) * integrate.quad(integrand_dDdg, 1e-8, a)[0]
 
-def integrand_D(a,*args):
-    return  OmegaM(a,*args)**0.55 / a
+# def integrand_D(a,*args):
+#     return  OmegaM(a,*args)**0.55 / a
+
+def integrand_D(a,gamma=gamma, OmegaM0=OmegaM0,*args):
+    return  OmegaM(a,OmegaM0,*args)**gamma / a    
 
 # normalized to a=1
 def D(a,*args):

@@ -118,41 +118,41 @@ def finvp(f00,f11,f01,f00p,f11p,f01p):
     den = f00*f11 -f01**2
     return f11p /den - f11*(f00p*f11 + f00*f11p - 2*f01*f01p)/den**2
 
-def finvp3d(f00,f01,f02,f11,f12,f22,f00p,f01p,f02p,f11p,f12p,f22p):
-    den = f00*f11*f22 - f00*f12**2-f11*f02**2-f22*f01**2 + 2*f01*f02*f12
-    denp = f00p*f11*f22 + f00*f11p*f22+f00*f11*f22p  \
-        - f00p*f12**2 - 2*f00*f12*f12p \
-        - f11p*f02**2 - 2*f11*f02*f02p \
-        - f22p*f01**2 - 2* f22*f01*f01p \
-        + 2*(f01p*f02*f12 + f01*f02p*f12 + f01*f02*f12p)
+# def finvp3d(f00,f01,f02,f11,f12,f22,f00p,f01p,f02p,f11p,f12p,f22p):
+#     den = f00*f11*f22 - f00*f12**2-f11*f02**2-f22*f01**2 + 2*f01*f02*f12
+#     denp = f00p*f11*f22 + f00*f11p*f22+f00*f11*f22p  \
+#         - f00p*f12**2 - 2*f00*f12*f12p \
+#         - f11p*f02**2 - 2*f11*f02*f02p \
+#         - f22p*f01**2 - 2* f22*f01*f01p \
+#         + 2*(f01p*f02*f12 + f01*f02p*f12 + f01*f02*f12p)
 
-    # full matrix
-    # mat = numpy.array([ \
-    #     [f11*f22-f12**2, f02*f12-f01*f22, f01*f12-f00*f12], \
-    #     [0, f00*f22-f02**2, f02*f01-f02*f11], \
-    #     [0, 0, f00*f11-f01**2] \
-    #     ])
-    #00 element
-    mat = f11*f22-f12**2
+#     # full matrix
+#     # mat = numpy.array([ \
+#     #     [f11*f22-f12**2, f02*f12-f01*f22, f01*f12-f00*f12], \
+#     #     [0, f00*f22-f02**2, f02*f01-f02*f11], \
+#     #     [0, 0, f00*f11-f01**2] \
+#     #     ])
+#     #00 element
+#     mat = f11*f22-f12**2
 
-    # mat[1,0]= mat[0,1]
-    # mat[2,0] = mat[0,2]
-    # mat[2,1] = mat[1,2]
+#     # mat[1,0]= mat[0,1]
+#     # mat[2,0] = mat[0,2]
+#     # mat[2,1] = mat[1,2]
 
-    #full matrix
-    #00 element
-    # matp = numpy.array([ \
-    #     [f11*f22p+f11p*f22-2*f12*f12p, f02p*f12+f02*f12p-f01p*f22-f01*f22p, f01p*f12+f01*f12p-f00p*f12-f00*f12p], \
-    #     [0, f00p*f22+f00*f22p-2*f02*f02p, f02p*f01+f02*f01p-f02p*f11-f02*f11p], \
-    #     [0, 0, f00p*f11+f00*f11p-2*f01*f01p] \
-    #     ])
-    matp =f11*f22p+f11p*f22-2*f12*f12p
+#     #full matrix
+#     #00 element
+#     # matp = numpy.array([ \
+#     #     [f11*f22p+f11p*f22-2*f12*f12p, f02p*f12+f02*f12p-f01p*f22-f01*f22p, f01p*f12+f01*f12p-f00p*f12-f00*f12p], \
+#     #     [0, f00p*f22+f00*f22p-2*f02*f02p, f02p*f01+f02*f01p-f02p*f11-f02*f11p], \
+#     #     [0, 0, f00p*f11+f00*f11p-2*f01*f01p] \
+#     #     ])
+#     matp =f11*f22p+f11p*f22-2*f12*f12p
 
-    # matp[1,0]= matp[0,1]
-    # matp[2,0] = matp[0,2]
-    # matp[2,1] = matp[1,2]
+#     # matp[1,0]= matp[0,1]
+#     # matp[2,0] = matp[0,2]
+#     # matp[2,1] = matp[1,2]
 
-    return matp/den -denp/den**2*mat
+#     return matp/den -denp/den**2*mat
 
 
 def Cmatrices(z,mu,ng,duration,sigm,restrate):
@@ -349,7 +349,6 @@ for _z in bincenters:
     fD_.append(f*D_)
     bD_.append(1.2*D_)
 
-
 fD_=numpy.array(fD_)
 bD_=numpy.array(bD_)
 
@@ -363,7 +362,7 @@ def bD(z):
 def set1():
     # fig,(ax) = plt.subplots(1, 1)
     zmaxs = [0.2]
-    durations = [2,10.]
+    durations = [10.]
     labels = ['Two Years','Ten Years']
     var =[]
     dvards = []
