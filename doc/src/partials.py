@@ -11,7 +11,7 @@ matplotlib.rcParams['font.size'] = 14
 matplotlib.rcParams['lines.linewidth'] = 2.0
 
 # cosmology
-OmegaM0 = 0.28
+OmegaM0 = 0.30
 cosmo = FlatLambdaCDM(H0=100, Om0=OmegaM0)
 
 gamma=0.55
@@ -106,7 +106,7 @@ def Pgg_l(mu,f,D,dDdg, dfdg):
     return 2*(b*D+f*D*mu**2)*(b*dDdg + (f*dDdg+dfdg*D)*mu**2)*matter[:,1]
 
 def Pgg_b(mu,f,D):
-#    return 2*(b*D+f*D*mu**2)*matter[:,1]   
+    # return 2*(b*D+f*D*mu**2)*matter[:,1]   
     return 2*D*(b*D+f*D*mu**2)*matter[:,1]
 
 def Pgg_Om(mu,f,D, dfdOm, dDdOmOverD):
@@ -194,7 +194,7 @@ def Cmatrices(z,mu,ng,duration,sigm,restrate):
 
     # nginv = 1./ng
 
-    f = OmegaM(a)**.55
+    f = OmegaM(a)**gamma
     D_ = D(a)
     dDdg_ = dDdg(a)
     dfdg_ = dfdg(a)
@@ -650,6 +650,36 @@ def set2():
 
 # set2()
 # wefwe
+
+
+def forpaper():
+    zmaxs=[0.2]
+    durations = [10.]
+    var =[]
+    dvards = []
+    var_ind=[]
+    dvardsigM = []
+    var_vonly=[]
+    dvardkmax = []
+    for duration in durations:
+        v_=[]
+        vind_=[]
+        vvonly_=[]
+        dv_=[]
+        dvsigM_=[]
+        dvdkmax_=[]
+        for zmax in zmaxs:
+            f00,f11,f10,f02,f12,f22= zintegral_fast(zmax,ng,duration,sigm_Ia,restrate_Ia)
+            # dv_.append(finvp(f00,f11,f10,f00s,f11s,f10s))
+            v_.append(numpy.linalg.inv(numpy.array([[f00,f10,f02],[f10,f11,f12],[f02,f12,f22]])))
+            print(v_[-1])
+            # dvdkmax_.append(finvp(f00,f11,f10,f00kmax,f11kmax,f10kmax))
+
+
+        var.append(numpy.array(v_)*2*3.14/.5) #3/4
+        print(numpy.linalg.inv(var[0][0][numpy.ix_([0,2],[0,2])]))
+
+forpaper() 
 
 def set1():
     fig,(ax) = plt.subplots(1, 1)

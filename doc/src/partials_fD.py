@@ -11,7 +11,7 @@ matplotlib.rcParams['font.size'] = 14
 matplotlib.rcParams['lines.linewidth'] = 2.0
 
 # cosmology
-OmegaM0 = 0.28
+OmegaM0 = 0.3
 cosmo = FlatLambdaCDM(H0=100, Om0=OmegaM0)
 
 gamma=0.55
@@ -344,8 +344,8 @@ bD_ = []
 
 for _z in bincenters:
     a=1./(1+_z)
-    f = OmegaM(a,OmegaM0=0.28)**.55
-    D_ = D(a,OmegaM0=0.28,gamma=0.55)
+    f = OmegaM(a,OmegaM0=OmegaM0)**gamma
+    D_ = D(a,OmegaM0=OmegaM0,gamma=gamma)
     fD_.append(f*D_)
     bD_.append(1.2*D_)
 
