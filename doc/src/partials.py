@@ -66,8 +66,9 @@ def integrand_D(a,gamma=gamma, OmegaM0=OmegaM0,*args):
 
 # normalized to a=1
 def D(a,*args):
-    return 1./1000*numpy.exp(integrate.quad(integrand_D, 1./1000,a,args=(gamma,OmegaM0))[0])
-    # return numpy.exp(-integrate.quad(integrand_D, a,1,args=args)[0])
+    #return 1./1000*numpy.exp(integrate.quad(integrand_D, 1./1000,a,args=(gamma,OmegaM0))[0])
+    return numpy.exp(-integrate.quad(integrand_D, a,1,args=args)[0])
+
 
 def dOmdOm0(a,OmegaM0=OmegaM0):
     den= (OmegaM0 + (1-OmegaM0)*a**3) 
@@ -79,11 +80,16 @@ def integrand_dDdOmOverD(a,*args):
 def dDdOmOverD(a, *args):
     return integrate.quad(integrand_dDdOmOverD, a,1,args=args)[0]
 
-
 def dfdOm(a):
     return gamma * OmegaM(a)**(gamma-1)
 
+def dOmdw0(a,OmegaM0=OmegaM0):
+    om = OmegaM(a,OmegaM0=OmegaM0)
+    return 3 * numpy.log(a) * om *(1-om)
 
+def dOmdwa(a,OmegaM0=OmegaM0):
+    om = OmegaM(a,OmegaM0=OmegaM0)    
+    return 3*(numpy.log(a)+1-a)*om*(1-om)
 
 def Pvv(mu,f,D):
     return (f*D*mu*100)**2*matter[:,1]/matter[:,0]**2
@@ -94,6 +100,12 @@ def Pvv_l(mu,f,D,dDdg, dfdg):
 
 def Pvv_Om(mu,f,D, dfdOm, dDdOmOverD):
     return 2*f*D*(mu*100)**2*matter[:,1]/matter[:,0]**2 * (f*dDdOmOverD*D + dfdOm * D )
+
+def Pvv_fD(mu,f,D,dDdg, dfdg):
+    return 2*f*D*(mu*100)**2*matter[:,1]/matter[:,0]**2
+
+# def Pvv_wX(mu,f,D,dDdg, dfdg,dfdOm,dDdOmOverD,dOmdwX):
+#     return Pvv_Om(mu,f,D, dfdOm, dDdOmOverD) * dOmdwX
 
 
 # gg
@@ -112,6 +124,8 @@ def Pgg_b(mu,f,D):
 def Pgg_Om(mu,f,D, dfdOm, dDdOmOverD):
     return 2*(b*D+f*D*mu**2)*matter[:,1] * (b*dDdOmOverD*D + f* dDdOmOverD*D*mu**2 + dfdOm * D*mu**2 )
 
+# def Pgg_wX(mu,f,D,dDdg, dfdg,dfdOm,dDdOmOverD,dOmdwX):
+#     return 2*(b*D+f*D*mu**2)*(b*dDdOmOverD + (dfdOm + f*dDdOmOverD)*mu**2)*D*dOmdwX* matter[:,1]
 
 # gv
 def Pgv(mu,f,D):
@@ -128,6 +142,8 @@ def Pgv_b(mu,f,D):
 def Pgv_Om(mu,f,D, dfdOm, dDdOmOverD):
     return ((b*dDdOmOverD*D + f*dDdOmOverD*D*mu**2 + dfdOm*D*mu**2) * (f*D*mu*100) +(b*D+f*D*mu**2) *mu*100*(f*dDdOmOverD*D + dfdOm*D) )*matter[:,1]/matter[:,0]
 
+# def Pgv_wX(mu,f,D,dDdg, dfdg,dfdOm,dDdOmOverD,dOmdwX):
+#     return 2*(b*D+f*D*mu**2)*(b*dDdOmOverD + (dfdOm + f*dDdOmOverD)*mu**2)*D*dOmdwX* matter[:,1]
 
 def finvp(f00,f11,f01,f00p,f11p,f01p):
     den = f00*f11 -f01**2
@@ -214,24 +230,42 @@ def Cmatrices(z,mu,ng,duration,sigm,restrate):
     pgvs_b = Pgv_b(mu,f,D_)
 
     dOmdOm0_ = dOmdOm0(a,OmegaM0=OmegaM0)
-    pggs_Om = Pgg_Om(mu,f,D_,dfdOm_,dDdOmOverD_)*dOmdOm0_
-    pgvs_Om = Pgv_Om(mu,f,D_,dfdOm_,dDdOmOverD_)*dOmdOm0_
-    pvvs_Om = Pvv_Om(mu,f,D_,dfdOm_,dDdOmOverD_)*dOmdOm0_
+    dOmdw0_ = dOmdw0(a,OmegaM0=OmegaM0)
+    dOmdwa_ = dOmdwa(a,OmegaM0=OmegaM0)   
+
+    temp = Pgg_Om(mu,f,D_,dfdOm_,dDdOmOverD_)
+    pggs_Om = temp*dOmdOm0_
+    pggs_w0 = temp*dOmdw0_
+    pggs_wa = temp*dOmdwa_
+
+    temp = Pgv_Om(mu,f,D_,dfdOm_,dDdOmOverD_)
+    pgvs_Om = temp*dOmdOm0_
+    pgvs_w0 = temp*dOmdw0_
+    pgvs_wa = temp*dOmdwa_
+
+    temp =  Pvv_Om(mu,f,D_,dfdOm_,dDdOmOverD_)
+    pvvs_Om = temp*dOmdOm0_
+    pvvs_w0 = temp*dOmdw0_
+    pvvs_wa = temp*dOmdwa_
 
     C=[]
     Cinv = []
     dCdl = []
     dCdb = []
     dCdOm = []
+    dCdw0 = []
+    dCdwa = []    
     # Cinvs = []
     Cinvn = []
     Cinvsigmam = []
-    for pgg, pgv, pvv, pgg_l, pgv_l, pvv_l, pgg_b, pgv_b, pgg_Om, pgv_Om, pvv_Om  in zip(pggs,pgvs,pvvs,pggs_l,pgvs_l,pvvs_l,pggs_b,pgvs_b,pggs_Om,pgvs_Om,pvvs_Om):
+    for pgg, pgv, pvv, pgg_l, pgv_l, pvv_l, pgg_b, pgv_b, pgg_Om, pgv_Om, pvv_Om, pgg_w0, pgv_w0, pvv_w0, pgg_wa, pgv_wa, pvv_wa  in zip(pggs,pgvs,pvvs,pggs_l,pgvs_l,pvvs_l,pggs_b,pgvs_b,pggs_Om,pgvs_Om,pvvs_Om,pggs_w0,pgvs_w0,pvvs_w0,pggs_wa,pgvs_wa,pvvs_wa):
         C.append(numpy.array([[pgg+ninv,pgv],[pgv,pvv+nvinv]]))
         Cinv.append(numpy.linalg.inv(C[-1]))
         dCdl.append(numpy.array([[pgg_l,pgv_l],[pgv_l,pvv_l]]))   #*OmegaM_a**0.55*lnfgfactor) # second term converts from fsigma8 to gamma
         dCdb.append(numpy.array([[pgg_b,pgv_b],[pgv_b,0]]))
         dCdOm.append(numpy.array([[pgg_Om,pgv_Om],[pgv_Om,pvv_Om]]))
+        dCdw0.append(numpy.array([[pgg_w0,pgv_w0],[pgv_w0,pvv_w0]]))
+        dCdwa.append(numpy.array([[pgg_wa,pgv_wa],[pgv_wa,pvv_wa]]))
 
         den = (pgg+ninv)*(pvv+nvinv)-pgv**2
         # Cinvs.append(1./den * numpy.array([[1,0],[0,0]]) - (pgg+nginv)/den**2 * numpy.array([[pvv+nvinv,-pgv],[-pgv,pgg+nginv]]))
@@ -250,7 +284,7 @@ def Cmatrices(z,mu,ng,duration,sigm,restrate):
         Cinvsigmam.append(Cinverse_partial(pgg+ninv, pvv+nvinv,pgv, 0, 2*sigv*ninv*sigv_factor *3e5 ,0)) # partial wrt sigmaM
 
        
-    return C, Cinv, dCdl,dCdb,Cinvn, Cinvsigmam,dCdOm
+    return C, Cinv, dCdl,dCdb,Cinvn, Cinvsigmam,dCdOm,dCdw0,dCdwa
 
 def traces(z,mu,ng,duration,sigm,restrate):
 
@@ -285,12 +319,11 @@ def traces(z,mu,ng,duration,sigm,restrate):
     bOsigM=[]
     OOsigM=[]
 
-
     ll_vonly=[]
     lO_vonly=[]
     OO_vonly=[]
 
-    for C, Cinv, C_l,C_b,Cinvn,CinvsigM, C_Om in zip(cmatrices[0],cmatrices[1],cmatrices[2],cmatrices[3],cmatrices[4],cmatrices[5],cmatrices[6]):
+    for C, Cinv, C_l,C_b,Cinvn,CinvsigM,C_Om,C_w0,C_wa in zip(cmatrices[0],cmatrices[1],cmatrices[2],cmatrices[3],cmatrices[4],cmatrices[5],cmatrices[6]):
         ll.append(numpy.trace(Cinv@C_l@Cinv@C_l))
         bb.append(numpy.trace(Cinv@C_b@Cinv@C_b))
         lb.append(numpy.trace(Cinv@C_l@Cinv@C_b))
@@ -335,12 +368,22 @@ def traces_fast(z,mu,ng,duration,sigm,restrate):
 
     ll=[]
     lb=[]
-    bb=[]
     lO=[]
+    lw0=[]
+    lwa=[]    
+    bb=[]
     bO=[]
+    bw0=[]
+    bwa=[]
     OO=[]
+    Ow0=[]
+    Owa=[]
+    w0w0=[]
+    w0wa=[]
+    wawa=[]
 
-    for C, Cinv, C_l,C_b,Cinvn,CinvsigM, C_Om in zip(cmatrices[0],cmatrices[1],cmatrices[2],cmatrices[3],cmatrices[4],cmatrices[5],cmatrices[6]):
+
+    for C, Cinv, C_l,C_b,Cinvn,CinvsigM, C_Om,  C_w0,  C_wa in zip(cmatrices[0],cmatrices[1],cmatrices[2],cmatrices[3],cmatrices[4],cmatrices[5],cmatrices[6],cmatrices[7],cmatrices[8]):
         ll.append(numpy.trace(Cinv@C_l@Cinv@C_l))
         bb.append(numpy.trace(Cinv@C_b@Cinv@C_b))
         lb.append(numpy.trace(Cinv@C_l@Cinv@C_b))
@@ -348,7 +391,22 @@ def traces_fast(z,mu,ng,duration,sigm,restrate):
         bO.append(numpy.trace(Cinv@C_b@Cinv@C_Om))
         OO.append(numpy.trace(Cinv@C_Om@Cinv@C_Om))
 
-    return numpy.array(ll),numpy.array(bb),numpy.array(lb),numpy.array(lO),numpy.array(bO),numpy.array(OO)
+        lw0.append(numpy.trace(Cinv@C_l@Cinv@C_w0))
+        lwa.append(numpy.trace(Cinv@C_l@Cinv@C_wa))    
+
+        bw0.append(numpy.trace(Cinv@C_b@Cinv@C_w0))
+        bwa.append(numpy.trace(Cinv@C_b@Cinv@C_wa))
+
+        Ow0.append(numpy.trace(Cinv@C_Om@Cinv@C_w0))
+        Owa.append(numpy.trace(Cinv@C_Om@Cinv@C_wa))
+
+        w0w0.append(numpy.trace(Cinv@C_w0@Cinv@C_w0))
+        w0wa.append(numpy.trace(Cinv@C_w0@Cinv@C_wa))
+        wawa.append(numpy.trace(Cinv@C_wa@Cinv@C_wa))
+
+    return numpy.array(ll),numpy.array(bb),numpy.array(lb),numpy.array(lO),numpy.array(bO),numpy.array(OO), \
+        numpy.array(lw0),numpy.array(lwa),numpy.array(bw0),numpy.array(bwa),numpy.array(Ow0),numpy.array(Owa), \
+        numpy.array(w0w0),numpy.array(w0wa),numpy.array(wawa)
 
 def muintegral(z,ng,duration,sigm,restrate):
     mus=numpy.arange(0,1.001,0.05)
@@ -427,10 +485,19 @@ def muintegral_fast(z,ng,duration,sigm,restrate):
     lO=numpy.zeros((len(mus),len(matter[:,0])))
     bO=numpy.zeros((len(mus),len(matter[:,0])))
     OO=numpy.zeros((len(mus),len(matter[:,0])))
+    lw0=numpy.zeros((len(mus),len(matter[:,0])))
+    lwa=numpy.zeros((len(mus),len(matter[:,0])))
+    bw0=numpy.zeros((len(mus),len(matter[:,0])))
+    bwa=numpy.zeros((len(mus),len(matter[:,0])))
+    Ow0=numpy.zeros((len(mus),len(matter[:,0])))
+    Owa=numpy.zeros((len(mus),len(matter[:,0])))
+    w0w0=numpy.zeros((len(mus),len(matter[:,0])))
+    w0wa=numpy.zeros((len(mus),len(matter[:,0])))
+    wawa=numpy.zeros((len(mus),len(matter[:,0])))
 
     for i in range(len(mus)):
         # dum = traces_fast(z,mus[i],ng,duration,sigm,restrate)
-        ll[i],bb[i],bl[i], lO[i],bO[i],OO[i]= traces_fast(z,mus[i],ng,duration,sigm,restrate)
+        ll[i],bb[i],bl[i], lO[i],bO[i],OO[i],lw0[i],lwa[i],bw0[i],bwa[i],Ow0[i],Owa[i],w0w0[i],w0wa[i],wawa[i] = traces_fast(z,mus[i],ng,duration,sigm,restrate)
 
     ll = numpy.trapz(ll,mus,axis=0)
     bb = numpy.trapz(bb,mus,axis=0)
@@ -438,8 +505,16 @@ def muintegral_fast(z,ng,duration,sigm,restrate):
     lO = numpy.trapz(lO,mus,axis=0)
     bO = numpy.trapz(bO,mus,axis=0)
     OO = numpy.trapz(OO,mus,axis=0)
-
-    return 2*ll,2*bb,2*bl, 2*lO, 2*bO, 2*OO
+    lw0 = numpy.trapz(lw0,mus,axis=0)
+    lwa = numpy.trapz(lwa,mus,axis=0)
+    bw0 = numpy.trapz(bw0,mus,axis=0)
+    bwa = numpy.trapz(bwa,mus,axis=0)
+    Ow0 = numpy.trapz(Ow0,mus,axis=0)
+    Owa = numpy.trapz(Owa,mus,axis=0)
+    w0w0 = numpy.trapz(w0w0,mus,axis=0)
+    w0wa = numpy.trapz(w0wa,mus,axis=0)
+    wawa = numpy.trapz(wawa,mus,axis=0)
+    return 2*ll,2*bb,2*bl, 2*lO, 2*bO, 2*OO, 2*lw0,2*lwa,2*bw0,2*bwa,2*Ow0,2*Owa,2*w0w0,2*w0wa,2*wawa
 
 
 def kintegral(z,zmax,ng,duration,sigm,restrate):
@@ -483,12 +558,12 @@ def kintegral(z,zmax,ng,duration,sigm,restrate):
     return ll,bb,bl, lls,bbs,bls,ll_ind,bb_ind,bl_ind, llsigM,bbsigM,blsigM,ll_vonly,lO,bO,OO, \
         lOs,bOs,OOs,lO_ind,bO_ind,OO_ind, lOsigM,bOsigM,OOsigM,lO_vonly, OO_vonly
 
-def kintegral_fast(z,zmax,ng,duration,sigm,restrate):
+def kintegral_fast(z,zmax,ng,duration,sigm,restrate,kmax=0.1):
     kmin = numpy.pi/(zmax*3e3)
-    kmax = 0.1
+
     w = numpy.logical_and(matter[:,0] >= kmin, matter[:,0]< kmax)
 
-    ll,bb,bl,lO,bO,OO = muintegral_fast(z,ng,duration,sigm,restrate)
+    ll,bb,bl,lO,bO,OO,lw0,lwa,bw0,bwa,Ow0,Owa,w0w0,w0wa,wawa = muintegral_fast(z,ng,duration,sigm,restrate)
     ll = numpy.trapz(matter[:,0][w]**2*ll[w],matter[:,0][w])
     bb = numpy.trapz(matter[:,0][w]**2*bb[w],matter[:,0][w])
     bl = numpy.trapz(matter[:,0][w]**2*bl[w],matter[:,0][w])
@@ -496,7 +571,17 @@ def kintegral_fast(z,zmax,ng,duration,sigm,restrate):
     bO = numpy.trapz(matter[:,0][w]**2*bO[w],matter[:,0][w])
     OO = numpy.trapz(matter[:,0][w]**2*OO[w],matter[:,0][w])
 
-    return ll,bb,bl,lO,bO,OO 
+    lw0 = numpy.trapz(matter[:,0][w]**2*lw0[w],matter[:,0][w])
+    lwa = numpy.trapz(matter[:,0][w]**2*lwa[w],matter[:,0][w])
+    bw0 = numpy.trapz(matter[:,0][w]**2*bw0[w],matter[:,0][w])
+    bwa = numpy.trapz(matter[:,0][w]**2*bwa[w],matter[:,0][w])
+    Ow0 = numpy.trapz(matter[:,0][w]**2*Ow0[w],matter[:,0][w])
+    Owa = numpy.trapz(matter[:,0][w]**2*Owa[w],matter[:,0][w])
+    w0w0 = numpy.trapz(matter[:,0][w]**2*w0w0[w],matter[:,0][w])
+    w0wa = numpy.trapz(matter[:,0][w]**2*w0wa[w],matter[:,0][w])
+    wawa = numpy.trapz(matter[:,0][w]**2*wawa[w],matter[:,0][w])
+
+    return ll,bb,bl,lO,bO,OO,lw0,lwa,bw0,bwa,Ow0,Owa,w0w0,w0wa,wawa
 
 # utility numbers
 zmax_zint = 0.3
@@ -584,7 +669,7 @@ def zintegral(zmax,ng,duration,sigm,restrate):
         lOs,bOs,OOs,lO_ind, bO_ind, OO_ind, lOsigM,bOsigM,OOsigM,lO_vonly,OO_vonly
 
 
-def zintegral_fast(zmax,ng,duration,sigm,restrate):
+def zintegral_fast(zmax,ng,duration,sigm,restrate,kmax=0.1):
     w = zs_zint <= zmax
     zs = zs_zint[w]
     rs = rs_zint[w]
@@ -595,9 +680,18 @@ def zintegral_fast(zmax,ng,duration,sigm,restrate):
     lO=numpy.zeros(len(rs))
     bO=numpy.zeros(len(rs))
     OO=numpy.zeros(len(rs))
+    lw0=numpy.zeros(len(rs))
+    lwa=numpy.zeros(len(rs))
+    bw0=numpy.zeros(len(rs))
+    bwa=numpy.zeros(len(rs))
+    Ow0=numpy.zeros(len(rs))
+    Owa=numpy.zeros(len(rs))
+    w0w0=numpy.zeros(len(rs))
+    w0wa=numpy.zeros(len(rs))
+    wawa=numpy.zeros(len(rs))
 
     for i in range(len(rs)):
-        ll[i],bb[i],bl[i],lO[i],bO[i],OO[i] = kintegral_fast(zs[i],zmax,ng,duration,sigm,restrate)
+        ll[i],bb[i],bl[i],lO[i],bO[i],OO[i],lw0[i],lwa[i],bw0[i],bwa[i],Ow0[i],Owa[i],w0w0[i],w0wa[i],wawa[i] = kintegral_fast(zs[i],zmax,ng,duration,sigm,restrate,kmax=kmax)
 
     ll = numpy.trapz(rs**2*ll,rs)
     bb = numpy.trapz(rs**2*bb,rs)
@@ -605,7 +699,18 @@ def zintegral_fast(zmax,ng,duration,sigm,restrate):
     lO = numpy.trapz(rs**2*lO,rs)
     bO = numpy.trapz(rs**2*bO,rs)
     OO = numpy.trapz(rs**2*OO,rs)
-    return ll, bb, bl, lO,bO,OO
+
+    lw0=numpy.trapz(rs**2*lw0,rs)
+    lwa=numpy.trapz(rs**2*lwa,rs)
+    bw0=numpy.trapz(rs**2*bw0,rs)
+    bwa=numpy.trapz(rs**2*bwa,rs)
+    Ow0=numpy.trapz(rs**2*Ow0,rs)
+    Owa=numpy.trapz(rs**2*Owa,rs)
+    w0w0=numpy.trapz(rs**2*w0w0,rs)
+    w0wa=numpy.trapz(rs**2*w0wa,rs)
+    wawa=numpy.trapz(rs**2*wawa,rs)
+
+    return ll, bb, bl, lO,bO,OO,lw0,lwa,bw0,bwa,Ow0,Owa,w0w0,w0wa,wawa
 
 
 def set2():
@@ -655,31 +760,34 @@ def set2():
 def forpaper():
     zmaxs=[0.2]
     durations = [10.]
-    var =[]
-    dvards = []
-    var_ind=[]
-    dvardsigM = []
-    var_vonly=[]
-    dvardkmax = []
-    for duration in durations:
-        v_=[]
-        vind_=[]
-        vvonly_=[]
-        dv_=[]
-        dvsigM_=[]
-        dvdkmax_=[]
-        for zmax in zmaxs:
-            f00,f11,f10,f02,f12,f22= zintegral_fast(zmax,ng,duration,sigm_Ia,restrate_Ia)
-            # dv_.append(finvp(f00,f11,f10,f00s,f11s,f10s))
-            v_.append(numpy.linalg.inv(numpy.array([[f00,f10,f02],[f10,f11,f12],[f02,f12,f22]])))
-            print(v_[-1])
-            # dvdkmax_.append(finvp(f00,f11,f10,f00kmax,f11kmax,f10kmax))
+    kmaxs=[0.1,0.2]
+
+    for kmax in kmaxs:
+        var =[]
+        dvards = []
+        var_ind=[]
+        dvardsigM = []
+        var_vonly=[]
+        dvardkmax = []
+        for duration in durations:
+            v_=[]
+            vind_=[]
+            vvonly_=[]
+            dv_=[]
+            dvsigM_=[]
+            dvdkmax_=[]
+            for zmax in zmaxs:
+                f00,f11,f10,f02,f12,f22, f03,f04,f13,f14,f23,f24,f33,f34,f44= zintegral_fast(zmax,ng,duration,sigm_Ia,restrate_Ia,kmax=kmax)
+                # dv_.append(finvp(f00,f11,f10,f00s,f11s,f10s))
+                v_.append(numpy.linalg.inv(numpy.array([[f00,f10,f02,f03,f04],[f10,f11,f12,f13,f14],[f02,f12,f22,f23,f24],[f03,f13,f23,f33,f34],[f04,f14,f24,f34,f44]])))
+                # print(v_[-1])
+                # dvdkmax_.append(finvp(f00,f11,f10,f00kmax,f11kmax,f10kmax))
 
 
-        var.append(numpy.array(v_)*2*3.14/.5) #3/4
-        print(numpy.linalg.inv(var[0][0][numpy.ix_([0,2],[0,2])]))
+            var.append(numpy.array(v_)*2*3.14/.5) #3/4
+            print('kmax={} duration={} fisher={}'.format(kmax,duration,numpy.linalg.inv(var[0][0][numpy.ix_([0,2,3,4],[0,2,3,4])])))
 
-forpaper() 
+# forpaper() 
 
 def set1():
     fig,(ax) = plt.subplots(1, 1)
