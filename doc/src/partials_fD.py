@@ -15,6 +15,7 @@ OmegaM0 = 0.3
 cosmo = FlatLambdaCDM(H0=100, Om0=OmegaM0)
 
 gamma=0.55
+sigma_v=300.
 
 # tho code is hard wired to change these numbers requires surgery
 zmax=0.2
@@ -171,6 +172,7 @@ def Cmatrices(z,mu,ng,duration,sigm,restrate):
     # print (1/term)
     sigv_factor=1/term
     sigv = 3e5*sigm*sigv_factor
+    sigv = numpy.sqrt(sigv**2+sigma_v**2)
 
     # lnfgfactor = dlnfs8dg(a)
 

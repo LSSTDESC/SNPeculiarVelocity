@@ -18,6 +18,8 @@ gamma=0.55
 
 sigOM0sqinv=1/0.005**2
 
+sigma_v=300.
+
 # power spectrum from CAMB
 matter = numpy.loadtxt("/Users/akim/project/PeculiarVelocity/pv/dragan/matterpower.dat")
 
@@ -201,6 +203,7 @@ def Cmatrices(z,mu,ng,duration,sigm,restrate):
     # print (1/term)
     sigv_factor=1/term
     sigv = 3e5*sigm*sigv_factor
+    sigv = numpy.sqrt(sigv**2+sigma_v**2)
 
     lnfgfactor = dlnfs8dg(a)
 
