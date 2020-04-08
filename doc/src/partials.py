@@ -10,28 +10,40 @@ import astropy
 matplotlib.rcParams['font.size'] = 14
 matplotlib.rcParams['lines.linewidth'] = 2.0
 
-# cosmology
 OmegaM0 = 0.30
 cosmo = FlatLambdaCDM(H0=100, Om0=OmegaM0)
+    
+# utility numbers
+zmax_zint = 0.3
+zs_zint = numpy.arange(0.01,0.3+0.00001,0.01) # in redshift space
+rs_zint = cosmo.comoving_distance(zs_zint).value
 
-gamma=0.55
-
-sigOM0sqinv=1/0.005**2
-
-sigma_v=300.
 
 # power spectrum from CAMB
 matter = numpy.loadtxt("/Users/akim/project/PeculiarVelocity/pv/dragan/matterpower.dat")
 
-# vv
-f=OmegaM0**0.55
+# # 
+# OmegaM0 = 0.30
+# cosmo = FlatLambdaCDM(H0=100, Om0=OmegaM0)
 
-# SN properties
-restrate_Ia = 0.65*  2.69e-5*(1/0.70)**3 # h^3/Mpc^3 yr^{-1}
-sigm_Ia = 0.08
+# gamma=0.55
 
-# galaxy density (TAIPAN Howlett et al.)
-ng = 1e-3
+# sigOM0sqinv=1/0.005**2
+
+# sigma_v=300.
+
+# # power spectrum from CAMB
+# matter = numpy.loadtxt("/Users/akim/project/PeculiarVelocity/pv/dragan/matterpower.dat")
+
+# # vv
+# f=OmegaM0**0.55
+
+# # SN properties
+# restrate_Ia = 0.65*  2.69e-5*(1/0.70)**3 # h^3/Mpc^3 yr^{-1}
+# sigm_Ia = 0.08
+
+# # galaxy density (TAIPAN Howlett et al.)
+# ng = 1e-3
 
 def Cinverse(m00,m11,m01):
     return numpy.array([[m11,-m01],[-m01,m00]])/(m00*m11 - m01**2)
@@ -41,7 +53,7 @@ def Cinverse_partial(m00,m11,m01,dm00,dm11,dm01):
     return numpy.array([[dm11,2*m01*dm01],[2*m01*dm01,dm00]])/den \
         - numpy.array([[m11,-m01],[-m01,m00]])/den**2 * (dm00*m11 + m00*dm11 - 2*m01*dm01)
 
-def OmegaM(a,OmegaM0=OmegaM0):
+def OmegaM(a,OmegaM0=0.3):
     return OmegaM0/(OmegaM0 + (1-OmegaM0)*a**3)
 
 def integrand_dlnfs(a,*args):
@@ -63,16 +75,18 @@ def dDdg(a,*args):
 # def integrand_D(a,*args):
 #     return  OmegaM(a,*args)**0.55 / a
 
-def integrand_D(a,gamma=gamma, OmegaM0=OmegaM0,*args):
+def integrand_D(a,gamma=0.55, OmegaM0=0.3,*args):
     return  OmegaM(a,OmegaM0,*args)**gamma / a    
 
-# normalized to a=1
+# normalized to CAMB prediction CMB
 def D(a,*args):
-    #return 1./1000*numpy.exp(integrate.quad(integrand_D, 1./1000,a,args=(gamma,OmegaM0))[0])
-    return numpy.exp(-integrate.quad(integrand_D, a,1,args=args)[0])
+    #return 1./1101*numpy.exp(integrate.quad(integrand_D, 1./1101,a,args=(gamma,OmegaM0))[0])
+    print (numpy.exp(integrate.quad(integrand_D, 1./1101,a,args=(gamma,OmegaM0))[0])/numpy.exp(integrate.quad(integrand_D, 1./1101,1,args=(0.55,OmegaM0))[0]), numpy.exp(-integrate.quad(integrand_D, a,1,args=args)[0]))
+    return numpy.exp(integrate.quad(integrand_D, 1./1101,a,args=(gamma,OmegaM0))[0])/numpy.exp(integrate.quad(integrand_D, 1./1101,1,args=(0.55,OmegaM0))[0])
+    #return numpy.exp(-integrate.quad(integrand_D, a,1,args=args)[0])
 
 
-def dOmdOm0(a,OmegaM0=OmegaM0):
+def dOmdOm0(a,OmegaM0=0.3):
     den= (OmegaM0 + (1-OmegaM0)*a**3) 
     return (1./den - (1-a**3)/den**2)
 
@@ -85,11 +99,11 @@ def dDdOmOverD(a, *args):
 def dfdOm(a):
     return gamma * OmegaM(a)**(gamma-1)
 
-def dOmdw0(a,OmegaM0=OmegaM0):
+def dOmdw0(a,OmegaM0=0.3):
     om = OmegaM(a,OmegaM0=OmegaM0)
     return 3 * numpy.log(a) * om *(1-om)
 
-def dOmdwa(a,OmegaM0=OmegaM0):
+def dOmdwa(a,OmegaM0=0.3):
     om = OmegaM(a,OmegaM0=OmegaM0)    
     return 3*(numpy.log(a)+1-a)*om*(1-om)
 
@@ -110,8 +124,8 @@ def Pvv_fD(mu,f,D,dDdg, dfdg):
 #     return Pvv_Om(mu,f,D, dfdOm, dDdOmOverD) * dOmdwX
 
 
-# gg
-b= 1.2
+# # gg
+# b= 1.2
 def Pgg(mu,f,D):
     return (b*D+f*D*mu**2)**2*matter[:,1]
 
@@ -586,10 +600,6 @@ def kintegral_fast(z,zmax,ng,duration,sigm,restrate,kmax=0.1):
 
     return ll,bb,bl,lO,bO,OO,lw0,lwa,bw0,bwa,Ow0,Owa,w0w0,w0wa,wawa
 
-# utility numbers
-zmax_zint = 0.3
-zs_zint = numpy.arange(0.01,0.3+0.00001,0.01) # in redshift space
-rs_zint = cosmo.comoving_distance(zs_zint).value
 
 def zintegral(zmax,ng,duration,sigm,restrate):
     # zs = numpy.arange(0.01,zmax+0.00001,0.01) # in redshift space
@@ -672,7 +682,7 @@ def zintegral(zmax,ng,duration,sigm,restrate):
         lOs,bOs,OOs,lO_ind, bO_ind, OO_ind, lOsigM,bOsigM,OOsigM,lO_vonly,OO_vonly
 
 
-def zintegral_fast(zmax,ng,duration,sigm,restrate,kmax=0.1):
+def zintegral_fast(zmax,ng,duration,sigm,restrate, kmax=0.1) :
     w = zs_zint <= zmax
     zs = zs_zint[w]
     rs = rs_zint[w]
@@ -715,6 +725,48 @@ def zintegral_fast(zmax,ng,duration,sigm,restrate,kmax=0.1):
 
     return ll, bb, bl, lO,bO,OO,lw0,lwa,bw0,bwa,Ow0,Owa,w0w0,w0wa,wawa
 
+def zintegrand_fast(zmax,ng,duration,sigm,restrate,kmax=0.1):
+    w = zs_zint <= zmax
+    zs = zs_zint[w]
+    rs = rs_zint[w]
+
+    ll=numpy.zeros(len(rs))
+    bb=numpy.zeros(len(rs))
+    bl=numpy.zeros(len(rs))
+    lO=numpy.zeros(len(rs))
+    bO=numpy.zeros(len(rs))
+    OO=numpy.zeros(len(rs))
+    lw0=numpy.zeros(len(rs))
+    lwa=numpy.zeros(len(rs))
+    bw0=numpy.zeros(len(rs))
+    bwa=numpy.zeros(len(rs))
+    Ow0=numpy.zeros(len(rs))
+    Owa=numpy.zeros(len(rs))
+    w0w0=numpy.zeros(len(rs))
+    w0wa=numpy.zeros(len(rs))
+    wawa=numpy.zeros(len(rs))
+
+    for i in range(len(rs)):
+        ll[i],bb[i],bl[i],lO[i],bO[i],OO[i],lw0[i],lwa[i],bw0[i],bwa[i],Ow0[i],Owa[i],w0w0[i],w0wa[i],wawa[i] = kintegral_fast(zs[i],zmax,ng,duration,sigm,restrate,kmax=kmax)
+
+    ll = numpy.trapz(rs**2*ll,rs)
+    bb = numpy.trapz(rs**2*bb,rs)
+    bl = numpy.trapz(rs**2*bl,rs)
+    lO = numpy.trapz(rs**2*lO,rs)
+    bO = numpy.trapz(rs**2*bO,rs)
+    OO = numpy.trapz(rs**2*OO,rs)
+
+    lw0=numpy.trapz(rs**2*lw0,rs)
+    lwa=numpy.trapz(rs**2*lwa,rs)
+    bw0=numpy.trapz(rs**2*bw0,rs)
+    bwa=numpy.trapz(rs**2*bwa,rs)
+    Ow0=numpy.trapz(rs**2*Ow0,rs)
+    Owa=numpy.trapz(rs**2*Owa,rs)
+    w0w0=numpy.trapz(rs**2*w0w0,rs)
+    w0wa=numpy.trapz(rs**2*w0wa,rs)
+    wawa=numpy.trapz(rs**2*wawa,rs)
+
+    return ll, bb, bl, lO,bO,OO,lw0,lwa,bw0,bwa,Ow0,Owa,w0w0,w0wa,wawa
 
 def set2():
     fig,(ax) = plt.subplots(1, 1)
@@ -760,10 +812,11 @@ def set2():
 # wefwe
 
 
-def forpaper():
+def forpaper(OmegaM0=0.3):
     zmaxs=[0.2]
     durations = [10.]
     kmaxs=[0.1,0.2]
+    kmaxs=[0.1]
 
     for kmax in kmaxs:
         var =[]
@@ -788,8 +841,38 @@ def forpaper():
 
 
             var.append(numpy.array(v_)*2*3.14/.5) #3/4
-            print('kmax={} duration={} fisher={}'.format(kmax,duration,numpy.linalg.inv(var[0][0][numpy.ix_([0,2,3,4],[0,2,3,4])])))
+            print('kmax={} duration={} \n fisher={}'.format(kmax,duration,numpy.linalg.inv(var[0][0][numpy.ix_([0,2,3,4],[0,2,3,4])])))
 
+
+def referee(OmegaM0=0.3):
+    zmaxs=[0.2]
+    durations = [10.]
+    kmaxs=[0.1]
+
+    for kmax in kmaxs:
+        var =[]
+        dvards = []
+        var_ind=[]
+        dvardsigM = []
+        var_vonly=[]
+        dvardkmax = []
+        for duration in durations:
+            v_=[]
+            vind_=[]
+            vvonly_=[]
+            dv_=[]
+            dvsigM_=[]
+            dvdkmax_=[]
+            for zmax in zmaxs:
+                f00,f11,f10,f02,f12,f22, f03,f04,f13,f14,f23,f24,f33,f34,f44= zintegral_fast(zmax,ng,duration,sigm_Ia,restrate_Ia,kmax=kmax)
+                # dv_.append(finvp(f00,f11,f10,f00s,f11s,f10s))
+                v_.append(numpy.linalg.inv(numpy.array([[f00,f10,f02,f03,f04],[f10,f11,f12,f13,f14],[f02,f12,f22,f23,f24],[f03,f13,f23,f33,f34],[f04,f14,f24,f34,f44]])))
+                # print(v_[-1])
+                # dvdkmax_.append(finvp(f00,f11,f10,f00kmax,f11kmax,f10kmax))
+
+
+            var.append(numpy.array(v_)*2*3.14/.5) #3/4
+            print('kmax={} duration={} \n fisher={}'.format(kmax,duration,numpy.linalg.inv(var[0][0][numpy.ix_([0,2,3,4],[0,2,3,4])])))
 # forpaper() 
 
 def set1():
@@ -945,5 +1028,40 @@ def surveyFOM(skyfrac, duration):
 
     return numpy.linalg.inv(numpy.array([[f00,f10,f02],[f10,f11,f12],[f02,f12,f22+sigOM0sqinv]]))[0,0]*2*3.14/skyfrac
 
+if __name__ == "__main__":
+        # cosmology
+
+
+    gamma=0.55
+
+    sigOM0sqinv=1/0.005**2
+
+    sigma_v=300.
+
+
+
+    # vv
+    f=OmegaM0**0.55
+
+    # SN properties
+    restrate_Ia = 0.65*  2.69e-5*(1/0.70)**3 # h^3/Mpc^3 yr^{-1}
+    sigm_Ia = 0.08
+    # print(sigm_Ia **2/restrate_Ia)
+
+    # # # GW properties
+    # restrate_Ia = 1000/1e9  # 110-3840 from Abbott
+    # sigm_Ia = 0.02
+    # print(sigm_Ia **2/restrate_Ia)
+    # wfe
+    # galaxy density (TAIPAN Howlett et al.)
+    ng = 1e-3
+
+    # gg
+    b= 1.2
+
+    # execute only if run as a script
+    forpaper()
+
 
 #surveyFOM()
+
